@@ -1,0 +1,2 @@
+
+-101 = Could not load GLFW.
