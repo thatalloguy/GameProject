@@ -5,6 +5,7 @@
 #include "App.h"
 
 void App::init() {
+                                   // Nothing wrong with this code, fight me :)
     window = new Quack::Window(*new Quack::WindowCreationData{});
 }
 
