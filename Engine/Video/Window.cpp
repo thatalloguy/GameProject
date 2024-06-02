@@ -41,10 +41,7 @@ namespace Quack {
         }
 
         glfwMakeContextCurrent(raw_window);
-        gladLoadGL();
 
-        // Render settings
-        glViewport(0, 0, creation_info.size.x, creation_info.size.y);
 
         if (creation_info.should_maximize) {
             glfwMaximizeWindow(raw_window);
@@ -107,12 +104,6 @@ namespace Quack {
     }
 
     void Window::update() {
-
-        //temp
-        glClearColor(0, 0.3, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
         glfwPollEvents();
         glfwSwapBuffers(raw_window);
     }

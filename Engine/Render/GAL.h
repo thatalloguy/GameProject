@@ -27,7 +27,6 @@ namespace GAL {
     void cleanUp();
 
 
-
     void clearScreen(Math::Vector4 color);
     void setViewport(Math::Vector4 rect);
 

@@ -1,2 +1,3 @@
 
 -101 = Could not load GLFW.
+-102 = Could not load GLAD

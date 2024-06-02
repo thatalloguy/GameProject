@@ -11,6 +11,5 @@ int main() {
 
     application.cleanup();
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
