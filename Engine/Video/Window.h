@@ -43,7 +43,7 @@ namespace Quack {
         void update();
 
     private:
-        inline void load_glfw_config();
+        inline void loadGlfwConfig();
 
 
         WindowCreationData* window_info;
