@@ -4,6 +4,8 @@
 
 #include "App.h"
 
+
+#define USE_GL
 #include <Render/GAL.h>
 
 void App::init() {

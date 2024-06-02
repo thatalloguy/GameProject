@@ -17,6 +17,18 @@ using namespace Quack;
 
 namespace GAL {
 
+    typedef unsigned int GPUBufferId;
+
+
+    enum class BufferType : unsigned int {
+        Array
+    };
+
+    enum class BufferUsage : unsigned int {
+        Static,
+        Dynamic
+    };
+
 
 
     struct RenderCreationInfo {
@@ -29,6 +41,8 @@ namespace GAL {
 
     void clearScreen(Math::Vector4 color);
     void setViewport(Math::Vector4 rect);
+
+    GPUBufferId& createVertexBuffer(void* data, int size, BufferUsage usage, BufferType type);
 
 };
 
