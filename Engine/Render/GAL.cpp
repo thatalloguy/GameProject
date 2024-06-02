@@ -3,15 +3,16 @@
 //
 
 #include "GAL.h"
-#include "GLFW/glfw3.h"
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
 
 
+
+
 void GAL::init(GAL::RenderCreationInfo &creationInfo) {
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGL()) {
         spdlog::debug("Could not load glad");
         exit(-102);
     }
@@ -31,43 +32,48 @@ void GAL::setViewport(Math::Vector4 rect) {
     glViewport(rect.x, rect.y, rect.z, rect.w);
 }
 
+GAL::Mesh *GAL::createMesh(void *vertices, void *indices) {
 
 
+    Mesh* mesh = new Mesh();
 
-#define USE_GL
-#ifdef USE_GL
+    glGenVertexArrays(1, &mesh->VAO);
+    glGenBuffers(1, &mesh->VBO);
+    glGenBuffers(1, &mesh->EBO);
+
+    glBindVertexArray(mesh->VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
 
-
-namespace GAL::GL_UTIL {
-
-    GLenum toEnum(GAL::BufferType type) {
-        switch (type) {
-            case GAL::BufferType::Array:
-                return GL_ARRAY_BUFFER;
-        }
-    }
-
-    GLenum toEnum(GAL::BufferUsage type) {
-        switch (type) {
-            case GAL::BufferUsage::Dynamic:
-                return GL_DYNAMIC_DRAW;
-            case GAL::BufferUsage::Static:
-                return GL_STATIC_DRAW;
-        }
-    }
+    return mesh;
 }
 
-GAL::GPUBufferId &GAL::createVertexBuffer(void *data, int size, GAL::BufferUsage usage, GAL::BufferType type) {
+void GAL::drawMesh(GAL::Mesh &mesh) {
 
-    spdlog::debug("Creating VBO");
 
-    GPUBufferId VBO;
-
-    glGenBuffers(1, &VBO);
-
+    glBindVertexArray(mesh.VAO);
+    // temp
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
+GAL::ShaderRef *GAL::loadShader(const char *vert_src, const char *frag_src) {
+
+    ShaderRef* shader = new ShaderRef();
 
 
-#endif
+    return nullptr;
+}
+

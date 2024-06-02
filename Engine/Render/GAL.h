@@ -19,6 +19,17 @@ namespace GAL {
 
     typedef unsigned int GPUBufferId;
 
+    struct Mesh {
+        unsigned int VAO;
+        unsigned int VBO;
+        unsigned int EBO;
+    };
+
+    struct ShaderRef {
+        unsigned int vertexShader;
+        unsigned int fragmentShader;
+    };
+
 
     enum class BufferType : unsigned int {
         Array
@@ -42,7 +53,10 @@ namespace GAL {
     void clearScreen(Math::Vector4 color);
     void setViewport(Math::Vector4 rect);
 
-    GPUBufferId& createVertexBuffer(void* data, int size, BufferUsage usage, BufferType type);
+    Mesh* createMesh(void* vertices, void* indices);
+    void drawMesh(Mesh& mesh);
+
+    ShaderRef* loadShader(const char* vert_src, const char* frag_src);
 
 };
 
