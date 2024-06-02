@@ -69,11 +69,16 @@ void GAL::drawMesh(GAL::Mesh &mesh) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-GAL::ShaderRef *GAL::loadShader(const char *vert_src, const char *frag_src) {
+GAL::ShaderRef *GAL::loadShader(const char *vert_src, const char *frag_src, bool enable_errors=true) {
 
     ShaderRef* shader = new ShaderRef();
 
+    shader->vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(shader->vertexShader, 1, &vert_src, NULL);
+    glCompileShader(shader->vertexShader);
 
-    return nullptr;
+
+
+    return shader;
 }
 

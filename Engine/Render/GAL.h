@@ -53,10 +53,12 @@ namespace GAL {
     void clearScreen(Math::Vector4 color);
     void setViewport(Math::Vector4 rect);
 
+    //USER MUST DELETE THESE THEMSELF
     Mesh* createMesh(void* vertices, void* indices);
     void drawMesh(Mesh& mesh);
 
-    ShaderRef* loadShader(const char* vert_src, const char* frag_src);
+    //USER MUST DELETE THESE THEMSELF
+    ShaderRef* loadShader(const char* vert_src, const char* frag_src, bool enable_errors=true);
 
 };
 
