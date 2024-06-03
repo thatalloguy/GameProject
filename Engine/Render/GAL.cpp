@@ -24,15 +24,15 @@ void GAL::cleanUp() {
 }
 
 void GAL::clearScreen(Math::Vector4 color) {
-    glClearColor(color.x, color.y, color.z, color.w);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glClearColor(color.x, color.y, color.z, color.w);
+    glClear(GL_COLOR_BUFFER_BIT );
 }
 
 void GAL::setViewport(Math::Vector4 rect) {
     glViewport(rect.x, rect.y, rect.z, rect.w);
 }
 
-GAL::Mesh *GAL::createMesh(void *vertices, void *indices) {
+GAL::Mesh *GAL::createMesh(float vertices[],unsigned int indices[]) {
 
 
     Mesh* mesh = new Mesh();
@@ -61,24 +61,77 @@ GAL::Mesh *GAL::createMesh(void *vertices, void *indices) {
     return mesh;
 }
 
-void GAL::drawMesh(GAL::Mesh &mesh) {
+void GAL::drawMesh(GAL::Mesh &mesh, GPUProgram program) {
 
-
+    glUseProgram(program);
     glBindVertexArray(mesh.VAO);
-    // temp
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-GAL::ShaderRef *GAL::loadShader(const char *vert_src, const char *frag_src, bool enable_errors=true) {
+GAL::GPUProgram GAL::loadShader(const char *vert_src, const char *frag_src, bool enable_errors) {
 
-    ShaderRef* shader = new ShaderRef();
+    unsigned int vertexShader;
+    unsigned int fragmentShader;
+    unsigned int program;
 
-    shader->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(shader->vertexShader, 1, &vert_src, NULL);
-    glCompileShader(shader->vertexShader);
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vert_src, NULL);
+    glCompileShader(vertexShader);
 
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &frag_src, NULL);
+    glCompileShader(fragmentShader);
 
+    //error checking
+    if (enable_errors) {
+        int success;
+        char info[512];
+        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 
-    return shader;
+        if(!success) {
+            glGetShaderInfoLog(vertexShader, 512, NULL, info);
+            spdlog::error("[Shader Compilation] {}", info);
+        }
+
+        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+        if(!success) {
+            glGetShaderInfoLog(fragmentShader, 512, NULL, info);
+            spdlog::error("[Shader Compilation] {}", info);
+        }
+    }
+
+    program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+
+    //Check for linking errors
+
+    if (enable_errors) {
+        int success;
+        char info[512];
+        glGetProgramiv(program, GL_LINK_STATUS, &success);
+
+        if(!success) {
+            glGetProgramInfoLog(program, 512, NULL, info);
+            spdlog::error("[Shader Linking] {}", info);
+        }
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return program;
 }
 
+void GAL::deleteGPUProgram(GAL::GPUProgram program) {
+    glDeleteProgram(program);
+}
+
+GAL::Mesh::~Mesh() {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}

@@ -15,32 +15,19 @@
 
 using namespace Quack;
 
-namespace GAL {
+//todo remove this
 
-    typedef unsigned int GPUBufferId;
+namespace GAL {
 
     struct Mesh {
         unsigned int VAO;
         unsigned int VBO;
         unsigned int EBO;
+
+        ~Mesh();
     };
 
-    struct ShaderRef {
-        unsigned int vertexShader;
-        unsigned int fragmentShader;
-    };
-
-
-    enum class BufferType : unsigned int {
-        Array
-    };
-
-    enum class BufferUsage : unsigned int {
-        Static,
-        Dynamic
-    };
-
-
+    typedef unsigned int GPUProgram;
 
     struct RenderCreationInfo {
 
@@ -54,11 +41,12 @@ namespace GAL {
     void setViewport(Math::Vector4 rect);
 
     //USER MUST DELETE THESE THEMSELF
-    Mesh* createMesh(void* vertices, void* indices);
-    void drawMesh(Mesh& mesh);
+    Mesh* createMesh(float vertices[],unsigned int indices[]);
+    void drawMesh(Mesh& mesh, GPUProgram program);
 
-    //USER MUST DELETE THESE THEMSELF
-    ShaderRef* loadShader(const char* vert_src, const char* frag_src, bool enable_errors=true);
+    GPUProgram loadShader(const char* vert_src, const char* frag_src, bool enable_errors=true);
+    void deleteGPUProgram(GPUProgram program);
+
 
 };
 

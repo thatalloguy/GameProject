@@ -104,8 +104,8 @@ namespace Quack {
     }
 
     void Window::update() {
-        glfwPollEvents();
         glfwSwapBuffers(raw_window);
+        glfwPollEvents();
     }
 
 
