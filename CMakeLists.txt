@@ -9,10 +9,12 @@ file(GLOB_RECURSE ENGINE_SOURCE
 
         Engine/Math/Vecs.h
         Engine/Utils/Defines.h
-        Engine/Utils/Hashmap.h
 
         Engine/Render/GAL.h
         Engine/Render/GAL.cpp
+
+        Engine/Input/InputManager.h
+        Engine/Input/InputManager.cpp
 )
 
 

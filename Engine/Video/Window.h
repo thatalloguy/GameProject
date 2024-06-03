@@ -42,6 +42,8 @@ namespace Quack {
 
         void update();
 
+        GLFWwindow* getRawWindow();
+
     private:
         inline void loadGlfwConfig();
 

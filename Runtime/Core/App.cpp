@@ -3,6 +3,8 @@
 //
 
 #include "App.h"
+#include "Input/InputManager.h"
+#include "spdlog/spdlog.h"
 
 
 #define USE_GL
@@ -20,6 +22,8 @@ namespace Game {
 void App::init() {
                                    // Nothing wrong with this code, fight me :)
     window = new Quack::Window(*new Quack::WindowCreationData{});
+
+    Quack::Input::setTargetWindow(*window);
 
     GAL::RenderCreationInfo info{};
 
@@ -63,6 +67,10 @@ void App::run() {
 
 
         GAL::drawMesh(*Game::mesh, Game::shader);
+
+        if (Quack::Input::isKeyPressed(Quack::Key::A)) {
+            spdlog::info("A KEY PRESSED");
+        }
 
         window->update();
     }

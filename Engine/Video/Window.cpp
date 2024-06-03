@@ -19,6 +19,7 @@
 #endif
 
 
+
 namespace Quack {
 
 
@@ -106,6 +107,10 @@ namespace Quack {
     void Window::update() {
         glfwSwapBuffers(raw_window);
         glfwPollEvents();
+    }
+
+    GLFWwindow *Window::getRawWindow() {
+        return raw_window;
     }
 
 
