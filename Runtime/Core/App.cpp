@@ -72,6 +72,10 @@ void App::run() {
             spdlog::info("A KEY PRESSED");
         }
 
+        if (Quack::Input::isButtonPressed(0, 2)) {
+            spdlog::info("A BUTTON PRESSED");
+        }
+
         //spdlog::info("Controller Axis: {} | {}", Quack::Input::getJoystickAxis(0).x, Quack::Input::getJoystickAxis(0).y);
 
         window->update();

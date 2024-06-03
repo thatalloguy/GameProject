@@ -150,6 +150,12 @@ namespace Quack {
 
        Math::Vector2 getJoystickAxis(int controllerId);
 
+       // 0 = under
+       // 1 = right
+       // 2 = left
+       // 3 = up
+       bool isButtonPressed(int controllerId, int button);
+
     }
 
 
