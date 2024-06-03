@@ -59,7 +59,7 @@ void App::init() {
 }
 
 void App::run() {
-
+    int count;
     while (!window->shouldShutdown()) {
 
         GAL::setViewport({0, 0, 1280, 720});
@@ -71,7 +71,8 @@ void App::run() {
         if (Quack::Input::isKeyPressed(Quack::Key::A)) {
             spdlog::info("A KEY PRESSED");
         }
-
+        spdlog::info("NORTH {}", glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count)[1]);
+        spdlog::info("WEST {}", glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count)[0]);
         window->update();
     }
 
