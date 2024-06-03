@@ -146,6 +146,10 @@ namespace Quack {
 
        bool isKeyPressed(Key key);
 
+       int isControllerPresent(int controllerId);
+
+       Math::Vector2 getJoystickAxis(int controllerId);
+
     }
 
 

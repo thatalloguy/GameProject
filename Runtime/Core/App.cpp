@@ -71,8 +71,9 @@ void App::run() {
         if (Quack::Input::isKeyPressed(Quack::Key::A)) {
             spdlog::info("A KEY PRESSED");
         }
-        spdlog::info("NORTH {}", glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count)[1]);
-        spdlog::info("WEST {}", glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count)[0]);
+
+        //spdlog::info("Controller Axis: {} | {}", Quack::Input::getJoystickAxis(0).x, Quack::Input::getJoystickAxis(0).y);
+
         window->update();
     }
 
