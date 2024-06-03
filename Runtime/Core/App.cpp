@@ -5,14 +5,18 @@
 #include "App.h"
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
+#include "Renderer/VkEngine.h"
 
+namespace Game {
+    VulkanEngine engine;
+}
 
 void App::init() {
                                    // Nothing wrong with this code, fight me :)
     window = new Quack::Window(*new Quack::WindowCreationData{});
     Quack::Input::setTargetWindow(*window);
 
-
+    Game::engine.Init(window->getRawWindow(), false);
 }
 
 void App::run() {
@@ -27,11 +31,16 @@ void App::run() {
             spdlog::info("A BUTTON PRESSED");
         }
 
+        Game::engine.updateScene();
+
+        Game::engine.Run();
+
         window->update();
     }
 
 }
 
 void App::cleanup() {
+    Game::engine.CleanUp();
     delete window;
 }

@@ -12,6 +12,22 @@ file(GLOB_RECURSE ENGINE_SOURCE
 
         Engine/Input/InputManager.h
         Engine/Input/InputManager.cpp
+
+        Engine/Renderer/VkEngine.cpp
+        Engine/Renderer/VkEngine.h
+        Engine/Renderer/VkInitializers.h
+        Engine/Renderer/VkImages.cpp
+        Engine/Renderer/VkImages.h
+        Engine/Renderer/VkPipelines.cpp
+        Engine/Renderer/VkPipelines.h
+        Engine/Renderer/VkDescriptors.cpp
+        Engine/Renderer/VkDescriptors.h
+        Engine/Renderer/VkLoader.cpp
+        Engine/Renderer/VkLoader.h
+        Engine/Renderer/VkTypes.h
+        Engine/Renderer/VkInitializers.cpp
+        Engine/Renderer/Camera.cpp
+        Engine/Renderer/Camera.h
 )
 
 
@@ -26,6 +42,37 @@ add_subdirectory("Thirdparty/spdlog")
 add_subdirectory("Thirdparty/glad")
 
 
+find_package(Vulkan REQUIRED)
+
+
+add_subdirectory("Thirdparty/vk-bootstrap")
+add_subdirectory("Thirdparty/VulkanMemoryAllocator")
+add_subdirectory("Thirdparty/fastgltf")
+
+file(GLOB_RECURSE IMGUI_SOURCE
+        Thirdparty/imgui/imgui.cpp
+        Thirdparty/imgui/imgui.h
+        Thirdparty/imgui/imgui_internal.h
+        Thirdparty/imgui/imgui_internal.cpp
+        Thirdparty/imgui/imconfig.h
+        Thirdparty/imgui/imstb_rectpack.h
+        Thirdparty/imgui/imgui_draw.cpp
+        Thirdparty/imgui/imgui_tables.cpp
+        Thirdparty/imgui/imgui_widgets.cpp
+        Thirdparty/imgui/imgui_demo.cpp
+        Thirdparty/imgui/backends/imgui_impl_vulkan.h
+        Thirdparty/imgui/backends/imgui_impl_vulkan.cpp
+        Thirdparty/imgui/backends/imgui_impl_glfw.h
+        Thirdparty/imgui/backends/imgui_impl_glfw.cpp
+)
+
+file(GLOB_RECURSE FASTGLTF_DEPS
+        Thirdparty/fastgltf/deps/simdjson/simdjson.h
+        Thirdparty/fastgltf/deps/simdjson/simdjson.cpp
+)
+
+
+
 
 include_directories("Engine")
 include_directories("Thirdparty/glfw/include")
@@ -36,9 +83,21 @@ include_directories("Thirdparty/spdlog/include")
 
 
 
-add_executable(Game Runtime/main.cpp ${RUNTIME_SOURCE} ${ENGINE_SOURCE})
+add_executable(Game Runtime/main.cpp ${RUNTIME_SOURCE} ${ENGINE_SOURCE} ${IMGUI_SOURCE} ${FASTGLTF_DEPS})
 
 
 target_link_libraries(Game PUBLIC dwmapi)
-target_link_libraries(Game PUBLIC glfw)
 target_link_libraries(Game PUBLIC glad)
+
+
+target_link_libraries(Game PRIVATE vk-bootstrap::vk-bootstrap)
+target_link_libraries(Game PRIVATE GPUOpen::VulkanMemoryAllocator)
+target_link_libraries(Game PRIVATE spdlog)
+target_link_libraries(Game PRIVATE fastgltf)
+target_link_libraries(Game PRIVATE glfw Vulkan::Vulkan)
+
+
+
+target_include_directories(Game PRIVATE "Thirdparty/imgui")
+target_include_directories(Game PRIVATE "Thirdparty/stb")
+target_include_directories(Game PRIVATE "Thirdparty/glm")

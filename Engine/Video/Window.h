@@ -8,7 +8,7 @@
 #include <Utils/Defines.h>
 #include <Math/Vecs.h>
 
-#include <GLFW/glfw3.h>
+#include <Renderer/VkEngine.h>
 
 namespace Quack {
 

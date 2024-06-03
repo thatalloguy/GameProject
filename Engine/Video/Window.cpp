@@ -33,16 +33,13 @@ namespace Quack {
             exit(-100);
         }
 
-        spdlog::debug("[WINDOW] loaded Glfw");
-
+        spdlog::info("[WINDOW] loaded Glfw");
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         raw_window = glfwCreateWindow(creation_info.size.x, creation_info.size.y, creation_info.title, NULL, NULL);
 
         if (!raw_window) {
             spdlog::error("Could not create window");
         }
-
-        glfwMakeContextCurrent(raw_window);
-
 
         if (creation_info.should_maximize) {
             glfwMaximizeWindow(raw_window);
@@ -81,12 +78,7 @@ namespace Quack {
     }
 
     void Window::loadGlfwConfig() {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        glfwWindowHint(GLFW_SAMPLES, 4);
-        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
     }
 
     void Window::pushWindowMode(WindowMode mode) {
