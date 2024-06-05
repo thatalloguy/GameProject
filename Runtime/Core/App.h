@@ -5,6 +5,9 @@
 #ifndef GAME_APP_H
 #define GAME_APP_H
 
+//Physics stuff
+#include <Jolt/Jolt.h>
+
 #include <Video/Window.h>
 
 class App {

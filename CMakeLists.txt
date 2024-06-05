@@ -48,6 +48,7 @@ find_package(Vulkan REQUIRED)
 add_subdirectory("Thirdparty/vk-bootstrap")
 add_subdirectory("Thirdparty/VulkanMemoryAllocator")
 add_subdirectory("Thirdparty/fastgltf")
+add_subdirectory("Thirdparty/Jolt")
 
 file(GLOB_RECURSE IMGUI_SOURCE
         Thirdparty/imgui/imgui.cpp
@@ -88,6 +89,7 @@ add_executable(Game Runtime/main.cpp ${RUNTIME_SOURCE} ${ENGINE_SOURCE} ${IMGUI_
 
 target_link_libraries(Game PUBLIC dwmapi)
 target_link_libraries(Game PUBLIC glad)
+target_link_libraries(Game PUBLIC Jolt)
 
 
 target_link_libraries(Game PRIVATE vk-bootstrap::vk-bootstrap)
@@ -101,3 +103,4 @@ target_link_libraries(Game PRIVATE glfw Vulkan::Vulkan)
 target_include_directories(Game PRIVATE "Thirdparty/imgui")
 target_include_directories(Game PRIVATE "Thirdparty/stb")
 target_include_directories(Game PRIVATE "Thirdparty/glm")
+target_include_directories(Game PUBLIC  ${JoltPhysics_SOURCE_DIR}/..)
