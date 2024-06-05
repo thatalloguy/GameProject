@@ -63,6 +63,7 @@ void App::init() {
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
 
+                                            // Beautiful code, fight me >:(
     Game::testEntity.attachModel(new std::string("cube"));
 
 }
