@@ -16,6 +16,7 @@
 #include "Jolt/Physics/Body/BodyActivationListener.h"
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
+
 using namespace JPH;
 
 namespace Quack {
@@ -86,6 +87,17 @@ namespace Quack {
                 JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
                 return mObjectToBroadPhase[inLayer];
             }
+
+            virtual const char *			GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
+            {
+                switch ((BroadPhaseLayer::Type)inLayer)
+                {
+                    case (BroadPhaseLayer::Type)BroadPhaseLayers::NON_MOVING:	return "NON_MOVING";
+                    case (BroadPhaseLayer::Type)BroadPhaseLayers::MOVING:		return "MOVING";
+                    default:													JPH_ASSERT(false); return "INVALID";
+                }
+            }
+
 
         private:
             BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
