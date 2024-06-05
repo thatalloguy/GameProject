@@ -12,6 +12,8 @@
 
 
 #include <Jolt/Physics/Collision/ObjectLayer.h>
+#include "Jolt/Physics/Collision/ContactListener.h"
+#include "Jolt/Physics/Body/BodyActivationListener.h"
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
 using namespace JPH;
@@ -89,15 +91,70 @@ namespace Quack {
             BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
         };
 
+        class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter {
+        public:
+            virtual bool ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override {
+                switch (inLayer1)
+                {
+                    case Layers::NON_MOVING:
+                        return inLayer2 == BroadPhaseLayers::MOVING;
+                    case Layers::MOVING:
+                        return true;
+                    default:
+                        JPH_ASSERT(false);
+                        return false;
+                }
+            }
+        };
+
+        class MyContactListener : public ContactListener {
+        public:
+            virtual ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override {
+                spdlog::debug("Contact Validate Callback");
+
+                return ValidateResult::AcceptAllContactsForThisBodyPair;
+            }
+
+            virtual void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
+                spdlog::debug("A contact was added");
+            }
+
+            virtual void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
+                spdlog::debug("A contact was persisted");
+            }
+
+            virtual void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override {
+                spdlog::debug("A contact was removed");
+            }
+        };
+
+        class MyBodyActivationListener : public BodyActivationListener {
+        public:
+            virtual void OnBodyActivated(const BodyID& inBodyId, uint64 inBodyUserData) override {
+                spdlog::debug("A body got activated");
+            }
+
+            virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override {
+                spdlog::debug("A body went to sleep");
+            }
+        };
+
     }
 
     struct PhysicsEngineCreationInfo {
-
+        int preallocation_size = 10 * 1024 * 1024;
+        uint cMaxBodies = 1024;
+        uint cNumBodyMutexes = 0;
+        uint cMaxBodyPairs = 1024;
+        uint cMaxContactConstraints = 1024;
+        float cDeltaTime = 1.0f / 60.0f;
     };
 
     class PhysicsEngine {
 
     public:
+
+        void Initialize(PhysicsEngineCreationInfo& creationInfo);
 
     private:
 
