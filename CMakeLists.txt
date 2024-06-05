@@ -28,6 +28,9 @@ file(GLOB_RECURSE ENGINE_SOURCE
         Engine/Renderer/VkInitializers.cpp
         Engine/Renderer/Camera.cpp
         Engine/Renderer/Camera.h
+
+        Engine/Physics/PhysicsEngine.h
+        Engine/Physics/PhysicsEngine.cpp
 )
 
 
