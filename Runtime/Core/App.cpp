@@ -7,9 +7,42 @@
 #include "spdlog/spdlog.h"
 #include "Renderer/VkEngine.h"
 
+class Entity {
+
+public:
+    Entity() = default;
+    ~Entity() {
+
+        //temp?
+        delete model;
+    };
+
+    void attachModel(std::string* assetName) {
+        model = assetName;
+    }
+
+    void render(VulkanEngine& engine) {
+        // only render if we have a model attached.
+        if (model != nullptr) {
+            engine.loadedScenes[*model]->Draw(getTransformMatrix(), engine.mainDrawContext);
+        }
+    };
+
+private:
+    Quack::Math::Vector3 position{0, 0, 0};
+
+    std::string* model = nullptr;
+
+    glm::mat4 getTransformMatrix() {
+        return glm::translate(glm::mat4{1.f}, glm::vec3{position.x, position.y, position.z});
+    }
+};
+
 namespace Game {
     VulkanEngine engine;
     Camera* camera;
+
+    Entity testEntity;
 }
 
 void App::init() {
@@ -29,6 +62,9 @@ void App::init() {
 
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
+
+    Game::testEntity.attachModel(new std::string("cube"));
+
 }
 
 void App::run() {
@@ -41,11 +77,13 @@ void App::run() {
 
        /* if (Quack::Input::isButtonPressed(0, 2)) {
             spdlog::info("A BUTTON PRESSED");
-        }
-*/
+        }*/
+
+
+
         Game::engine.updateScene();
 
-        Game::engine.loadedScenes["cube"]->Draw(glm::mat4{1.f}, Game::engine.mainDrawContext);
+        Game::testEntity.render(Game::engine);
 
         Game::engine.Run();
 
