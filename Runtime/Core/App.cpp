@@ -9,6 +9,7 @@
 
 namespace Game {
     VulkanEngine engine;
+    Camera* camera;
 }
 
 void App::init() {
@@ -16,7 +17,18 @@ void App::init() {
     window = new Quack::Window(*new Quack::WindowCreationData{});
     Quack::Input::setTargetWindow(*window);
 
-    Game::engine.Init(window->getRawWindow(), false);
+    Game::engine.Init(window->getRawWindow(), true);
+
+
+    std::string structurePath = {"..//Assets/basicmesh.glb"};
+    auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
+    // just a check, not necessary
+    assert(structureFile.has_value());
+
+    Game::engine.loadedScenes["cube"] = *structureFile;
+
+    Game::camera = &Game::engine.getMainCamera();
+    Game::camera->position.z = 20;
 }
 
 void App::run() {
@@ -27,11 +39,13 @@ void App::run() {
             spdlog::info("A KEY PRESSED");
         }
 
-        if (Quack::Input::isButtonPressed(0, 2)) {
+       /* if (Quack::Input::isButtonPressed(0, 2)) {
             spdlog::info("A BUTTON PRESSED");
         }
-
+*/
         Game::engine.updateScene();
+
+        Game::engine.loadedScenes["cube"]->Draw(glm::mat4{1.f}, Game::engine.mainDrawContext);
 
         Game::engine.Run();
 

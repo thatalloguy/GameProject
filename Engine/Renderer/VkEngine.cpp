@@ -1439,6 +1439,10 @@ bool VulkanEngine::isVisible(const RenderObject &obj, const Camera& camera) {
 
 }
 
+Camera &VulkanEngine::getMainCamera() {
+    return mainCamera;
+}
+
 
 
 //// GLTFMetallic

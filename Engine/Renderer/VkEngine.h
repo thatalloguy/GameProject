@@ -216,6 +216,8 @@ class VulkanEngine {
         void Draw();
         void Run();
 
+        Camera& getMainCamera();
+
         AllocatedImage _blackImage;
         AllocatedImage _greyImage;
 
@@ -258,7 +260,7 @@ private:
 
 
         std::vector<ComputeEffect> backgroundEffects;
-        int currentBackgroundEffect{0};
+        int currentBackgroundEffect{1};
 
         VkPipelineLayout _trianglePipelineLayout;
         VkPipeline _trianglePipeline;
