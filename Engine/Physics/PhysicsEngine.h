@@ -80,6 +80,11 @@ namespace Quack {
                 return BroadPhaseLayers::NUM_LAYERS;
             }
 
+            virtual BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override {
+                JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
+                return mObjectToBroadPhase[inLayer];
+            }
+
         private:
             BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
         };
