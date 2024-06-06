@@ -29,10 +29,11 @@
 - - [ ] Mouse
 ----
 - Physics
-- - [ ] Rigid bodies.
-- - [ ] Character controller
+- - [x] Setup
+- - [ ] Rigid body creation.
 - - [ ] static Bodies?
 - - [ ] Collision shapes (including triangles?)
+- - [ ] Character controller
 - - [ ] Triggers
 ----
 - Gameplay

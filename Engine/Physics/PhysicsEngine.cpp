@@ -51,7 +51,7 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
 
     body_interface->AddBody(floor->GetID(), EActivation::DontActivate);
 
-    BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0f, 3.0f, 0.0f), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
+    BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0f, 6.0f, 0.0f), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
     sphere_id = body_interface->CreateAndAddBody(sphere_settings, EActivation::Activate);
 
     body_interface->SetLinearVelocity(sphere_id, Vec3(0.0f, -5.0f, 0.0f));
