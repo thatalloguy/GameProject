@@ -8,14 +8,27 @@
 #include <cstdarg>
 #include <cstdio>
 #include "spdlog/spdlog.h"
+
+#define JPH_ENABLE_ASSERT
 #include <Jolt/Jolt.h>
 
 
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include "Jolt/Physics/Collision/ContactListener.h"
 #include "Jolt/Physics/Body/BodyActivationListener.h"
+#include "Math/Vecs.h"
+#include "Jolt/Physics/Body/BodyInterface.h"
+#include "Jolt/Physics/PhysicsSystem.h"
+#include "Jolt/Core/JobSystemThreadPool.h"
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
 
+#include "Jolt/Core/Factory.h"
+#include "Jolt/RegisterTypes.h"
+#include "Jolt/Core/TempAllocator.h"
+#include "Jolt/Core/JobSystemThreadPool.h"
+#include "Jolt/Physics/Collision/Shape/BoxShape.h"
+#include "Jolt/Physics/Body/BodyCreationSettings.h"
+#include "Jolt/Physics/Collision/Shape/SphereShape.h"
 
 using namespace JPH;
 
@@ -121,21 +134,21 @@ namespace Quack {
 
         class MyContactListener : public ContactListener {
         public:
-            virtual ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override {
+            ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override {
                 spdlog::debug("Contact Validate Callback");
 
                 return ValidateResult::AcceptAllContactsForThisBodyPair;
             }
 
-            virtual void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
+            void OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
                 spdlog::debug("A contact was added");
             }
 
-            virtual void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
+            void OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override {
                 spdlog::debug("A contact was persisted");
             }
 
-            virtual void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override {
+            void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override {
                 spdlog::debug("A contact was removed");
             }
         };
@@ -166,9 +179,33 @@ namespace Quack {
 
     public:
 
-        void Initialize(PhysicsEngineCreationInfo& creationInfo);
+
+        PhysicsEngine(PhysicsEngineCreationInfo& physicsEngineCreationInfo) {
+            Initialize(physicsEngineCreationInfo);
+        }
+
+
+        ~PhysicsEngine();
+        //temp
+        Math::Vector3 getSpherePos();
+        bool isActive();
+        void update();
 
     private:
+        void Initialize(PhysicsEngineCreationInfo& creationInfo);
+
+        BodyID sphere_id;
+        BodyInterface* body_interface = nullptr;
+        PhysicsSystem* physicsSystem= nullptr;
+        TempAllocator* temp_allocator= nullptr;
+        JobSystemThreadPool* job_system= nullptr;
+        Body *floor= nullptr;
+
+        PhysicsHelpers::BPlayerInterfaceImpl* broad_phase_layer_interface = nullptr;
+        ObjectVsBroadPhaseLayerFilter* object_vs_broadphase_layer_filter = nullptr;
+        PhysicsHelpers::ObjectLayerPairFilterImpl* object_vs_object_layer_filter = nullptr;
+
+        float cDeltaTime = 1.0f / 60.0f;
 
     };
 

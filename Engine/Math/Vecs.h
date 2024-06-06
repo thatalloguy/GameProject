@@ -46,6 +46,12 @@ namespace Quack {
                 this->z = val;
             }
 
+            void operator=(Vector3& val) {
+                this->x = val.x;
+                this->y = val.y;
+                this->z = val.z;
+            }
+
             void operator+(Vector3 &b) {
                 this->x += b.x;
                 this->y += b.y;

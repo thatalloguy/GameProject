@@ -8,9 +8,7 @@
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
 #include "Renderer/VkEngine.h"
-
-
-
+#include "Physics/PhysicsEngine.h"
 
 
 class Entity {
@@ -34,6 +32,10 @@ public:
         }
     };
 
+    void setPosition(Quack::Math::Vector3 vec) {
+        position = vec;
+    }
+
 private:
     Quack::Math::Vector3 position{0, 0, 0};
 
@@ -47,6 +49,10 @@ private:
 namespace Game {
     VulkanEngine engine;
     Camera* camera;
+    Quack::PhysicsEngine* physicsEngine;
+    Quack::PhysicsEngineCreationInfo* engineCreationInfo;
+
+
 
     Entity testEntity;
 }
@@ -72,6 +78,12 @@ void App::init() {
                                             // Beautiful code, fight me >:(
     Game::testEntity.attachModel(new std::string("cube"));
 
+
+    // load Physics
+    Game::engineCreationInfo = new Quack::PhysicsEngineCreationInfo{};
+    Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
+
+
 }
 
 void App::run() {
@@ -92,6 +104,14 @@ void App::run() {
 
         Game::testEntity.render(Game::engine);
 
+        if (Game::physicsEngine->isActive()) {
+
+            Game::testEntity.setPosition(Game::physicsEngine->getSpherePos());
+
+            Game::physicsEngine->update();
+        }
+
+
         Game::engine.Run();
 
         window->update();
@@ -100,6 +120,8 @@ void App::run() {
 }
 
 void App::cleanup() {
+    delete Game::physicsEngine;
+    delete Game::engineCreationInfo;
     Game::engine.CleanUp();
     delete window;
 }
