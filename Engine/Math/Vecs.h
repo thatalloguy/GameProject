@@ -82,6 +82,10 @@ namespace Quack {
                 this->w += b.z;
             }
 
+            void sIdentity() {
+                w = 1;
+            }
+
         };
 
     }

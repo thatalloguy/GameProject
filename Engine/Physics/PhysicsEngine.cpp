@@ -54,11 +54,11 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
     BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0f, 6.0f, 0.0f), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
     sphere_id = body_interface->CreateAndAddBody(sphere_settings, EActivation::Activate);
 
-    body_interface->SetLinearVelocity(sphere_id, Vec3(0.0f, -5.0f, 0.0f));
+    body_interface->SetLinearVelocity(sphere_id, Vec3(0.0f, 0.0f, 0.0f));
 
     const float cDeltaTime = 1.0f / 60.0f;
 
-    physicsSystem->OptimizeBroadPhase();
+
 
 
 }
@@ -101,4 +101,8 @@ Quack::PhysicsEngine::~PhysicsEngine() {
 
 bool Quack::PhysicsEngine::isActive() {
     return body_interface->IsActive(sphere_id);
+}
+
+void Quack::PhysicsEngine::optimizeBP() {
+    physicsSystem->OptimizeBroadPhase();
 }

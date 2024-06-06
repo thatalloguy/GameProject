@@ -10,6 +10,22 @@
 #include "Renderer/VkEngine.h"
 #include "Physics/PhysicsEngine.h"
 
+struct BodyCreationInfo {
+    RVec3 position;
+    Quat rotation;
+    Shape* shape = nullptr;
+    EActivation shouldActivate = EActivation::DontActivate;
+    EMotionType motionType = EMotionType::Static;
+    JPH::ObjectLayer layer = 0; // non moving
+};
+
+struct EntityCreationInfo {
+    Quack::Math::Vector3 position{0, 0, 0};
+    std::string* model = nullptr;
+    bool isDynamic = false;
+    bool isPhysical = false;
+    BodyCreationInfo bodyCreationInfo{};
+};
 
 class Entity {
 
@@ -31,6 +47,10 @@ public:
             engine.loadedScenes[*model]->Draw(getTransformMatrix(), engine.mainDrawContext);
         }
     };
+
+    void updatePhysics() {
+
+    }
 
     void setPosition(Quack::Math::Vector3 vec) {
         position = vec;

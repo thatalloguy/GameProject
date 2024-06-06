@@ -186,9 +186,14 @@ namespace Quack {
 
 
         ~PhysicsEngine();
+
+        void optimizeBP();
+
         //temp
         Math::Vector3 getSpherePos();
         bool isActive();
+
+
         void update();
 
     private:
