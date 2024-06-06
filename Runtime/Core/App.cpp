@@ -79,6 +79,8 @@ private:
             BodyCreationSettings settings(info.bodyCreationInfo.shape, info.bodyCreationInfo.position, info.bodyCreationInfo.rotation, info.bodyCreationInfo.motionType, info.bodyCreationInfo.layer);
             physicsID = info.bodyCreationInfo.physicsEngine->addNewBody(settings, info.bodyCreationInfo.shouldActivate);
             body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
+            body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
+
         }
     }
 
@@ -128,7 +130,7 @@ void App::init() {
             .bodyCreationInfo = {
                     .position = {0, 6, 0},
                     .rotation = Quat::sIdentity(),
-                    .shape = new SphereShape(0.5f),
+                    .shape = new SphereShape(0.2f),
                     .shouldActivate = EActivation::Activate,
                     .motionType = EMotionType::Dynamic,
                     .layer = Quack::Layers::MOVING,
