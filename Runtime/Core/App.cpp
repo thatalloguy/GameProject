@@ -2,7 +2,7 @@
 // Created by allos on 6/1/2024.
 //
 
-
+#define USING_JOLT
 
 #include "App.h"
 #include "Input/InputManager.h"
@@ -17,6 +17,8 @@ struct BodyCreationInfo {
     EActivation shouldActivate = EActivation::DontActivate;
     EMotionType motionType = EMotionType::Static;
     JPH::ObjectLayer layer = 0; // non moving
+
+    Quack::PhysicsEngine* physicsEngine = nullptr;
 };
 
 struct EntityCreationInfo {
@@ -30,16 +32,20 @@ struct EntityCreationInfo {
 class Entity {
 
 public:
-    Entity() = default;
-    ~Entity() {
+    Entity(EntityCreationInfo& creationInfo) {
+        parseInfo(creationInfo);
+    };
 
+    ~Entity() {
         //temp?
+        if (body_interface) {
+            body_interface->RemoveBody(physicsID);
+
+            body_interface->DestroyBody(physicsID);
+        }
         delete model;
     };
 
-    void attachModel(std::string* assetName) {
-        model = assetName;
-    }
 
     void render(VulkanEngine& engine) {
         // only render if we have a model attached.
@@ -48,8 +54,10 @@ public:
         }
     };
 
-    void updatePhysics() {
-
+    void updatePhysics(Quack::PhysicsEngine& physicsEngine) {
+        if (body_interface) {
+            position = physicsEngine.getInterface().GetCenterOfMassPosition(physicsID);
+        }
     }
 
     void setPosition(Quack::Math::Vector3 vec) {
@@ -57,11 +65,24 @@ public:
     }
 
 private:
-    Quack::Math::Vector3 position{0, 0, 0};
-
+    Quack::Math::Vector3 position;
     std::string* model = nullptr;
+    BodyID physicsID{};
+    BodyInterface* body_interface = nullptr;
 
-    glm::mat4 getTransformMatrix() {
+    void parseInfo(EntityCreationInfo& info) {
+
+        this->model = info.model;
+        this->position = info.position;
+
+        if (info.isPhysical && info.bodyCreationInfo.physicsEngine != nullptr) {
+            BodyCreationSettings settings(info.bodyCreationInfo.shape, info.bodyCreationInfo.position, info.bodyCreationInfo.rotation, info.bodyCreationInfo.motionType, info.bodyCreationInfo.layer);
+            physicsID = info.bodyCreationInfo.physicsEngine->addNewBody(settings, info.bodyCreationInfo.shouldActivate);
+            body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
+        }
+    }
+
+    inline glm::mat4 getTransformMatrix() {
         return glm::translate(glm::mat4{1.f}, glm::vec3{position.x, position.y, position.z});
     }
 };
@@ -74,7 +95,7 @@ namespace Game {
 
 
 
-    Entity testEntity;
+    Entity* testEntity;
 }
 
 void App::init() {
@@ -95,13 +116,28 @@ void App::init() {
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
 
-                                            // Beautiful code, fight me >:(
-    Game::testEntity.attachModel(new std::string("cube"));
-
 
     // load Physics
     Game::engineCreationInfo = new Quack::PhysicsEngineCreationInfo{};
     Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
+
+    // Beautiful code, fight me >:(
+    EntityCreationInfo info {
+            .model = new std::string("cube"),
+            .isPhysical = true,
+            .bodyCreationInfo = {
+                    .position = {0, 6, 0},
+                    .rotation = Quat::sIdentity(),
+                    .shape = new SphereShape(0.5f),
+                    .shouldActivate = EActivation::Activate,
+                    .motionType = EMotionType::Dynamic,
+                    .layer = Quack::Layers::MOVING,
+                    .physicsEngine = Game::physicsEngine
+            }
+    };
+
+    Game::testEntity = new Entity(info);
+
 
 
 }
@@ -122,14 +158,16 @@ void App::run() {
 
         Game::engine.updateScene();
 
-        Game::testEntity.render(Game::engine);
+        Game::testEntity->render(Game::engine);
 
-        if (Game::physicsEngine->isActive()) {
 
-            Game::testEntity.setPosition(Game::physicsEngine->getSpherePos());
+
+            //Game::testEntity->setPosition(Game::physicsEngine->getSpherePos());
+
+            Game::testEntity->updatePhysics(*Game::physicsEngine);
 
             Game::physicsEngine->update();
-        }
+
 
 
         Game::engine.Run();
@@ -140,8 +178,11 @@ void App::run() {
 }
 
 void App::cleanup() {
+    delete Game::testEntity;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
+
+
     Game::engine.CleanUp();
     delete window;
 }

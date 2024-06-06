@@ -63,11 +63,11 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
 
 }
 
-Quack::Math::Vector3 Quack::PhysicsEngine::getSpherePos() {
-        RVec3 position = body_interface->GetCenterOfMassPosition(sphere_id);
-
-        return Quack::Math::Vector3(position.GetX(), position.GetY(), position.GetZ());
+BodyID Quack::PhysicsEngine::addNewBody(BodyCreationSettings &settings, EActivation mode) {
+    return body_interface->CreateAndAddBody(settings, mode);
 }
+
+
 
 void Quack::PhysicsEngine::update() {
         physicsSystem->Update(cDeltaTime, 1, temp_allocator, job_system);
@@ -99,10 +99,13 @@ Quack::PhysicsEngine::~PhysicsEngine() {
 
 }
 
-bool Quack::PhysicsEngine::isActive() {
-    return body_interface->IsActive(sphere_id);
-}
 
 void Quack::PhysicsEngine::optimizeBP() {
     physicsSystem->OptimizeBroadPhase();
 }
+
+BodyInterface &Quack::PhysicsEngine::getInterface() {
+    return *body_interface;
+}
+
+

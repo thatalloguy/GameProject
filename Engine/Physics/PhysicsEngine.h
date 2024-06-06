@@ -189,9 +189,10 @@ namespace Quack {
 
         void optimizeBP();
 
+        BodyID addNewBody(BodyCreationSettings& settings, EActivation mode);
+
         //temp
-        Math::Vector3 getSpherePos();
-        bool isActive();
+        BodyInterface& getInterface();
 
 
         void update();
