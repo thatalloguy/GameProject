@@ -32,7 +32,7 @@
 - - [x] Setup
 - - [x] Rigid body creation.
 - - [x] static Bodies?
-- - [ ] Collision shapes (including triangles?)
+- - [x] Collision shapes (including triangles?)
 - - [ ] Character controller
 - - [ ] Triggers
 ----
