@@ -30,41 +30,9 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
 
     physicsSystem->Init(creationInfo.cMaxBodies, creationInfo.cNumBodyMutexes, creationInfo.cMaxBodyPairs, creationInfo.cMaxContactConstraints, *broad_phase_layer_interface, *object_vs_broadphase_layer_filter, *object_vs_object_layer_filter);
 
-
-    MyBodyActivationListener body_activation_listener;
-    //physicsSystem->SetBodyActivationListener(&body_activation_listener);
-
-    MyContactListener contact_listener;
-    //physicsSystem->SetContactListener(&contact_listener);
-
     body_interface = &physicsSystem->GetBodyInterface();
 
-/*
-    BoxShapeSettings floor_shape_settings(Vec3(100.f, 1.0f, 100.0f));
-    floor_shape_settings.SetEmbedded();
-
-    ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
-    ShapeRefC floor_shape = floor_shape_result.Get();
-
-    BodyCreationSettings floor_settings(floor_shape, RVec3(0.0f, -1.0f, 0.0f), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-
-    floor = body_interface->CreateBody(floor_settings);
-
-    body_interface->AddBody(floor->GetID(), EActivation::DontActivate);
-*/
-
-/*
-    BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0f, 6.0f, 0.0f), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
-    sphere_id = body_interface->CreateAndAddBody(sphere_settings, EActivation::Activate);
-
-    body_interface->SetLinearVelocity(sphere_id, Vec3(0.0f, 0.0f, 0.0f));
-*/
-
-    const float cDeltaTime = 1.0f / 60.0f;
-
-
-
-
+    cDeltaTime = creationInfo.cDeltaTime;
 }
 
 BodyID Quack::PhysicsEngine::addNewBody(BodyCreationSettings &settings, EActivation mode) {

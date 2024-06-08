@@ -116,7 +116,7 @@ namespace Quack {
             BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
         };
 
-        class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter {
+/*        class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter {
         public:
             virtual bool ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override {
                 switch (inLayer1)
@@ -162,7 +162,7 @@ namespace Quack {
             virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override {
                 spdlog::debug("A body went to sleep");
             }
-        };
+        };*/
 
     }
 
