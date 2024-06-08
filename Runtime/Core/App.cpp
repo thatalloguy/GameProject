@@ -8,6 +8,7 @@
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
 #include "Objects/Entity.h"
+#include "Jolt/Physics/Character/Character.h"
 
 
 namespace Game {
@@ -15,11 +16,68 @@ namespace Game {
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
-
-
-    Quack::Entity* floor;
-    Quack::Entity* testEntity;
 }
+
+class Player{
+
+public:
+    Player(){
+
+        auto player_info = Quack::EntityCreationInfo{
+                .position = {0, 6, 0},
+                .model = 1,
+                .isPhysical = false
+        };
+
+        _entity = new Quack::Entity(player_info);
+
+
+        // initialize physics character
+
+        Ref<CharacterSettings> settings = new CharacterSettings();
+        settings->mMaxSlopeAngle = DegreesToRadians(45.0f);
+        settings->mLayer = Quack::Layers::MOVING;
+        settings->mShape = nullptr;
+
+    }
+    ~Player() {
+        delete _entity;
+    }
+
+    void preUpdate() {
+
+        //Capture input?
+        if (Quack::Input::isControllerPresent(0)) {
+            Quack::Math::Vector3 out{0, 0, 0};
+
+
+            auto vec = Quack::Input::getJoystickAxis(0);
+
+            spdlog::info("VEC: {} {} ", ceil(vec.x * 10) / 10, ceil(vec.y * 10) / 10);
+
+        }
+    }
+
+    void postUpdate() {
+
+
+        _entity->render(Game::engine);
+        _entity->updatePhysics(*Game::physicsEngine);
+    }
+
+private:
+    Quack::Entity* _entity = nullptr;
+
+    Character* _character = nullptr;
+};
+
+
+namespace Level {
+    Quack::Entity* floor;
+    Player* player;
+
+}
+
 
 void App::init() {
                                    // Nothing wrong with this code, fight me :)
@@ -50,20 +108,6 @@ void App::init() {
     Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
 
     // Beautiful code, fight me >:(
-    Quack::EntityCreationInfo test_info {
-            .model = 1,
-            .isPhysical = true,
-            .bodyCreationInfo = {
-                    .position = {0, 6, 0},
-                    .rotation = Quat::sIdentity(),
-                    .shape = new SphereShape(1.0f),
-                    .shouldActivate = EActivation::Activate,
-                    .motionType = EMotionType::Dynamic,
-                    .layer = Quack::Layers::MOVING,
-                    .physicsEngine = Game::physicsEngine
-            }
-    };
-
     Quack::EntityCreationInfo floor_info {
             .size = {100, 1, 100},
             .model = 2,
@@ -80,8 +124,8 @@ void App::init() {
     };
 
 
-    Game::testEntity = new Quack::Entity(test_info);
-    Game::floor = new Quack::Entity(floor_info);
+    Level::player = new Player();
+    Level::floor = new Quack::Entity(floor_info);
 
 
 
@@ -103,18 +147,13 @@ void App::run() {
 
         Game::engine.updateScene();
 
-        Game::testEntity->render(Game::engine);
-        Game::floor->render(Game::engine);
+        Level::player->preUpdate();
+        Level::floor->updatePhysics(*Game::physicsEngine);
 
+        Game::physicsEngine->update();
 
-
-            //Game::testEntity->setPosition(Game::physicsEngine->getSpherePos());
-
-            Game::testEntity->updatePhysics(*Game::physicsEngine);
-            Game::floor->updatePhysics(*Game::physicsEngine);
-
-            Game::physicsEngine->update();
-
+        Level::floor->render(Game::engine);
+        Level::player->postUpdate();
 
 
         Game::engine.Run();
@@ -125,8 +164,8 @@ void App::run() {
 }
 
 void App::cleanup() {
-    delete Game::testEntity;
-    delete Game::floor;
+    delete Level::player;
+    delete Level::floor;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
 
