@@ -200,12 +200,10 @@ namespace Quack {
     private:
         void Initialize(PhysicsEngineCreationInfo& creationInfo);
 
-        BodyID sphere_id;
         BodyInterface* body_interface = nullptr;
         PhysicsSystem* physicsSystem= nullptr;
         TempAllocator* temp_allocator= nullptr;
         JobSystemThreadPool* job_system= nullptr;
-        Body *floor= nullptr;
 
         PhysicsHelpers::BPlayerInterfaceImpl* broad_phase_layer_interface = nullptr;
         ObjectVsBroadPhaseLayerFilter* object_vs_broadphase_layer_filter = nullptr;

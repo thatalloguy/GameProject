@@ -39,6 +39,7 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
 
     body_interface = &physicsSystem->GetBodyInterface();
 
+/*
     BoxShapeSettings floor_shape_settings(Vec3(100.f, 1.0f, 100.0f));
     floor_shape_settings.SetEmbedded();
 
@@ -50,6 +51,7 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
     floor = body_interface->CreateBody(floor_settings);
 
     body_interface->AddBody(floor->GetID(), EActivation::DontActivate);
+*/
 
 /*
     BodyCreationSettings sphere_settings(new SphereShape(0.5f), RVec3(0.0f, 6.0f, 0.0f), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
@@ -85,8 +87,8 @@ Quack::PhysicsEngine::~PhysicsEngine() {
 */
 
 
-    body_interface->RemoveBody(floor->GetID());
-    body_interface->DestroyBody(floor->GetID());
+/*    body_interface->RemoveBody(floor->GetID());
+    body_interface->DestroyBody(floor->GetID());*/
 
     UnregisterTypes();
 

@@ -96,7 +96,7 @@ namespace Game {
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
 
 
-
+    Entity* floor;
     Entity* testEntity;
 }
 
@@ -124,13 +124,13 @@ void App::init() {
     Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
 
     // Beautiful code, fight me >:(
-    EntityCreationInfo info {
+    EntityCreationInfo test_info {
             .model = new std::string("cube"),
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, 6, 0},
                     .rotation = Quat::sIdentity(),
-                    .shape = new SphereShape(0.2f),
+                    .shape = new SphereShape(1.0f),
                     .shouldActivate = EActivation::Activate,
                     .motionType = EMotionType::Dynamic,
                     .layer = Quack::Layers::MOVING,
@@ -138,7 +138,23 @@ void App::init() {
             }
     };
 
-    Game::testEntity = new Entity(info);
+    EntityCreationInfo floor_info {
+            .model =  new std::string("cube"),
+            .isPhysical = true,
+            .bodyCreationInfo = {
+                    .position = {0, -5, 0},
+                    .rotation = Quat::sIdentity(),
+                    .shape = new BoxShape(RVec3(100.f, 1.0f, 100.f)),
+                    .shouldActivate = EActivation::DontActivate,
+                    .motionType = EMotionType::Static,
+                    .layer = Quack::Layers::NON_MOVING,
+                    .physicsEngine = Game::physicsEngine
+            }
+    };
+
+
+    Game::testEntity = new Entity(test_info);
+    Game::floor = new Entity(floor_info);
 
 
 
@@ -161,12 +177,14 @@ void App::run() {
         Game::engine.updateScene();
 
         Game::testEntity->render(Game::engine);
+        Game::floor->render(Game::engine);
 
 
 
             //Game::testEntity->setPosition(Game::physicsEngine->getSpherePos());
 
             Game::testEntity->updatePhysics(*Game::physicsEngine);
+            Game::floor->updatePhysics(*Game::physicsEngine);
 
             Game::physicsEngine->update();
 
@@ -181,6 +199,7 @@ void App::run() {
 
 void App::cleanup() {
     delete Game::testEntity;
+    delete Game::floor;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
 
