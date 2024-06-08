@@ -31,6 +31,9 @@ file(GLOB_RECURSE ENGINE_SOURCE
 
         Engine/Physics/PhysicsEngine.h
         Engine/Physics/PhysicsEngine.cpp
+
+        Engine/Objects/Entity.h
+        Engine/Objects/Entity.cpp
 )
 
 

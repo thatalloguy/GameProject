@@ -23,7 +23,7 @@ struct BodyCreationInfo {
 
 struct EntityCreationInfo {
     Quack::Math::Vector3 position{0, 0, 0};
-    std::string* model = nullptr;
+    unsigned int model = 0;
     bool isDynamic = false;
     bool isPhysical = false;
     BodyCreationInfo bodyCreationInfo{};
@@ -37,20 +37,18 @@ public:
     };
 
     ~Entity() {
-        //temp?
         if (body_interface) {
             body_interface->RemoveBody(physicsID);
 
             body_interface->DestroyBody(physicsID);
         }
-        delete model;
     };
 
 
     void render(VulkanEngine& engine) {
         // only render if we have a model attached.
-        if (model != nullptr) {
-            engine.loadedScenes[*model]->Draw(getTransformMatrix(), engine.mainDrawContext);
+        if (modelID > 0) {
+            engine.loadedScenes[modelID]->Draw(getTransformMatrix(), engine.mainDrawContext);
         }
     };
 
@@ -66,13 +64,13 @@ public:
 
 private:
     Quack::Math::Vector3 position;
-    std::string* model = nullptr;
+    unsigned int modelID = 0;
     BodyID physicsID{};
     BodyInterface* body_interface = nullptr;
 
     void parseInfo(EntityCreationInfo& info) {
 
-        this->model = info.model;
+        this->modelID = info.model;
         this->position = info.position;
 
         if (info.isPhysical && info.bodyCreationInfo.physicsEngine != nullptr) {
@@ -113,7 +111,7 @@ void App::init() {
     // just a check, not necessary
     assert(structureFile.has_value());
 
-    Game::engine.loadedScenes["cube"] = *structureFile;
+    Game::engine.loadedScenes[1] = *structureFile;
 
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
@@ -125,7 +123,7 @@ void App::init() {
 
     // Beautiful code, fight me >:(
     EntityCreationInfo test_info {
-            .model = new std::string("cube"),
+            .model = 1,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, 6, 0},
@@ -139,7 +137,7 @@ void App::init() {
     };
 
     EntityCreationInfo floor_info {
-            .model =  new std::string("cube"),
+            .model = 1,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, -5, 0},

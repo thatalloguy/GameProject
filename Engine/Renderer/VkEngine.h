@@ -232,7 +232,7 @@ class VulkanEngine {
 
         AllocatedImage _whiteImage;
 
-        std::unordered_map<std::string, std::shared_ptr<LoadedGLTF>> loadedScenes;
+        std::unordered_map<unsigned int, std::shared_ptr<LoadedGLTF>> loadedScenes;
 
 
         void updateScene();
