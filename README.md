@@ -31,7 +31,7 @@
 - Physics
 - - [x] Setup
 - - [x] Rigid body creation.
-- - [ ] static Bodies?
+- - [x] static Bodies?
 - - [ ] Collision shapes (including triangles?)
 - - [ ] Character controller
 - - [ ] Triggers
