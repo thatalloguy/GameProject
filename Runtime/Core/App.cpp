@@ -32,9 +32,11 @@ void App::init() {
     // Temp model
     std::string structurePath = {"..//Assets/basicmesh.glb"};
     auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
+    auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
     // just a check, not necessary
     assert(structureFile.has_value());
     Game::engine.loadedScenes[1] = *structureFile;
+    Game::engine.loadedScenes[2] = *testFile;
 
 
     //Setup camera start.
@@ -63,7 +65,8 @@ void App::init() {
     };
 
     Quack::EntityCreationInfo floor_info {
-            .model = 1,
+            .size = {100, 1, 100},
+            .model = 2,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, -5, 0},

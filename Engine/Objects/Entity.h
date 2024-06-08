@@ -23,6 +23,7 @@ namespace Quack {
 
     struct EntityCreationInfo {
         Quack::Math::Vector3 position{0, 0, 0};
+        Quack::Math::Vector3 size{1, 1, 1};
         unsigned int model = 0;
         bool isDynamic = false;
         bool isPhysical = false;
@@ -43,13 +44,14 @@ namespace Quack {
         void setPosition(Quack::Math::Vector3 vec);
 
     private:
-        Quack::Math::Vector3 position;
+        Quack::Math::Vector3 position{0, 0, 0};
+        Quack::Math::Vector3 size{1, 1, 1};
         unsigned int modelID = 0;
         BodyID physicsID{};
         BodyInterface *body_interface = nullptr;
 
         void parseInfo(EntityCreationInfo &info);
-        inline glm::mat4 getTransformMatrix();
+        glm::mat4 getTransformMatrix();
     };
 }// Quack
 

@@ -1570,7 +1570,7 @@ void GLTFMetallic_roughness::destroy(VkDevice device, MaterialPass pass) {
 void MeshNode::Draw(const glm::mat4 &topMatrix, DrawContext &ctx) {
 
 
-    glm::mat4 nodeMatrix = topMatrix * worldTransform;
+    //glm::mat4 nodeMatrix = topMatrix * worldTransform;
 
 
     for (auto& s: mesh->surfaces) {
@@ -1581,7 +1581,7 @@ void MeshNode::Draw(const glm::mat4 &topMatrix, DrawContext &ctx) {
         def.material = &s.material->data;
         def.bounds = s.bounds;
 
-        def.transform = nodeMatrix;
+        def.transform = topMatrix;
         def.vertexBufferAddress = mesh->meshBuffers.vertexBufferAddress;
 
         if (s.material->data.passType == MaterialPass::Transparent) {

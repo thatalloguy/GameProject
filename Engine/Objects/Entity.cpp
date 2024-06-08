@@ -20,6 +20,7 @@ void Quack::Entity::render(VulkanEngine &engine)  {
     // only render if we have a model attached.
     if (modelID > 0) {
         engine.loadedScenes[modelID]->Draw(getTransformMatrix(), engine.mainDrawContext);
+
     }
 }
 
@@ -45,11 +46,17 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
         physicsID = info.bodyCreationInfo.physicsEngine->addNewBody(settings,
                                                                     info.bodyCreationInfo.shouldActivate);
         body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
+        //temp?
         body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
-
+        size = info.size;
     }
 }
 
 glm::mat4 Quack::Entity::getTransformMatrix()  {
-    return glm::translate(glm::mat4{1.f}, glm::vec3{position.x, position.y, position.z});
+    glm::mat4 model{1.f};
+
+    model =  glm::translate(model, glm::vec3{position.x, position.y, position.z});
+    model =  glm::scale(model, glm::vec3{size.x, size.y, size.z});
+
+    return model;
 }
