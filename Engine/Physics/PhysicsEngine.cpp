@@ -78,18 +78,6 @@ void Quack::PhysicsEngine::update() {
 }
 
 Quack::PhysicsEngine::~PhysicsEngine() {
-
-/*
-
-    body_interface->RemoveBody(sphere_id);
-
-    body_interface->DestroyBody(sphere_id);
-*/
-
-
-/*    body_interface->RemoveBody(floor->GetID());
-    body_interface->DestroyBody(floor->GetID());*/
-
     UnregisterTypes();
 
     delete temp_allocator;

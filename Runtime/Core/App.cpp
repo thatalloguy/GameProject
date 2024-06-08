@@ -7,85 +7,8 @@
 #include "App.h"
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
-#include "Renderer/VkEngine.h"
-#include "Physics/PhysicsEngine.h"
+#include "Objects/Entity.h"
 
-struct BodyCreationInfo {
-    RVec3 position;
-    Quat rotation;
-    Shape* shape = nullptr;
-    EActivation shouldActivate = EActivation::DontActivate;
-    EMotionType motionType = EMotionType::Static;
-    JPH::ObjectLayer layer = 0; // non moving
-
-    Quack::PhysicsEngine* physicsEngine = nullptr;
-};
-
-struct EntityCreationInfo {
-    Quack::Math::Vector3 position{0, 0, 0};
-    unsigned int model = 0;
-    bool isDynamic = false;
-    bool isPhysical = false;
-    BodyCreationInfo bodyCreationInfo{};
-};
-
-class Entity {
-
-public:
-    Entity(EntityCreationInfo& creationInfo) {
-        parseInfo(creationInfo);
-    };
-
-    ~Entity() {
-        if (body_interface) {
-            body_interface->RemoveBody(physicsID);
-
-            body_interface->DestroyBody(physicsID);
-        }
-    };
-
-
-    void render(VulkanEngine& engine) {
-        // only render if we have a model attached.
-        if (modelID > 0) {
-            engine.loadedScenes[modelID]->Draw(getTransformMatrix(), engine.mainDrawContext);
-        }
-    };
-
-    void updatePhysics(Quack::PhysicsEngine& physicsEngine) {
-        if (body_interface) {
-            position = physicsEngine.getInterface().GetCenterOfMassPosition(physicsID);
-        }
-    }
-
-    void setPosition(Quack::Math::Vector3 vec) {
-        position = vec;
-    }
-
-private:
-    Quack::Math::Vector3 position;
-    unsigned int modelID = 0;
-    BodyID physicsID{};
-    BodyInterface* body_interface = nullptr;
-
-    void parseInfo(EntityCreationInfo& info) {
-
-        this->modelID = info.model;
-        this->position = info.position;
-
-        if (info.isPhysical && info.bodyCreationInfo.physicsEngine != nullptr) {
-            BodyCreationSettings settings(info.bodyCreationInfo.shape, info.bodyCreationInfo.position, info.bodyCreationInfo.rotation, info.bodyCreationInfo.motionType, info.bodyCreationInfo.layer);
-            physicsID = info.bodyCreationInfo.physicsEngine->addNewBody(settings, info.bodyCreationInfo.shouldActivate);
-            body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
-            body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
-
-        }
-    }
-
-    inline glm::mat4 getTransformMatrix() {
-        return glm::translate(glm::mat4{1.f}, glm::vec3{position.x, position.y, position.z});
-    }
-};
 
 namespace Game {
     VulkanEngine engine;
@@ -94,8 +17,8 @@ namespace Game {
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
 
 
-    Entity* floor;
-    Entity* testEntity;
+    Quack::Entity* floor;
+    Quack::Entity* testEntity;
 }
 
 void App::init() {
@@ -106,15 +29,18 @@ void App::init() {
     Game::engine.Init(window->getRawWindow(), true);
 
 
+    // Temp model
     std::string structurePath = {"..//Assets/basicmesh.glb"};
     auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
     // just a check, not necessary
     assert(structureFile.has_value());
-
     Game::engine.loadedScenes[1] = *structureFile;
 
+
+    //Setup camera start.
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
+    Game::camera->position.y = 3;
 
 
     // load Physics
@@ -122,7 +48,7 @@ void App::init() {
     Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
 
     // Beautiful code, fight me >:(
-    EntityCreationInfo test_info {
+    Quack::EntityCreationInfo test_info {
             .model = 1,
             .isPhysical = true,
             .bodyCreationInfo = {
@@ -136,7 +62,7 @@ void App::init() {
             }
     };
 
-    EntityCreationInfo floor_info {
+    Quack::EntityCreationInfo floor_info {
             .model = 1,
             .isPhysical = true,
             .bodyCreationInfo = {
@@ -151,8 +77,8 @@ void App::init() {
     };
 
 
-    Game::testEntity = new Entity(test_info);
-    Game::floor = new Entity(floor_info);
+    Game::testEntity = new Quack::Entity(test_info);
+    Game::floor = new Quack::Entity(floor_info);
 
 
 
