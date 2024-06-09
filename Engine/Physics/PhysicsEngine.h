@@ -194,7 +194,7 @@ namespace Quack {
         //temp
         BodyInterface& getInterface();
 
-
+        PhysicsSystem& getSystem();
         void update();
 
     private:

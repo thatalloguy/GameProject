@@ -9,6 +9,7 @@
 #include "spdlog/spdlog.h"
 #include "Objects/Entity.h"
 #include "Jolt/Physics/Character/Character.h"
+#include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
 
 
 namespace Game {
@@ -34,13 +35,21 @@ public:
 
         // initialize physics character
 
+        _standingShape = RotatedTranslatedShapeSettings({0, 6, 0}, Quat::sIdentity(), new BoxShape({1, 1.5, 1})).Create().Get();
+        _crouchingShape = RotatedTranslatedShapeSettings({0, 6, 0}, Quat::sIdentity(), new BoxShape({1, 1, 1})).Create().Get();
+
         Ref<CharacterSettings> settings = new CharacterSettings();
         settings->mMaxSlopeAngle = DegreesToRadians(45.0f);
         settings->mLayer = Quack::Layers::MOVING;
-        settings->mShape = nullptr;
+        settings->mShape = _standingShape;
+        settings->mFriction = 0.5f;
+        settings->mSupportingVolume = Plane(Vec3::sAxisY(), -0.5f);
 
+        _character = new Character(settings, RVec3::sZero(), Quat::sIdentity(), 0, &Game::physicsEngine->getSystem());
+        _character->AddToPhysicsSystem(EActivation::Activate);
     }
     ~Player() {
+        _character->RemoveFromPhysicsSystem();
         delete _entity;
     }
 
@@ -60,15 +69,17 @@ public:
 
     void postUpdate() {
 
-
+        _entity->setPosition(Quack::Math::Vector3{_character->GetPosition()});
         _entity->render(Game::engine);
-        _entity->updatePhysics(*Game::physicsEngine);
+        _character->PostSimulation(0.05f);
     }
 
 private:
     Quack::Entity* _entity = nullptr;
 
-    Character* _character = nullptr;
+    Ref<Character> _character;
+    RefConst<Shape> _standingShape;
+    RefConst<Shape> _crouchingShape;
 };
 
 

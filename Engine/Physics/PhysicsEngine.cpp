@@ -70,4 +70,8 @@ BodyInterface &Quack::PhysicsEngine::getInterface() {
     return *body_interface;
 }
 
+PhysicsSystem &Quack::PhysicsEngine::getSystem() {
+    return *physicsSystem;
+}
+
 
