@@ -26,6 +26,7 @@ public:
 
         auto player_info = Quack::EntityCreationInfo{
                 .position = {0, 6, 0},
+                .size = {1, 1, 1},
                 .model = 1,
                 .isPhysical = false
         };
@@ -35,15 +36,15 @@ public:
 
         // initialize physics character
 
-        _standingShape = RotatedTranslatedShapeSettings({0, 6, 0}, Quat::sIdentity(), new BoxShape({1, 1.5, 1})).Create().Get();
-        _crouchingShape = RotatedTranslatedShapeSettings({0, 6, 0}, Quat::sIdentity(), new BoxShape({1, 1, 1})).Create().Get();
+        _standingShape = RotatedTranslatedShapeSettings({0, 8, 0}, Quat::sIdentity(), new BoxShape({1, 1, 1})).Create().Get();
+        _crouchingShape = RotatedTranslatedShapeSettings({0, 8, 0}, Quat::sIdentity(), new BoxShape({1, 1, 1})).Create().Get();
 
         Ref<CharacterSettings> settings = new CharacterSettings();
         settings->mMaxSlopeAngle = DegreesToRadians(45.0f);
         settings->mLayer = Quack::Layers::MOVING;
         settings->mShape = _standingShape;
         settings->mFriction = 0.5f;
-        settings->mSupportingVolume = Plane(Vec3::sAxisY(), -0.5f);
+        settings->mSupportingVolume = Plane(Vec3::sAxisY(), -0.3f);
 
         _character = new Character(settings, RVec3::sZero(), Quat::sIdentity(), 0, &Game::physicsEngine->getSystem());
         _character->AddToPhysicsSystem(EActivation::Activate);
@@ -57,12 +58,19 @@ public:
 
         //Capture input?
         if (Quack::Input::isControllerPresent(0)) {
-            Quack::Math::Vector3 out{0, 0, 0};
-
-
             auto vec = Quack::Input::getJoystickAxis(0);
 
-            spdlog::info("VEC: {} {} ", ceil(vec.x * 10) / 10, ceil(vec.y * 10) / 10);
+            vec.x = ceil(vec.x * 11) / 11;
+            vec.y = ceil(vec.y * 11) / 11;
+
+
+
+            if (vec.x > 0.1 || vec.x < -0.1 || vec.y > 0.1 || vec.y < -0.1) {
+                vec.x *= speed;
+                vec.y *= speed;
+                _character->SetLinearVelocity({vec.x, _character->GetLinearVelocity().GetY(), vec.y});
+                spdlog::info("VEC: {} {} ", vec.x, vec.y);
+            }
 
         }
     }
@@ -80,6 +88,8 @@ private:
     Ref<Character> _character;
     RefConst<Shape> _standingShape;
     RefConst<Shape> _crouchingShape;
+
+    float speed = 5.0f;
 };
 
 
@@ -120,13 +130,14 @@ void App::init() {
 
     // Beautiful code, fight me >:(
     Quack::EntityCreationInfo floor_info {
-            .size = {100, 1, 100},
+            .position = {0, -5, 0},
+            .size = {100, 1.0f, 100},
             .model = 2,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, -5, 0},
                     .rotation = Quat::sIdentity(),
-                    .shape = new BoxShape(RVec3(100.f, 1.0f, 100.f)),
+                    .shape = new BoxShape(RVec3(100.f, 10.0f, 100.f)),
                     .shouldActivate = EActivation::DontActivate,
                     .motionType = EMotionType::Static,
                     .layer = Quack::Layers::NON_MOVING,
@@ -159,11 +170,11 @@ void App::run() {
         Game::engine.updateScene();
 
         Level::player->preUpdate();
-        Level::floor->updatePhysics(*Game::physicsEngine);
 
         Game::physicsEngine->update();
 
         Level::floor->render(Game::engine);
+        Level::floor->updatePhysics(*Game::physicsEngine);
         Level::player->postUpdate();
 
 

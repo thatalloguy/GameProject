@@ -20,7 +20,6 @@ void Quack::Entity::render(VulkanEngine &engine)  {
     // only render if we have a model attached.
     if (modelID > 0) {
         engine.loadedScenes[modelID]->Draw(getTransformMatrix(), engine.mainDrawContext);
-
     }
 }
 
@@ -38,6 +37,7 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
 
     this->modelID = info.model;
     this->position = info.position;
+    size = info.size;
 
     if (info.isPhysical && info.bodyCreationInfo.physicsEngine != nullptr) {
         BodyCreationSettings settings(info.bodyCreationInfo.shape, info.bodyCreationInfo.position,
@@ -47,8 +47,7 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
                                                                     info.bodyCreationInfo.shouldActivate);
         body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
         //temp?
-        body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
-        size = info.size;
+        //body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
     }
 }
 
