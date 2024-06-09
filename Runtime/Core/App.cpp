@@ -17,12 +17,13 @@ namespace Game {
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
+    float deltaTime = 0.0f;
 }
 
 class Player{
 
 public:
-    Player(){
+    Player(Camera& camera) : _camera(camera) {
 
         auto player_info = Quack::EntityCreationInfo{
                 .position = {0, 6, 0},
@@ -57,39 +58,83 @@ public:
     void preUpdate() {
 
         //Capture input?
+
+    }
+
+    void postUpdate() {
+        updateCamera();
+
+        auto vec = getMovement();
+        _character->SetLinearVelocity({vec.x, vec.y, vec.z});
+
+        _entity->setPosition(Quack::Math::Vector3{_character->GetPosition()});
+        //_entity->render(Game::engine);
+        _character->PostSimulation(0.05f);
+    }
+
+private:
+    void updateCamera() {
+
+        auto position = _character->GetPosition();
+
+        _camera.position.x = position.GetX();
+        _camera.position.y = position.GetY() + playerHeight;
+        _camera.position.z = position.GetZ();
+
+    };
+    Quack::Math::Vector3 getMovement() {
+        Quack::Math::Vector3 out = {0, 0, 0};
+
+        // controller
         if (Quack::Input::isControllerPresent(0)) {
             auto vec = Quack::Input::getJoystickAxis(0);
 
             vec.x = ceil(vec.x * 11) / 11;
             vec.y = ceil(vec.y * 11) / 11;
+            vec.z = ceil(vec.z * 11) / 11;
+            vec.w = ceil(vec.w * 11) / 11;
 
 
 
             if (vec.x > 0.1 || vec.x < -0.1 || vec.y > 0.1 || vec.y < -0.1) {
                 vec.x *= speed;
                 vec.y *= speed;
-                _character->SetLinearVelocity({vec.x, _character->GetLinearVelocity().GetY(), vec.y});
-                spdlog::info("VEC: {} {} ", vec.x, vec.y);
+                out = {vec.x, _character->GetLinearVelocity().GetY(), vec.y};
+                //TODO tweening
+                _camera.fov = 120.0f;
+            } else {
+
+
+                _camera.fov = 90.0f;
+            }
+
+            // rotating
+            if (vec.z > 0.1 || vec.z < -0.1 || vec.w > 0.1 || vec.w < -0.1) {
+                vec.z *= sensitivity;
+                vec.w *= sensitivity;
+
+                _camera.yaw += vec.z;
             }
 
         }
+
+        out
+
+        return out;
     }
 
-    void postUpdate() {
 
-        _entity->setPosition(Quack::Math::Vector3{_character->GetPosition()});
-        _entity->render(Game::engine);
-        _character->PostSimulation(0.05f);
-    }
-
-private:
     Quack::Entity* _entity = nullptr;
 
     Ref<Character> _character;
     RefConst<Shape> _standingShape;
     RefConst<Shape> _crouchingShape;
 
+    Camera& _camera;
+
     float speed = 5.0f;
+    float sensitivity = 0.02f;
+    float playerHeight = 3.0f;
 };
 
 
@@ -146,7 +191,7 @@ void App::init() {
     };
 
 
-    Level::player = new Player();
+    Level::player = new Player(Game::engine.getMainCamera());
     Level::floor = new Quack::Entity(floor_info);
 
 
@@ -155,6 +200,9 @@ void App::init() {
 
 void App::run() {
     int count;
+
+    std::chrono::steady_clock::time_point last;
+
     while (!window->shouldShutdown()) {
 
         if (Quack::Input::isKeyPressed(Quack::Key::A)) {
@@ -181,6 +229,9 @@ void App::run() {
         Game::engine.Run();
 
         window->update();
+        auto now = std::chrono::steady_clock::now();
+        Game::deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
+        last = now;
     }
 
 }

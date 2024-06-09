@@ -23,9 +23,10 @@ namespace Quack {
         return glfwJoystickPresent(controllerId);
     }
 
-    Math::Vector2 Input::getJoystickAxis(int controllerId) {
+    Math::Vector4 Input::getJoystickAxis(int controllerId) {
         int count;
-        return Math::Vector2(glfwGetJoystickAxes(controllerId, &count)[0], glfwGetJoystickAxes(controllerId, &count)[1]);
+        auto axis = glfwGetJoystickAxes(controllerId, &count);
+        return Math::Vector4(axis[0], axis[1], axis[2], axis[3]);
     }
 
     bool Input::isButtonPressed(int controllerId, int button) {

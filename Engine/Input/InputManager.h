@@ -148,7 +148,7 @@ namespace Quack {
 
        int isControllerPresent(int controllerId);
 
-       Math::Vector2 getJoystickAxis(int controllerId);
+       Math::Vector4 getJoystickAxis(int controllerId);
 
        // 0 = under
        // 1 = right
