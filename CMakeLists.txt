@@ -51,6 +51,7 @@ file(GLOB_RECURSE RUNTIME_SOURCE
 add_subdirectory("Thirdparty/glfw")
 add_subdirectory("Thirdparty/spdlog")
 add_subdirectory("Thirdparty/glad")
+add_subdirectory("Thirdparty/tweeny")
 
 
 find_package(Vulkan REQUIRED)
@@ -101,6 +102,7 @@ add_executable(Game Runtime/main.cpp ${RUNTIME_SOURCE} ${ENGINE_SOURCE} ${IMGUI_
 target_link_libraries(Game PUBLIC dwmapi)
 target_link_libraries(Game PUBLIC glad)
 target_link_libraries(Game PUBLIC Jolt)
+target_link_libraries(Game PUBLIC tweeny)
 
 
 target_link_libraries(Game PRIVATE vk-bootstrap::vk-bootstrap)

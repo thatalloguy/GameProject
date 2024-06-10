@@ -43,10 +43,12 @@ void App::init() {
     std::string structurePath = {"..//Assets/basicmesh.glb"};
     auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
     auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
+    auto sphereFile = VkLoader::loadGltf(&Game::engine, "..//Assets/sphere.glb");
     // just a check, not necessary
     assert(structureFile.has_value());
     Game::engine.loadedScenes[1] = *structureFile;
     Game::engine.loadedScenes[2] = *testFile;
+    Game::engine.loadedScenes[3] = *sphereFile;
 
 
     //Setup camera start.
@@ -121,7 +123,7 @@ void App::run() {
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::player->update();
 
-        Game::fishingManager->Update();
+        Game::fishingManager->Update(Game::deltaTime);
 
 
         Game::engine.Run();

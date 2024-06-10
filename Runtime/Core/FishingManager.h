@@ -15,12 +15,15 @@
 #include <Physics/PhysicsEngine.h>
 #include <Input/InputManager.h>
 
+#include <tweeny.h>
+
 enum class PlayerState : unsigned int {
     Moving = 0,
     Fishing = 1
 };
 
 class Player  {
+    friend class FishingManager;
 
 public:
     Player(Camera& camera, Quack::PhysicsEngine& physicsEngine) : _camera(camera), physicsEngine(physicsEngine) {
@@ -55,6 +58,10 @@ public:
             _character->SetLinearVelocity({vec.x, vec.y, vec.z});
 
             position = _character->GetPosition();
+        } else {
+            // stop movement
+            _character->SetLinearVelocity({0, 0, 0});
+
         }
 
 
@@ -192,7 +199,7 @@ public:
     FishingManager(VulkanEngine& renderer, Player& player, Quack::PhysicsEngine& physicsEngine);
     ~FishingManager();
 
-    void Update();
+    void Update(float dt);
 
 private:
     friend class Player;
@@ -204,6 +211,10 @@ private:
 
     Quack::Entity* fishCollider;
     Quack::Entity* lake;
+    tweeny::tween<float, float, float, float, float> vec3Tween;
+    bool pause = false;
+
+    void setUpFishing();
 
 };
 
