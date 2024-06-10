@@ -43,11 +43,10 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
         BodyCreationSettings settings(info.bodyCreationInfo.shape, info.bodyCreationInfo.position,
                                       info.bodyCreationInfo.rotation, info.bodyCreationInfo.motionType,
                                       info.bodyCreationInfo.layer);
+
         physicsID = info.bodyCreationInfo.physicsEngine->addNewBody(settings,
                                                                     info.bodyCreationInfo.shouldActivate);
         body_interface = &info.bodyCreationInfo.physicsEngine->getInterface();
-        //temp?
-        //body_interface->SetLinearVelocity(physicsID, Vec3(0.0f, 0.0f, 0.0f));
     }
 }
 
@@ -58,4 +57,8 @@ glm::mat4 Quack::Entity::getTransformMatrix()  {
     model =  glm::scale(model, glm::vec3{size.x, size.y, size.z});
 
     return model;
+}
+
+bool Quack::Entity::hasHit(Quack::Math::Vector3 pos) {
+    return (pos.x > position.x - size.x && pos.x < position.x + size.x) && (pos.y > position.y - size.y && pos.y < position.y + size.y) && (pos.z > position.z - size.z && pos.z < position.z + size.z);
 }

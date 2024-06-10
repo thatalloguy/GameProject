@@ -43,11 +43,13 @@ namespace Quack {
 
         void setPosition(Quack::Math::Vector3 vec);
 
+        bool hasHit(Quack::Math::Vector3 pos);
+
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
+        BodyID physicsID{};
     private:
         unsigned int modelID = 0;
-        BodyID physicsID{};
         BodyInterface *body_interface = nullptr;
 
         void parseInfo(EntityCreationInfo &info);

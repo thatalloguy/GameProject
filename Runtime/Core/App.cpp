@@ -18,6 +18,8 @@ namespace Game {
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
+
+
     float deltaTime = 0.0f;
 }
 
@@ -201,7 +203,7 @@ private:
 namespace Level {
     Quack::Entity* floor;
     Player* player;
-
+    Quack::Entity* cube;
 }
 
 
@@ -250,10 +252,18 @@ void App::init() {
             }
     };
 
+    Quack::EntityCreationInfo cube_info {
+            .position = {10, 1, 10},
+            .size = {4, 4.0f, 4},
+            .model = 2,
+            .isPhysical = false,
+
+    };
+
 
     Level::player = new Player(Game::engine.getMainCamera());
     Level::floor = new Quack::Entity(floor_info);
-
+    Level::cube = new Quack::Entity(cube_info);
 
 
 }
@@ -280,7 +290,9 @@ void App::run() {
         Game::physicsEngine->update();
 
         Level::floor->render(Game::engine);
+        Level::cube->render(Game::engine);
         Level::floor->updatePhysics(*Game::physicsEngine);
+        Level::cube->updatePhysics(*Game::physicsEngine);
         Level::player->postUpdate();
 
 
@@ -290,6 +302,8 @@ void App::run() {
         auto now = std::chrono::steady_clock::now();
         Game::deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
         last = now;
+
+        spdlog::info("HIT: {}", Level::cube->hasHit(Level::player->_entity->position));
     }
 
 }
@@ -297,6 +311,7 @@ void App::run() {
 void App::cleanup() {
     delete Level::player;
     delete Level::floor;
+    delete Level::cube;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
 

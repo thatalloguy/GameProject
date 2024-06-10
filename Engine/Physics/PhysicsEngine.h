@@ -131,9 +131,10 @@ namespace Quack {
                 }
             }
         };
-
+*/
         class MyContactListener : public ContactListener {
         public:
+
             ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override {
                 spdlog::debug("Contact Validate Callback");
 
@@ -151,18 +152,19 @@ namespace Quack {
             void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override {
                 spdlog::debug("A contact was removed");
             }
+
         };
 
         class MyBodyActivationListener : public BodyActivationListener {
         public:
             virtual void OnBodyActivated(const BodyID& inBodyId, uint64 inBodyUserData) override {
-                spdlog::debug("A body got activated");
+                //spdlog::debug("A body got activated");
             }
 
             virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override {
-                spdlog::debug("A body went to sleep");
+                //spdlog::debug("A body went to sleep");
             }
-        };*/
+        };
 
     }
 
@@ -196,6 +198,7 @@ namespace Quack {
 
         PhysicsSystem& getSystem();
         void update();
+
 
     private:
         void Initialize(PhysicsEngineCreationInfo& creationInfo);
