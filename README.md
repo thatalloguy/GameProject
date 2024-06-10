@@ -34,7 +34,7 @@
 - - [x] static Bodies?
 - - [x] Collision shapes (including triangles?)
 - - [x] Character controller
-- - [ ] Triggers
+- - [x] Triggers
 ----
 - Gameplay
 - - [x] Player controller?
