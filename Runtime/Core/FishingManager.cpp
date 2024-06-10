@@ -30,12 +30,19 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
                     .layer = Quack::Layers::NON_MOVING,
                     .physicsEngine = &physicsEngine
             }
-
     };
 
 
+    Quack::EntityCreationInfo debugPoint_info {
+            .position = {0, -100, 0},
+            .size = {0.2f, 0.2f, 0.2f},
+            .model = 3,
+            .isPhysical = false,
+    };
+
     fishCollider = new Quack::Entity(cube_info);
     lake = new Quack::Entity(lake_info);
+    debugPoint = new Quack::Entity(debugPoint_info);
 
 
     // UI UI UI UI UI AHGHHHHDAHIKWDHwaiudyAWDIAWUDAYUIduaiwdyawuid. i hate UI programming >:(
@@ -70,12 +77,15 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 FishingManager::~FishingManager() {
     delete fishCollider;
     delete lake;
+    delete debugPoint;
 }
 
 void FishingManager::Update(float dt) {
 
     fishCollider->render(_renderer);
     lake->render(_renderer);
+    debugPoint->render(_renderer);
+
     lake->updatePhysics(_physicsEngine);
 
     if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving && Quack::Input::isButtonPressed(0, 1)) {
@@ -116,4 +126,9 @@ void FishingManager::Update(float dt) {
 
 void FishingManager::setUpFishing() {
 
+    //center debug point
+    debugPoint->position.x = lake->position.x; //- (lake->size.x / 2);
+    debugPoint->position.z = lake->position.z;// (lake->size.z / 2);
+
+    debugPoint->position.y  = lake->position.y + lake->size.y + 1;
 }

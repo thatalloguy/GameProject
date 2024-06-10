@@ -192,6 +192,34 @@ private:
 
 };
 
+struct Corner {
+    unsigned int ID = 0;
+    float weight = 1.0f;
+};
+
+struct Fish {
+
+    Quack::Math::Vector3 position{0, 0, 0};
+    Quack::Math::Vector3 desiredPos{0, 0, 0};
+
+    // 0 = x
+    // 1 = y
+    // 2 = z
+    // 3 = w
+
+    /* X-------Y
+     * |       |
+     * |       |
+     * Z-------W
+     */
+
+
+private:
+
+    Corner corners[4] = {{0}, {1}, {2}, {3}};
+
+};
+
 
 class FishingManager{
 
@@ -211,6 +239,8 @@ private:
 
     Quack::Entity* fishCollider;
     Quack::Entity* lake;
+    Quack::Entity* debugPoint;
+    Quack::Entity* fish;
     tweeny::tween<float, float, float, float, float> vec3Tween;
     bool pause = false;
 
