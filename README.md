@@ -33,11 +33,11 @@
 - - [x] Rigid body creation.
 - - [x] static Bodies?
 - - [x] Collision shapes (including triangles?)
-- - [ ] Character controller
+- - [x] Character controller
 - - [ ] Triggers
 ----
 - Gameplay
-- - [ ] Player controller?
+- - [x] Player controller?
 - - [ ] Item interaction (fishing hook)
 - - [ ] Fishing (DESIGN NEEDED)
 - - [ ] Shop system
