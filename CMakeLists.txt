@@ -40,6 +40,11 @@ file(GLOB_RECURSE ENGINE_SOURCE
 file(GLOB_RECURSE RUNTIME_SOURCE
         Runtime/Core/App.h
         Runtime/Core/App.cpp
+
+        Runtime/Core/FishingManager.h
+        Runtime/Core/FishingManager.cpp
+
+
 )
 
 #Third party  dependencies
