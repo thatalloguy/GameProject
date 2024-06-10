@@ -129,6 +129,25 @@ struct DeletionQueue {
     }
 };
 
+struct FunctionQueue {
+    std::deque<std::function<void()>> functions;
+
+    void pushFunction(std::function<void()>&& function) {
+        functions.push_back(function);
+    }
+
+    void flush() {
+
+        for (auto it = functions.rbegin(); it != functions.rend(); it++) {
+            (*it)();
+        }
+    }
+
+    ~FunctionQueue() {
+        functions.clear();
+    }
+};
+
 struct AllocatedImage {
     VkImage image;
     VkImageView imageView;

@@ -236,6 +236,9 @@ class VulkanEngine {
 
 
         void updateScene();
+
+        FunctionQueue imguiFunc;
+
 private:
         void initVulkan();
         void initSwapchain();

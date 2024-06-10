@@ -10,6 +10,7 @@
 #include "Objects/Entity.h"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
+#include "imgui.h"
 
 
 namespace Game {
@@ -20,7 +21,7 @@ namespace Game {
     float deltaTime = 0.0f;
 }
 
-class Player{
+class Player  {
 
 public:
     Player(Camera& camera) : _camera(camera) {
@@ -44,7 +45,9 @@ public:
         settings->mMaxSlopeAngle = DegreesToRadians(45.0f);
         settings->mLayer = Quack::Layers::MOVING;
         settings->mShape = _standingShape;
-        settings->mFriction = 0.5f;
+        settings->mFriction = 0.1f;
+        settings->mMass = 100.0f;
+        settings->mGravityFactor = 2.0f;
         settings->mSupportingVolume = Plane(Vec3::sAxisY(), -0.3f);
 
         _character = new Character(settings, RVec3::sZero(), Quat::sIdentity(), 0, &Game::physicsEngine->getSystem());
@@ -65,13 +68,22 @@ public:
         updateCamera();
 
         auto vec = getMovement();
+
+
         _character->SetLinearVelocity({vec.x, vec.y, vec.z});
 
         _entity->setPosition(Quack::Math::Vector3{_character->GetPosition()});
-        //_entity->render(Game::engine);
+
         _character->PostSimulation(0.05f);
     }
 
+
+    float speed = 10.0f;
+    const float sensitivity = 0.02f;
+    float playerHeight = 3.0f;
+    float jumpForce = 3.0f;
+
+    Quack::Entity* _entity = nullptr;
 private:
     void updateCamera() {
 
@@ -82,8 +94,11 @@ private:
         _camera.position.z = position.GetZ();
 
     };
+
+
     Quack::Math::Vector3 getMovement() {
-        Quack::Math::Vector3 out = {0, 0, 0};
+        auto currentVel = _character->GetLinearVelocity();
+        Quack::Math::Vector3 out = {currentVel.GetX(), currentVel.GetY(), currentVel.GetZ()};
 
         // controller
         if (Quack::Input::isControllerPresent(0)) {
@@ -100,12 +115,6 @@ private:
                 vec.x *= speed;
                 vec.y *= speed;
                 out = {vec.x, _character->GetLinearVelocity().GetY(), vec.y};
-                //TODO tweening
-                _camera.fov = 120.0f;
-            } else {
-
-
-                _camera.fov = 90.0f;
             }
 
             // rotating
@@ -114,17 +123,71 @@ private:
                 vec.w *= sensitivity;
 
                 _camera.yaw += vec.z;
+
+                //todo fix ground camera clip
+                _camera.pitch += vec.w;
+                _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
             }
 
+            if (_character->GetGroundState() != Character::EGroundState::InAir && Quack::Input::isButtonPressed(0, 0)) {
+                out.y += jumpForce;
+            }
+            if (_character->GetGroundState() != Character::EGroundState::InAir && Quack::Input::isButtonPressed(0, 2)) {
+                speed = 17.5f;
+                _camera.fov = 94.0f;
+            } else {
+                speed = 10.0f;
+                _camera.fov = 90.0f;
+            }
+
+
+        }
+        //todo fix keyboard controller
+        else {
+
+            //Keyboard.
+            if (Quack::Input::isKeyPressed(Quack::Key::A)) {
+                out.x = -10 * speed * Game::deltaTime;
+            }
+            if (Quack::Input::isKeyPressed(Quack::Key::D)) {
+                out.x = 10 * speed * Game::deltaTime;
+            }
+            if (Quack::Input::isKeyPressed(Quack::Key::W)) {
+                out.z = -10 * speed * Game::deltaTime;
+            }
+            if (Quack::Input::isKeyPressed(Quack::Key::S)) {
+                out.z = 10 * speed * Game::deltaTime;
+            }
+
+            if (Quack::Input::isKeyPressed(Quack::Key::UP)) {
+                _camera.pitch -= 0.03f * Game::deltaTime;
+                _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
+            }
+
+            if (Quack::Input::isKeyPressed(Quack::Key::DOWN)) {
+                _camera.pitch += 0.03f * Game::deltaTime;
+                _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
+            }
+
+            if (Quack::Input::isKeyPressed(Quack::Key::LEFT)) {
+                _camera.yaw -= 0.03f;
+            }
+            if (Quack::Input::isKeyPressed(Quack::Key::RIGHT)) {
+                _camera.yaw += 0.03f;
+            }
         }
 
-        out
+
+
+
+        auto dir = glm::vec3(_camera.getRotationMatrix() * glm::vec4(out.x, out.y, out.z, 0));
+        out.x = dir.x;
+        out.y = out.y; // dont change y.
+        out.z = dir.z;
+
 
         return out;
     }
-
-
-    Quack::Entity* _entity = nullptr;
 
     Ref<Character> _character;
     RefConst<Shape> _standingShape;
@@ -132,9 +195,6 @@ private:
 
     Camera& _camera;
 
-    float speed = 5.0f;
-    float sensitivity = 0.02f;
-    float playerHeight = 3.0f;
 };
 
 
@@ -203,18 +263,16 @@ void App::run() {
 
     std::chrono::steady_clock::time_point last;
 
+    Game::engine.imguiFunc.pushFunction([=](){
+       ImGui::Begin("Duck Watcher Debug");
+
+       ImGui::SliderFloat("player speed: %f", &Level::player->speed, 0.1f, 30.0f);
+       ImGui::Text("PlayerPos: %f | %f | %f", Level::player->_entity->position.x, Level::player->_entity->position.y, Level::player->_entity->position.z);
+
+       ImGui::End();
+    });
+
     while (!window->shouldShutdown()) {
-
-        if (Quack::Input::isKeyPressed(Quack::Key::A)) {
-            spdlog::info("A KEY PRESSED");
-        }
-
-       /* if (Quack::Input::isButtonPressed(0, 2)) {
-            spdlog::info("A BUTTON PRESSED");
-        }*/
-
-
-
         Game::engine.updateScene();
 
         Level::player->preUpdate();

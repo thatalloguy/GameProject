@@ -6,6 +6,7 @@
 #define GAME_VECS_H
 
 
+
 #ifdef USE_JOLT
 #include <Jolt/Jolt.h>
 #endif
@@ -61,6 +62,8 @@ namespace Quack {
                 this->y += b.y;
                 this->z += b.z;
             }
+
+
 
 #ifdef USING_JOLT
             void operator=(JPH::Vec3 b) {

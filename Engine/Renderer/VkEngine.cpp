@@ -323,7 +323,7 @@ void VulkanEngine::Run()
             ImGui::NewFrame();
 
             if (displayDebugMenu) {
-                if (ImGui::Begin("Debug")) {
+                ImGui::Begin("Debug");
                     ComputeEffect &selected = backgroundEffects[currentBackgroundEffect];
 
 
@@ -365,8 +365,10 @@ void VulkanEngine::Run()
                     }
 
 
-                    ImGui::End();
-                }
+                ImGui::End();
+
+
+                imguiFunc.flush();
             }
             ImGui::Render();
 

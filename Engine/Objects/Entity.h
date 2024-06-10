@@ -43,9 +43,9 @@ namespace Quack {
 
         void setPosition(Quack::Math::Vector3 vec);
 
-    private:
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
+    private:
         unsigned int modelID = 0;
         BodyID physicsID{};
         BodyInterface *body_interface = nullptr;
