@@ -89,7 +89,7 @@ void App::init() {
     Level::floor = new Quack::Entity(floor_info);
 
 
-    Game::fishingManager = new FishingManager(Game::engine, *Level::player);
+    Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
 
 
 }
@@ -100,6 +100,8 @@ void App::run() {
     std::chrono::steady_clock::time_point last;
 
     Game::engine.imguiFunc.pushFunction([=](){
+
+        ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
        ImGui::Begin("Duck Watcher Debug");
 
        ImGui::SliderFloat("player speed", &Level::player->speed, 0.1f, 30.0f);
@@ -136,9 +138,9 @@ void App::run() {
 void App::cleanup() {
     delete Level::player;
     delete Level::floor;
+    delete Game::fishingManager;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
-    delete Game::fishingManager;
 
 
     Game::engine.CleanUp();

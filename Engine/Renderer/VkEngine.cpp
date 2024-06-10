@@ -323,6 +323,7 @@ void VulkanEngine::Run()
             ImGui::NewFrame();
 
             if (displayDebugMenu) {
+                ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
                 ImGui::Begin("Debug");
                     ComputeEffect &selected = backgroundEffects[currentBackgroundEffect];
 
