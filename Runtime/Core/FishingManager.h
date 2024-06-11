@@ -197,22 +197,33 @@ struct Corner {
     float weight = 1.0f;
 };
 
+/*
+ * HOW THE AI WORKS.
+ * First the Fish calc each rect of each corner. (see calcRects)
+ * Then the fish picks a corner with a few rules:
+ * - If the fish hasnt picked any corners in its lifetime (meaning currentCorner == -1) it will pick a random corner.
+ * - Each corner has a weight. The fish will favor the corner that weighs the most
+ * - Every time the fish needs to pick a  new corner a few things happen to the corners:
+ * - - The current corner gets -0.2f weight
+ * - - The last visited corner gets + 0.1f weight
+ * - - The diagonal corner of the current corner gets + 0.1 weight
+ *
+ * - For picking the best corner, the corner must:
+ * - Have a weight greater then 0.9
+ * - not be the last or current corner
+ *
+ * - If for some reason the fish cant pick the best corner (if all the weights are to low)
+ *   the fish will reset all the corner weights and pick a random one.
+ *
+ * - For deciding which position the fish wants to go, it will pick a random point in the desired corner.
+ */
 struct Fish {
     friend class FishingManager;
 
     Quack::Math::Vector3 position{0, 0, 0};
     Quack::Math::Vector3 desiredPos{0, 0, 0};
 
-    // 0 = x
-    // 1 = y
-    // 2 = z
-    // 3 = w
 
-    /* X-------Y
-     * |       |
-     * |       |
-     * Z-------W
-     */
 
     void genNextPos(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
 
@@ -228,9 +239,20 @@ struct Fish {
 
 private:
     void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
-        float halfWidth  = rectMin.x + ((rectMax.x - rectMin.x)  / 2);
+        // calc the halfs of the rects.
+        float halfWidth  = rectMin.x + ((rectMax.x - rectMin.x)  / 2); // for example : -2 - -18 = 16. 16 / 2 = 8. -18 + 8 = -10. so halfway = 10
         float halfHeight = rectMin.y + ((rectMax.y - rectMin.y) / 2);
 
+        // 0 = x
+        // 1 = y
+        // 2 = z
+        // 3 = w
+
+        /* X-------Y
+         * |       |
+         * |       |
+         * Z-------W
+         */
         //calc the rest
         rects[0] = {rectMin.x, rectMin.y, halfWidth, halfHeight}; // x
         rects[1] = {halfWidth, rectMin.y, rectMax.x, halfHeight}; // y
@@ -264,19 +286,18 @@ private:
             }
 
             corners[currentCorner].weight -= 0.2f;
-            if (rand() % 2) {
+
                 corners[lastCorner].weight += 0.1f;
-            }
-            else {
+
                 corners[diagonalCorner].weight += 0.1f;
-            }
+
 
 
 
             // get the best corner
             Corner best{7, 0.9f};
             for (auto corner : corners) {
-                if (corner.weight >= best.weight && corner.ID != currentCorner && lastCorner != corner.ID) {
+                if (corner.weight > best.weight && corner.ID != currentCorner && lastCorner != corner.ID) {
                     best = corner;
                 }
             }
@@ -309,10 +330,6 @@ private:
 
         desiredPos.x = rect.x + randX;
         desiredPos.z = rect.y + randY; // z instead of y since the lake should be viewed as a 2d square
-
-        spdlog::info("RECT: MIN {} {} | MAX {} {} ", rect.x, rect.y, rect.z, rect.w);
-        spdlog::info("Random {} {} ", randX, randY);
-
     };
 
     int currentCorner = -1;
