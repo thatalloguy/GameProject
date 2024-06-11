@@ -82,6 +82,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         ImGui::Separator();
         ImGui::Text("Desired Position: %f %f", dummy.desiredPos.x, dummy.desiredPos.z);
         ImGui::Text("Movement Speed : %f", dummy.moveSpeed);
+        ImGui::Text("Fish State: %s", dummy.getStateCSTR());
 
         ImGui::End();
     });

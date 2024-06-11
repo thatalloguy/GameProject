@@ -269,6 +269,17 @@ struct Fish {
         }
     }
 
+    const char* getStateCSTR() {
+        switch (_state) {
+            case FishState::wandering:
+                return "wandering";
+                break;
+            case FishState::bait:
+                return "Bait";
+                break;
+        }
+    }
+
 private:
     void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
         // calc the halfs of the rects.
