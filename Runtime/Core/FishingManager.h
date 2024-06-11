@@ -197,6 +197,11 @@ struct Corner {
     float weight = 1.0f;
 };
 
+enum class FishState : unsigned  int {
+    wandering = 0,
+    bait = 1
+};
+
 /*
  * HOW THE AI WORKS.
  * First the Fish calc each rect of each corner. (see calcRects)
@@ -224,18 +229,44 @@ struct Fish {
     Quack::Math::Vector3 position{0, 0, 0};
     Quack::Math::Vector3 desiredPos{0, 0, 0};
 
+    void initFish(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax, Quack::Math::Vector3 newPos) {
 
-
-    void genNextPos(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
-
+        //put it here since it only really needs to be calc per lake, not every ai tick.
         //first calculate the rects of each corner
         calculateRects(rectMin, rectMax);
+
+        this->position = newPos;
+    }
+
+    void genNextPos() {
+
 
         //then pick a corner
         pickCorner();
 
         //Now pick a position in a corner
         pickPositionInCorner();
+
+        travelPath = tweeny::from(position.x, position.y, position.z).to(desiredPos.x, desiredPos.y, desiredPos.z).during(10000).via(tweeny::easing::sinusoidalInOut);
+        travelPath.onStep([=, this](float x, float y, float z) {
+            this->position.x = x;
+            this->position.y = y;
+            this->position.z = z;
+            return false;
+        });
+
+        // change speed randomly.
+        float neww = (std::rand() % 3) + 1.5f;
+        moveSpeed = 0.0f + (neww / 10.0f);
+    }
+
+    void update(float deltaTime) {
+        if (_state == FishState::wandering) {
+             travelPath.step(deltaTime * moveSpeed);
+             if (travelPath.progress() == 1.0f && rand() % 5) {
+                genNextPos();
+            }
+        }
     }
 
 private:
@@ -339,6 +370,10 @@ private:
 
     Corner corners[4] = {{0}, {1}, {2}, {3}};
     Quack::Math::Vector4 rects[4];
+
+    tweeny::tween<float, float, float> travelPath;
+    FishState _state = FishState::wandering;
+    float moveSpeed = 0.3f;
 };
 
 
@@ -364,7 +399,7 @@ private:
     Quack::Entity* fish;
     tweeny::tween<float, float, float, float, float> vec3Tween;
     bool pause = false;
-
+    bool updateFishing = false;
     Fish dummy;
 
     void setUpFishing();

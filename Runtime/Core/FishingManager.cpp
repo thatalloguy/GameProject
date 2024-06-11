@@ -72,8 +72,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
         ImGui::SeparatorText("Fish AI");
         if (ImGui::Button("Pick new")) {
-            dummy.genNextPos({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f});
-            debugPoint->position = dummy.desiredPos;
+            dummy.genNextPos();
         }
         ImGui::Text("Current Corner: %i", dummy.corners[dummy.currentCorner].ID);
         ImGui::Text("CORNER 1: %f", dummy.corners[0].weight);
@@ -82,6 +81,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         ImGui::Text("CORNER 4: %f", dummy.corners[3].weight);
         ImGui::Separator();
         ImGui::Text("Desired Position: %f %f", dummy.desiredPos.x, dummy.desiredPos.z);
+        ImGui::Text("Movement Speed : %f", dummy.moveSpeed);
 
         ImGui::End();
     });
@@ -120,6 +120,7 @@ void FishingManager::Update(float dt) {
         _player.state = PlayerState::Moving;
         _player._camera.pitch = 0.f;
         // cancel the rest
+        updateFishing = false;
     }
 
     if (pause) {
@@ -131,6 +132,10 @@ void FishingManager::Update(float dt) {
 
             pause = false;
         }
+    }
+    if (updateFishing) {
+        dummy.update(dt);
+        debugPoint->position = dummy.position;
     }
 
 
@@ -144,4 +149,9 @@ void FishingManager::setUpFishing() {
     debugPoint->position.z = lake->position.z + (lake->size.z * 0.8f);
 
     debugPoint->position.y  = lake->position.y + lake->size.y + 1;
+
+    dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
+    dummy.genNextPos();
+
+    updateFishing = true;
 }
