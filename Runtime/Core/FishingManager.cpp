@@ -34,7 +34,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     Quack::EntityCreationInfo debugPoint_info {
-            .position = {0, -100, 0},
+            .position = {-10, 4, 40},
             .size = {0.2f, 0.2f, 0.2f},
             .model = 3,
             .isPhysical = false,
@@ -72,13 +72,16 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
         ImGui::SeparatorText("Fish AI");
         if (ImGui::Button("Pick new")) {
-            dummy.genNextPos();
+            dummy.genNextPos({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f});
+            debugPoint->position = dummy.desiredPos;
         }
         ImGui::Text("Current Corner: %i", dummy.corners[dummy.currentCorner].ID);
         ImGui::Text("CORNER 1: %f", dummy.corners[0].weight);
         ImGui::Text("CORNER 2: %f", dummy.corners[1].weight);
         ImGui::Text("CORNER 3: %f", dummy.corners[2].weight);
         ImGui::Text("CORNER 4: %f", dummy.corners[3].weight);
+        ImGui::Separator();
+        ImGui::Text("Desired Position: %f %f", dummy.desiredPos.x, dummy.desiredPos.z);
 
         ImGui::End();
     });
@@ -137,8 +140,8 @@ void FishingManager::Update(float dt) {
 void FishingManager::setUpFishing() {
 
     //center debug point
-    debugPoint->position.x = lake->position.x; //- (lake->size.x / 2);
-    debugPoint->position.z = lake->position.z;// (lake->size.z / 2);
+    debugPoint->position.x = lake->position.x + (lake->size.x * 0.8f);
+    debugPoint->position.z = lake->position.z + (lake->size.z * 0.8f);
 
     debugPoint->position.y  = lake->position.y + lake->size.y + 1;
 }

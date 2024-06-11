@@ -214,17 +214,35 @@ struct Fish {
      * Z-------W
      */
 
-    void genNextPos() {
+    void genNextPos(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
 
-        // if all the corners are 1 which its always at the start just pick a random corner
+        //first calculate the rects of each corner
+        calculateRects(rectMin, rectMax);
 
+        //then pick a corner
+        pickCorner();
 
-        // if choiceRandom is greater than 3, then its most likely that all corners are the same val. so just pick a random corner
+        //Now pick a position in a corner
+        pickPositionInCorner();
+    }
+
+private:
+    void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
+        float halfWidth  = rectMin.x + ((rectMax.x - rectMin.x)  / 2);
+        float halfHeight = rectMin.y + ((rectMax.y - rectMin.y) / 2);
+
+        //calc the rest
+        rects[0] = {rectMin.x, rectMin.y, halfWidth, halfHeight}; // x
+        rects[1] = {halfWidth, rectMin.y, rectMax.x, halfHeight}; // y
+        rects[2] = {rectMin.x, halfHeight, halfWidth, rectMax.y}; // z
+        rects[3] = {halfWidth, halfHeight, rectMax.x, rectMax.y}; // w
+    }
+
+    void pickCorner() {
+        //if its the first time just pick a random corner
         if (currentCorner <= -1) {
-            pickCorner(rand() % 4);
+            currentCorner = (rand() % 4);
         }
-
-
         else {
 
             // calc next corner based on the weight
@@ -248,7 +266,8 @@ struct Fish {
             corners[currentCorner].weight -= 0.2f;
             if (rand() % 2) {
                 corners[lastCorner].weight += 0.1f;
-            } else {
+            }
+            else {
                 corners[diagonalCorner].weight += 0.1f;
             }
 
@@ -269,34 +288,39 @@ struct Fish {
                 corners[1].weight = 1.0f;
                 corners[2].weight = 1.0f;
                 corners[3].weight = 1.0f;
-                pickCorner(rand() % 4);
-            } else {
-                // pick the best corner.
-                pickCorner(best.ID);
+                currentCorner = (rand() % 4);
             }
-
-
-
+            else {
+                // pick the best corner.
+                currentCorner = best.ID;
+            }
         }
 
         lastCorner = currentCorner;
-
-
     }
 
-private:
+    void pickPositionInCorner() {
+        Quack::Math::Vector4 rect = rects[currentCorner];
+
+
+        //pick a random point in both the width and height
+        int randX = rand() % static_cast<int>(rect.z - rect.x);
+        int randY = rand() % static_cast<int>(rect.w - rect.y);
+
+        desiredPos.x = rect.x + randX;
+        desiredPos.z = rect.y + randY; // z instead of y since the lake should be viewed as a 2d square
+
+        spdlog::info("RECT: MIN {} {} | MAX {} {} ", rect.x, rect.y, rect.z, rect.w);
+        spdlog::info("Random {} {} ", randX, randY);
+
+    };
 
     int currentCorner = -1;
-
-    void pickCorner(unsigned int cornerID) {
-        currentCorner = cornerID;
-    }
     unsigned int lastCorner = 3;
-
     unsigned int diagonalCorner = 0;
 
     Corner corners[4] = {{0}, {1}, {2}, {3}};
-
+    Quack::Math::Vector4 rects[4];
 };
 
 
