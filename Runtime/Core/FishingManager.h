@@ -198,6 +198,7 @@ struct Corner {
 };
 
 struct Fish {
+    friend class FishingManager;
 
     Quack::Math::Vector3 position{0, 0, 0};
     Quack::Math::Vector3 desiredPos{0, 0, 0};
@@ -213,8 +214,86 @@ struct Fish {
      * Z-------W
      */
 
+    void genNextPos() {
+
+        // if all the corners are 1 which its always at the start just pick a random corner
+
+
+        // if choiceRandom is greater than 3, then its most likely that all corners are the same val. so just pick a random corner
+        if (currentCorner <= -1) {
+            pickCorner(rand() % 4);
+        }
+
+
+        else {
+
+            // calc next corner based on the weight
+            switch (corners[currentCorner].ID) {
+                case 0:
+                    diagonalCorner = 3;
+                    break;
+                case 1:
+                    diagonalCorner = 2;
+                    break;
+                case 2:
+                    diagonalCorner = 1;
+                    break;
+                case 3:
+                    diagonalCorner = 0;
+                    break;
+                default:
+                    break;
+            }
+
+            corners[currentCorner].weight -= 0.2f;
+            if (rand() % 2) {
+                corners[lastCorner].weight += 0.1f;
+            } else {
+                corners[diagonalCorner].weight += 0.1f;
+            }
+
+
+
+            // get the best corner
+            Corner best{7, 0.9f};
+            for (auto corner : corners) {
+                if (corner.weight >= best.weight && corner.ID != currentCorner && lastCorner != corner.ID) {
+                    best = corner;
+                }
+            }
+
+            //if for some reason the ID is still 7 reset all the weights and pick a random one
+            if (best.ID == 7) {
+                currentCorner = -1;
+                corners[0].weight = 1.0f;
+                corners[1].weight = 1.0f;
+                corners[2].weight = 1.0f;
+                corners[3].weight = 1.0f;
+                pickCorner(rand() % 4);
+            } else {
+                // pick the best corner.
+                pickCorner(best.ID);
+            }
+
+
+
+        }
+
+        lastCorner = currentCorner;
+
+
+    }
 
 private:
+
+    int currentCorner = -1;
+
+    void pickCorner(unsigned int cornerID) {
+        currentCorner = cornerID;
+    }
+    unsigned int lastCorner = 3;
+
+    unsigned int diagonalCorner = 0;
 
     Corner corners[4] = {{0}, {1}, {2}, {3}};
 
@@ -243,6 +322,8 @@ private:
     Quack::Entity* fish;
     tweeny::tween<float, float, float, float, float> vec3Tween;
     bool pause = false;
+
+    Fish dummy;
 
     void setUpFishing();
 

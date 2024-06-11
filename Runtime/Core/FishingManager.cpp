@@ -70,6 +70,16 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
             ImGui::SetWindowFontScale(1.0f);
         }
 
+        ImGui::SeparatorText("Fish AI");
+        if (ImGui::Button("Pick new")) {
+            dummy.genNextPos();
+        }
+        ImGui::Text("Current Corner: %i", dummy.corners[dummy.currentCorner].ID);
+        ImGui::Text("CORNER 1: %f", dummy.corners[0].weight);
+        ImGui::Text("CORNER 2: %f", dummy.corners[1].weight);
+        ImGui::Text("CORNER 3: %f", dummy.corners[2].weight);
+        ImGui::Text("CORNER 4: %f", dummy.corners[3].weight);
+
         ImGui::End();
     });
 }
