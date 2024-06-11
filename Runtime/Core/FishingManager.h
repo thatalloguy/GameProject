@@ -205,8 +205,9 @@ struct Corner {
  * - Each corner has a weight. The fish will favor the corner that weighs the most
  * - Every time the fish needs to pick a  new corner a few things happen to the corners:
  * - - The current corner gets -0.2f weight
- * - - The last visited corner gets + 0.1f weight
- * - - The diagonal corner of the current corner gets + 0.1 weight
+ * - - It randomly chooses between either:
+ *   - - The last visited corner gets + 0.1f weight
+ *   - - The diagonal corner of the current corner gets + 0.1 weight
  *
  * - For picking the best corner, the corner must:
  * - Have a weight greater then 0.9
@@ -286,11 +287,11 @@ private:
             }
 
             corners[currentCorner].weight -= 0.2f;
-
+            if (rand() % 2) {
                 corners[lastCorner].weight += 0.1f;
-
+            } else {
                 corners[diagonalCorner].weight += 0.1f;
-
+            }
 
 
 
