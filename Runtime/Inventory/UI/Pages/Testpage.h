@@ -28,7 +28,7 @@ public:
     }
 
     void renderLeftPage() override {
-        ImGui::Text("PAGE");
+        //ImGui::Text("PAGE");
     }
 
     void renderRightPage() override {

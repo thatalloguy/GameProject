@@ -237,7 +237,8 @@ class VulkanEngine {
 
         void updateScene();
 
-        FunctionQueue imguiFunc;
+        FunctionQueue debugRenderFuncs;
+        FunctionQueue uiRenderFuncs;
 
 private:
         void initVulkan();

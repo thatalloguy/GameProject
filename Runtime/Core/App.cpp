@@ -110,7 +110,7 @@ void App::run() {
 
     std::chrono::steady_clock::time_point last;
 
-    Game::engine.imguiFunc.pushFunction([=](){
+    Game::engine.debugRenderFuncs.pushFunction([=](){
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
        ImGui::Begin("Duck Watcher Debug");
@@ -122,6 +122,9 @@ void App::run() {
        ImGui::End();
     });
 
+    bool toggle = false;
+    bool booktoggle = false;
+
     while (!window->shouldShutdown()) {
         Game::engine.updateScene();
 
@@ -131,6 +134,21 @@ void App::run() {
         Level::floor->render(Game::engine);
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::player->update();
+
+        //via f3 you can toggle debug menu
+        if (Quack::Input::isKeyPressed(Quack::Key::F3) && toggle) {
+            Game::engine.displayDebugMenu = !Game::engine.displayDebugMenu;
+            toggle = false;
+        } else if (!Quack::Input::isKeyPressed(Quack::Key::F3)) {
+            toggle = true;
+        }
+
+        if (Quack::Input::isKeyPressed(Quack::Key::F5) && booktoggle) {
+            Game::bookUI->shouldRender(!Game::bookUI->isRendering());
+            booktoggle = false;
+        } else if (!Quack::Input::isKeyPressed(Quack::Key::F5)) {
+            booktoggle = true;
+        }
 
         Game::fishingManager->Update(Game::deltaTime);
 

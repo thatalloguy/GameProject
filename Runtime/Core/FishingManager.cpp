@@ -63,7 +63,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     // UI UI UI UI UI AHGHHHHDAHIKWDHwaiudyAWDIAWUDAYUIduaiwdyawuid. i hate UI programming >:(
-    renderer.imguiFunc.pushFunction([&](){
+    renderer.debugRenderFuncs.pushFunction([&](){
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
         ImGui::Begin("Fish Manager");

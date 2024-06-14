@@ -9,7 +9,7 @@
 BookUI::BookUI(VulkanEngine &renderer) : _renderer(renderer) {
     registerInternalPages();
 
-    _renderer.imguiFunc.pushFunction([&](){
+    _renderer.uiRenderFuncs.pushFunction([&](){
         if (renderUI) {
             this->render();
         }
@@ -30,6 +30,7 @@ Quack::Math::Vector2 BookUI::getUISize() const {
 
 void BookUI::registerInternalPages() {
     pages[0] = new Testpage();
+    pages[0]->init();
 }
 
 void BookUI::render() {

@@ -369,8 +369,12 @@ void VulkanEngine::Run()
                 ImGui::End();
 
 
-                imguiFunc.flush();
+                debugRenderFuncs.flush();
             }
+
+            uiRenderFuncs.flush();
+
+
             ImGui::Render();
 
             Draw();
