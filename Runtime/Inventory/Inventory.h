@@ -36,7 +36,9 @@ public:
 
 namespace Inventory {
 
+    class Item {
 
+    };
 
 
     struct InventoryItem {
@@ -49,11 +51,18 @@ namespace Inventory {
 
     struct Pair {
         unsigned int key;
-        InventoryItem val;
+        Item val[MAX_INVENTORY_SIZE];
+    };
+
+    struct Slot {
+        unsigned int inventoryKey;
+        unsigned int inventoryPos; // inventory[inventoryKey][inventoryPos] == Item();
     };
 
 
-    static Pair inventory[MAX_INVENTORY_SIZE];
+    // Items And Fish.
+    static Pair inventory[2];
+
 
 
 }

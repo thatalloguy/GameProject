@@ -38,6 +38,11 @@
 ----
 - Gameplay
 - - [x] Player controller?
+- - [ ] Inventory:
+- - - [ ] Money Tab
+- - - [ ] Items tab
+- - - [ ] Fish Tab
+- - - [ ] Journal Tab 
 - - [ ] Item interaction (fishing hook)
 - - [ ] Fishing (DESIGN NEEDED)
 - - [ ] Shop system
