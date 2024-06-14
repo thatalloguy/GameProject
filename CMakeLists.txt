@@ -44,7 +44,13 @@ file(GLOB_RECURSE RUNTIME_SOURCE
         Runtime/Core/FishingManager.h
         Runtime/Core/FishingManager.cpp
 
+        Runtime/Inventory/Inventory.h
+        Runtime/Inventory/Inventory.cpp
 
+        Runtime/Inventory/UI/BookUI.h
+        Runtime/Inventory/UI/BookUI.cpp
+
+        Runtime/Inventory/UI/Pages/Testpage.h
 )
 
 #Third party  dependencies

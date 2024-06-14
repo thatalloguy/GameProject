@@ -5,6 +5,8 @@
 #ifndef GAME_FISHINGMANAGER_H
 #define GAME_FISHINGMANAGER_H
 
+#define MAX_CURSOR_DIST 3
+
 #include <Objects/Entity.h>
 
 #include "Jolt/Physics/Character/Character.h"
@@ -202,6 +204,7 @@ enum class FishState : unsigned  int {
     bait = 1
 };
 
+
 /*
  * HOW THE AI WORKS.
  * First the Fish calc each rect of each corner. (see calcRects)
@@ -273,13 +276,10 @@ struct Fish {
         switch (_state) {
             case FishState::wandering:
                 return "wandering";
-                break;
             case FishState::bait:
                 return "Bait";
-                break;
         }
     }
-
 private:
     void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
         // calc the halfs of the rects.
@@ -407,11 +407,17 @@ private:
     Quack::Entity* fishCollider;
     Quack::Entity* lake;
     Quack::Entity* debugPoint;
-    Quack::Entity* fish;
+    Quack::Entity* bobber;
+    Quack::Entity* debugE;
+
+
     tweeny::tween<float, float, float, float, float> vec3Tween;
     bool pause = false;
     bool updateFishing = false;
+
     Fish dummy;
+
+    Quack::Math::Vector2 cursor{0, 0};
 
     void setUpFishing();
 

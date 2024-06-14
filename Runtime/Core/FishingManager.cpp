@@ -40,9 +40,26 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
             .isPhysical = false,
     };
 
+    Quack::EntityCreationInfo debugE_info {
+            .position = {-10, 4, 40},
+            .size = {0.3f, 0.1f, 0.3f},
+            .model = 3,
+            .isPhysical = false,
+    };
+
+    Quack::EntityCreationInfo bobber_info {
+            .position = {-10, 4, 40},
+            .size = {0.3f, 0.3f, 0.3f},
+            .model = 4,
+            .isPhysical = false,
+    };
+
     fishCollider = new Quack::Entity(cube_info);
     lake = new Quack::Entity(lake_info);
     debugPoint = new Quack::Entity(debugPoint_info);
+
+    bobber = new Quack::Entity(bobber_info);
+    debugE = new Quack::Entity(debugE_info);
 
 
     // UI UI UI UI UI AHGHHHHDAHIKWDHwaiudyAWDIAWUDAYUIduaiwdyawuid. i hate UI programming >:(
@@ -92,6 +109,8 @@ FishingManager::~FishingManager() {
     delete fishCollider;
     delete lake;
     delete debugPoint;
+    delete debugE;
+    delete bobber;
 }
 
 void FishingManager::Update(float dt) {
@@ -99,6 +118,8 @@ void FishingManager::Update(float dt) {
     fishCollider->render(_renderer);
     lake->render(_renderer);
     debugPoint->render(_renderer);
+    debugE->render(_renderer);
+    bobber->render(_renderer);
 
     lake->updatePhysics(_physicsEngine);
 
@@ -137,6 +158,31 @@ void FishingManager::Update(float dt) {
     if (updateFishing) {
         dummy.update(dt);
         debugPoint->position = dummy.position;
+        bobber->position.x = cursor.x;
+        bobber->position.z = cursor.y;
+
+        //TODO add keyboard support
+
+        // Bobber movement
+        if (Quack::Input::isControllerPresent(0)) {
+            auto vec = Quack::Input::getJoystickAxis(0);
+
+            vec.x = ceil(vec.x * 11) / 11;
+            vec.y = ceil(vec.y * 11) / 11;
+
+
+
+            if (vec.x > 0.1 || vec.x < -0.1 || vec.y > 0.1 || vec.y < -0.1) {
+                vec.x *= (dt * 1.45f);
+                vec.y *= (dt * 1.45f);
+
+                cursor.x -= vec.x;
+                cursor.y -= vec.y;
+                cursor.x = max(lake->position.x - 2.0f, min(lake->position.x + 2.0f, cursor.x));
+                cursor.y = max(lake->position.z - 2.0f, min(lake->position.z + 2.0f, cursor.y));
+            }
+
+        }
     }
 
 
@@ -151,8 +197,14 @@ void FishingManager::setUpFishing() {
 
     debugPoint->position.y  = lake->position.y + lake->size.y + 1;
 
+    bobber->position.y = lake->position.y + lake->size.y + 0.2f;
+
+    cursor.x = lake->position.x;
+    cursor.y = lake->position.z;
+
     dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
     dummy.genNextPos();
+
 
     updateFishing = true;
 }

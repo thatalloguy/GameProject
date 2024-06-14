@@ -44,11 +44,13 @@ void App::init() {
     auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
     auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
     auto sphereFile = VkLoader::loadGltf(&Game::engine, "..//Assets/sphere.glb");
+    auto bobberFile = VkLoader::loadGltf(&Game::engine, "..//Assets/bobber.glb");
     // just a check, not necessary
     assert(structureFile.has_value());
     Game::engine.loadedScenes[1] = *structureFile;
     Game::engine.loadedScenes[2] = *testFile;
     Game::engine.loadedScenes[3] = *sphereFile;
+    Game::engine.loadedScenes[4] = *bobberFile;
 
 
     //Setup camera start.
