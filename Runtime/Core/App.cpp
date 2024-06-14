@@ -3,6 +3,7 @@
 //
 
 #define USING_JOLT
+#pragma once
 
 #include "App.h"
 #include "Input/InputManager.h"
@@ -10,6 +11,8 @@
 #include "Objects/Entity.h"
 #include "imgui.h"
 #include "FishingManager.h"
+#include "../Inventory/Inventory.h"
+#include "../Inventory/UI/BookUI.h"
 
 
 namespace Game {
@@ -20,6 +23,7 @@ namespace Game {
 
 
     FishingManager* fishingManager;
+    BookUI* bookUI;
 
     float deltaTime = 0.0f;
 }
@@ -94,7 +98,7 @@ void App::init() {
 
 
     Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
-
+    Game::bookUI = new BookUI(Game::engine);
 
 }
 
@@ -145,6 +149,7 @@ void App::cleanup() {
     delete Game::fishingManager;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
+    delete Game::bookUI;
 
 
     Game::engine.CleanUp();

@@ -9,6 +9,7 @@ namespace Quack {
 
     typedef const char* cstr;
 
+
 } // Quack
 
 #endif //GAME_STRING_H

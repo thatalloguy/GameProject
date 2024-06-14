@@ -6,16 +6,37 @@
 #define MAX_INVENTORY_SIZE 8
 #endif
 
+
+
 #ifndef GAME_INVENTORY_H
 #define GAME_INVENTORY_H
 
+
+
+class Page {
+
+public:
+
+    Page() {
+        init();
+    }
+    ~Page() {
+        destroy();
+    }
+
+    virtual void init() {};
+    virtual void destroy() {};
+
+    virtual void renderLeftPage() {};
+    virtual void renderRightPage() {  };
+
+    virtual const char* getName() { return "UNKNOWN"; };
+};
+
+
 namespace Inventory {
 
-    template<typename K, typename V>
-    struct Pair {
-        K key;
-        V val;
-    };
+
 
 
     struct InventoryItem {
@@ -26,8 +47,13 @@ namespace Inventory {
         void* itemData;
     };
 
+    struct Pair {
+        unsigned int key;
+        InventoryItem val;
+    };
 
-    Pair<unsigned int, InventoryItem> inventory[MAX_INVENTORY_SIZE];
+
+    static Pair inventory[MAX_INVENTORY_SIZE];
 
 
 }

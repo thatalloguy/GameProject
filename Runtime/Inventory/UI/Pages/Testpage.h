@@ -6,7 +6,34 @@
 #define GAME_TESTPAGE_H
 
 
-class Testpage {
+#include "../../Inventory.h"
+
+#include <imgui.h>
+
+
+class Testpage : public Page {
+
+public:
+
+    void init() override {
+        printf("Hello world from testPage\n");
+    }
+
+    void destroy() override {
+
+    }
+
+    const char * getName() override {
+        return "TestPage";
+    }
+
+    void renderLeftPage() override {
+        ImGui::Text("PAGE");
+    }
+
+    void renderRightPage() override {
+
+    }
 
 };
 
