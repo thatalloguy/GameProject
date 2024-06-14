@@ -50,6 +50,9 @@ file(GLOB_RECURSE RUNTIME_SOURCE
         Runtime/Inventory/UI/BookUI.cpp
 
         Runtime/Inventory/UI/Pages/Testpage.h
+
+        Runtime/Inventory/Items/FishingRod.h
+        Runtime/Inventory/Items/FishingRod.cpp
 )
 
 #Third party  dependencies

@@ -12,6 +12,7 @@
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
 #include "Jolt/Physics/Collision/Shape/CylinderShape.h"
+#include "../Inventory/Inventory.h"
 
 
 #include <Physics/PhysicsEngine.h>
@@ -60,6 +61,10 @@ public:
             _character->SetLinearVelocity({vec.x, vec.y, vec.z});
 
             position = _character->GetPosition();
+
+            if (currentItem) {
+                currentItem->update();
+            }
         } else {
             // stop movement
             _character->SetLinearVelocity({0, 0, 0});
@@ -79,6 +84,7 @@ public:
     Quack::Math::Vector3 position{0, 0, 0};
     PlayerState state = PlayerState::Moving;
 
+    Item* currentItem = nullptr;
 
 private:
     void updateCamera() {

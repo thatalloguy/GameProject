@@ -13,6 +13,7 @@
 #include "FishingManager.h"
 #include "../Inventory/Inventory.h"
 #include "../Inventory/UI/BookUI.h"
+#include "../Inventory/Items/FishingRod.h"
 
 
 namespace Game {
@@ -100,6 +101,8 @@ void App::init() {
     Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
     Game::bookUI = new BookUI(Game::engine);
 
+    Level::player->currentItem = new FishingRod();
+
 }
 
 void App::run() {
@@ -144,12 +147,15 @@ void App::run() {
 }
 
 void App::cleanup() {
+    delete Level::player->currentItem;
     delete Level::player;
     delete Level::floor;
     delete Game::fishingManager;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
     delete Game::bookUI;
+
+
 
 
     Game::engine.CleanUp();

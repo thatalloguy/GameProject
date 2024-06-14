@@ -34,38 +34,31 @@ public:
 };
 
 
-namespace Inventory {
+enum class ItemRarity : unsigned int {
+    Common = 0,
+    Uncommon = 1,
+    Rare = 2
+};
 
-    class Item {
+class Item {
+public:
+    virtual void init() {};
+    virtual void update() {};
+    virtual void destroy() {};
 
-    };
+    ItemRarity rarity = ItemRarity::Common;
+    const char* description = "UNKNOWN";
+    const char* name = "UNKNOWN";
+    unsigned int ItemID = 0;
+};
 
-
-    struct InventoryItem {
-
-        const char* name;
-        unsigned int itemID;
-
-        void* itemData;
-    };
-
-    struct Pair {
-        unsigned int key;
-        Item val[MAX_INVENTORY_SIZE];
-    };
-
-    struct Slot {
-        unsigned int inventoryKey;
-        unsigned int inventoryPos; // inventory[inventoryKey][inventoryPos] == Item();
-    };
-
-
-    // Items And Fish.
-    static Pair inventory[2];
+/* ItemID map
+ * 0 | UNKNOWN;
+ * 1 | FishingRod
+ */
 
 
 
-}
 
 
 #endif //GAME_INVENTORY_H
