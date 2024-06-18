@@ -231,6 +231,11 @@ enum class FishState : unsigned  int {
  *   the fish will reset all the corner weights and pick a random one.
  *
  * - For deciding which position the fish wants to go, it will pick a random point in the desired corner.
+ *
+ * - How Curiosity works:
+ *  -- Curiosity increase over time generally.
+ *  -- Curiosity increases when the bobber makes small movements
+ *  -- Curiosity increases automatically baised on the bait used. -- NOT IMPL YET.
  */
 struct Fish {
     friend class FishingManager;
@@ -385,6 +390,8 @@ private:
     unsigned int lastCorner = 3;
     unsigned int diagonalCorner = 0;
 
+    float curiosity = 0.0f;
+
     Corner corners[4] = {{0}, {1}, {2}, {3}};
     Quack::Math::Vector4 rects[4];
 
@@ -427,6 +434,9 @@ private:
 
     void setUpFishing();
     void cleanUpFishing();
+
+    //bobber movement
+    bool bobberMovedLastFrame = false;
 };
 
 

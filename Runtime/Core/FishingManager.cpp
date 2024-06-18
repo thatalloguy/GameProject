@@ -101,6 +101,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         ImGui::Text("Desired Position: %f %f", dummy.desiredPos.x, dummy.desiredPos.z);
         ImGui::Text("Movement Speed : %f", dummy.moveSpeed);
         ImGui::Text("Fish State: %s", dummy.getStateCSTR());
+        ImGui::Text("Fish curiosity: %f", dummy.curiosity);
 
         ImGui::End();
     });
@@ -171,6 +172,13 @@ void FishingManager::Update(float dt) {
                     cleanUpFishing();
                 }
 
+                if (!bobberMovedLastFrame) {
+                    dummy.curiosity += 0.1f;
+                    bobberMovedLastFrame = true;
+                }
+            } else {
+                // reset if the button is not pressed anymore.
+                bobberMovedLastFrame = false;
             }
         }
     }
