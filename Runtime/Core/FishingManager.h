@@ -207,8 +207,10 @@ struct Corner {
 
 enum class FishState : unsigned  int {
     wandering = 0,
-    bait = 1
+    bait = 1,
+    escaping = 2
 };
+
 
 
 /*
@@ -254,6 +256,7 @@ struct Fish {
 
     void genNextPos() {
 
+        curiosity += ((std::rand() % 3) + 1.0f) / 10.0f;
 
         //then pick a corner
         pickCorner();
@@ -274,12 +277,56 @@ struct Fish {
         moveSpeed = 0.0f + (neww / 10.0f);
     }
 
-    void update(float deltaTime) {
-        if (_state == FishState::wandering) {
-             travelPath.step(deltaTime * moveSpeed);
-             if (travelPath.progress() == 1.0f && rand() % 5) {
-                genNextPos();
-            }
+    void update(float deltaTime, Quack::Math::Vector3& bobberPosition) {
+        switch (_state) {
+            case FishState::wandering:
+                // before updating anymovement stuff check if the fish is curious enough
+                if (curiosity >= 1.0f) {
+                    _state = FishState::bait;
+
+                    desiredPos = bobberPosition;
+
+                    //set new desired pos.
+                    travelPath = tweeny::from(position.x, position.y, position.z).to(desiredPos.x, desiredPos.y, desiredPos.z).during(10000).via(tweeny::easing::sinusoidalInOut);
+                    travelPath.onStep([=, this](float x, float y, float z) {
+                        this->position.x = x;
+                        this->position.y = y;
+                        this->position.z = z;
+                        return false;
+                    });
+
+                    // change speed randomly.
+                    float neww = (std::rand() % 3) + 1.5f;
+                    moveSpeed = 0.35f;
+                }
+
+
+                travelPath.step(deltaTime * moveSpeed);
+                if (travelPath.progress() == 1.0f && rand() % 5) {
+                    genNextPos();
+                }
+                break;
+
+            case FishState::bait:
+                travelPath.step(deltaTime * moveSpeed);
+
+                /// the fish reached the bobber
+                if (travelPath.progress() == 1.0f) {
+                    _state = FishState::escaping;
+                    pickDirection(bobberPosition);
+                }
+                break;
+
+            case FishState::escaping:
+                travelPath.step(deltaTime * moveSpeed);
+
+                moveSpeed  = 0.75f;
+
+                if (travelPath.progress() == 1.0f && rand() % 75 == 1) {
+                    pickDirection(bobberPosition);
+                }
+
+                break;
         }
     }
 
@@ -289,8 +336,22 @@ struct Fish {
                 return "wandering";
             case FishState::bait:
                 return "Bait";
+            case FishState::escaping:
+                return "Escaping";
         }
     }
+
+    void reset() {
+        _state = FishState::wandering;
+        currentCorner  = -1;
+        lastCorner = 3;
+        diagonalCorner = 0;
+        curiosity = 0.0f;
+
+        stamina = 50.0f;
+        // dont reset moveleft for some reason.
+    }
+
 private:
     void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
         // calc the halfs of the rects.
@@ -386,6 +447,25 @@ private:
         desiredPos.z = rect.y + randY; // z instead of y since the lake should be viewed as a 2d square
     };
 
+    void pickDirection(Quack::Math::Vector3& bobberPos) {
+        moveLeft = !moveLeft; // only go left or right cuz me am lazy.
+
+        if (moveLeft) {
+            desiredPos.x = bobberPos.x - 5.0f;
+        } else {
+            desiredPos.x = bobberPos.x + 5.0f;
+        }
+
+        travelPath = tweeny::from(position.x, position.y, position.z).to(desiredPos.x, desiredPos.y, desiredPos.z).during(10000).via(tweeny::easing::sinusoidalInOut);
+        travelPath.onStep([=, this](float x, float y, float z) {
+            this->position.x = x;
+            this->position.y = y;
+            this->position.z = z;
+            return false;
+        });
+
+    };
+
     int currentCorner = -1;
     unsigned int lastCorner = 3;
     unsigned int diagonalCorner = 0;
@@ -398,6 +478,10 @@ private:
     tweeny::tween<float, float, float> travelPath;
     FishState _state = FishState::wandering;
     float moveSpeed = 0.3f;
+    float stamina = 50.0f;
+    const float maxStamina = 50.0f;
+
+    bool moveLeft = false;
 };
 
 

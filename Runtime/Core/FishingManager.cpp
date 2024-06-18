@@ -103,6 +103,10 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         ImGui::Text("Fish State: %s", dummy.getStateCSTR());
         ImGui::Text("Fish curiosity: %f", dummy.curiosity);
 
+        if (ImGui::Button("Reset Fish")) {
+            dummy.reset();
+        }
+
         ImGui::End();
     });
 }
@@ -157,7 +161,7 @@ void FishingManager::Update(float dt) {
 
 
     if (updateFishing) {
-        dummy.update(dt);
+        dummy.update(dt, bobber->position);
         debugPoint->position = dummy.position;
         bobber->position.x = cursor.x;
         bobber->position.z = cursor.y;
@@ -212,4 +216,7 @@ void FishingManager::cleanUpFishing() {
     _player._camera.pitch = 0.f;
     // cancel the rest
     updateFishing = false;
+    cursor.x = lake->position.x;
+    cursor.y = lake->position.z;
+    dummy.reset();
 }
