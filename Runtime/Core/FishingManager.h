@@ -348,7 +348,7 @@ struct Fish {
         diagonalCorner = 0;
         curiosity = 0.0f;
 
-        stamina = 50.0f;
+        stamina = maxStamina;
         // dont reset moveleft for some reason.
     }
 
@@ -478,8 +478,8 @@ private:
     tweeny::tween<float, float, float> travelPath;
     FishState _state = FishState::wandering;
     float moveSpeed = 0.3f;
-    float stamina = 50.0f;
-    const float maxStamina = 50.0f;
+    float stamina = 30.0f;
+    const float maxStamina = 30.0f;
 
     bool moveLeft = false;
 };
@@ -521,6 +521,7 @@ private:
 
     //bobber movement
     bool bobberMovedLastFrame = false;
+    float fishlineDurability = 10.0f;
 };
 
 

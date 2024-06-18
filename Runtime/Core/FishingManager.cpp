@@ -67,9 +67,10 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
         ImGui::Begin("Fish Manager");
+        ImGui::SetNextItemOpen(true);
         if (ImGui::TreeNode("FishingManager: ")) {
             ImGui::Text("Player Speed %f", _player.speed);
-
+            ImGui::Text("Line Durability: %f", fishlineDurability);
             ImGui::Text("Current Item: %s", _player.currentItem->name);
 
             ImGui::TreePop();
@@ -102,6 +103,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         ImGui::Text("Movement Speed : %f", dummy.moveSpeed);
         ImGui::Text("Fish State: %s", dummy.getStateCSTR());
         ImGui::Text("Fish curiosity: %f", dummy.curiosity);
+        ImGui::Text("Fish Stamina: %f", dummy.stamina);
 
         if (ImGui::Button("Reset Fish")) {
             dummy.reset();
@@ -170,6 +172,24 @@ void FishingManager::Update(float dt) {
 
         // Bobber movement
         if (Quack::Input::isControllerPresent(0)) {
+
+            if (dummy._state == FishState::escaping) {
+                auto vec = Quack::Input::getJoystickAxis(0);
+
+
+                // We movin correctly
+                if (vec.x > 0.1 && !dummy.moveLeft) {
+                    dummy.stamina -= vec.x * dt * 1.45f;
+                } else if (vec.x < 0.1 && dummy.moveLeft) {
+                    dummy.stamina -= -vec.x * dt * 1.45f;
+                } else {// We arent movin correctly
+                    fishlineDurability -= dt * 1.05f;
+                }
+
+
+
+            }
+
             if (Quack::Input::isButtonPressed(0, 0)) {
                 cursor.y -= 2 * (dt * 2.5f);
                 if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
@@ -184,6 +204,10 @@ void FishingManager::Update(float dt) {
                 // reset if the button is not pressed anymore.
                 bobberMovedLastFrame = false;
             }
+        }
+
+        if (fishlineDurability <= 0.1f || dummy.stamina <= 0.1f) {
+            cleanUpFishing();
         }
     }
 
@@ -219,4 +243,6 @@ void FishingManager::cleanUpFishing() {
     cursor.x = lake->position.x;
     cursor.y = lake->position.z;
     dummy.reset();
+
+    fishlineDurability = 10.0f;
 }
