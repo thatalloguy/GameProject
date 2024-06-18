@@ -38,6 +38,12 @@
                 this->y += b.y;
             }
 
+            Vector2& operator-(Vector2 &b) {
+                this->x -= b.x;
+                this->y -= b.y;
+                return *this;
+            }
+
         };
 
         struct Vector3 {

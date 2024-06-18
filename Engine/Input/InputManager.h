@@ -12,6 +12,8 @@
 #include "Utils/Defines.h"
 #include "Video/Window.h"
 
+#include <Math/Vecs.h>
+
 namespace Quack {
 
     enum class Key {
@@ -153,7 +155,7 @@ namespace Quack {
 
        int isControllerPresent(int controllerId);
 
-       Math::Vector4 getJoystickAxis(int controllerId);
+       Quack::Math::Vector4 getJoystickAxis(int controllerId);
 
        // 0 = under
        // 1 = right
@@ -164,7 +166,7 @@ namespace Quack {
 
        // Mouse stuff
        void setMouseMode(MouseMode mode);
-
+       Quack::Math::Vector2 getMousePos();
     }
 
 

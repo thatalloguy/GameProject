@@ -43,6 +43,8 @@ public:
 
         _character = new Character(settings, RVec3::sZero(), Quat::sIdentity(), 0, &physicsEngine.getSystem());
         _character->AddToPhysicsSystem(EActivation::Activate);
+
+        lastMousePos = Quack::Input::getMousePos();
     }
 
     ~Player() {
@@ -91,6 +93,20 @@ private:
         _camera.position.y = character_position.GetY() + playerHeight;
         _camera.position.z = character_position.GetZ();
 
+        auto rel = Quack::Input::getMousePos() - lastMousePos;
+
+        rel.x *= sensitivity;
+        rel.y *= sensitivity;
+
+        _camera.yaw += rel.x;
+
+        //todo fix ground camera clip
+        _camera.pitch += rel.y;
+        _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
+
+        lastMousePos = Quack::Input::getMousePos();
+
+
     };
 
 
@@ -112,7 +128,7 @@ private:
             if (vec.x > 0.1 || vec.x < -0.1 || vec.y > 0.1 || vec.y < -0.1) {
                 vec.x *= speed;
                 vec.y *= speed;
-                out = {vec.x, _character->GetLinearVelocity().GetY(), vec.y};
+                out = Quack::Math::Vector3{vec.x, _character->GetLinearVelocity().GetY(), vec.y};
             }
 
             // rotating
@@ -158,6 +174,7 @@ private:
     RefConst<Shape> _crouchingShape;
 
     Camera& _camera;
+    Quack::Math::Vector2 lastMousePos{0, 0};
 
     friend class FishingManager;
 

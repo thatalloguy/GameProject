@@ -38,12 +38,13 @@ namespace Quack {
         glfwSetInputMode(currentWindow->getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
     }
 
-    Math::Vector2 getMousePos() {
-        Math::Vector2 vec{};
+    Quack::Math::Vector2 Input::getMousePos() {
+        double x;
+        double y;
 
-        glfwGetCursorPos(currentWindow->getRawWindow(), (double*) &vec.x, (double*) &vec.y);
+        glfwGetCursorPos(currentWindow->getRawWindow(), &x, &y);
 
-        return vec;
+        return {(float) x, (float) y};
     }
 }
 
