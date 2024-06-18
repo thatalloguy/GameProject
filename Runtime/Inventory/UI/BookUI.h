@@ -33,7 +33,7 @@ private:
 
     VulkanEngine& _renderer;
 
-    bool renderUI = true;
+    bool renderUI = false;
 
 };
 

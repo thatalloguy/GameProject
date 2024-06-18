@@ -41,7 +41,7 @@ void App::init() {
     window = new Quack::Window(*new Quack::WindowCreationData{});
     Quack::Input::setTargetWindow(*window);
 
-    Game::engine.Init(window->getRawWindow(), true);
+    Game::engine.Init(window->getRawWindow(), false);
 
 
     // Temp model
