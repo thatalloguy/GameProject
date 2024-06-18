@@ -50,7 +50,7 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
     }
 }
 
-glm::mat4 Quack::Entity::getTransformMatrix()  {
+glm::mat4 Quack::Entity::getTransformMatrix() const  {
     glm::mat4 model{1.f};
 
     model =  glm::translate(model, glm::vec3{position.x, position.y, position.z});
@@ -59,6 +59,6 @@ glm::mat4 Quack::Entity::getTransformMatrix()  {
     return model;
 }
 
-bool Quack::Entity::hasHit(Quack::Math::Vector3 pos) {
+bool Quack::Entity::hasHit(Quack::Math::Vector3 pos) const {
     return (pos.x > position.x - size.x && pos.x < position.x + size.x) && (pos.y > position.y - size.y && pos.y < position.y + size.y) && (pos.z > position.z - size.z && pos.z < position.z + size.z);
 }

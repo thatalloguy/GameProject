@@ -33,7 +33,7 @@ namespace Quack {
     class Entity {
 
     public:
-        Entity(EntityCreationInfo &creationInfo);
+        explicit Entity(EntityCreationInfo &creationInfo);
         ~Entity();
 
 
@@ -43,7 +43,7 @@ namespace Quack {
 
         void setPosition(Quack::Math::Vector3 vec);
 
-        bool hasHit(Quack::Math::Vector3 pos);
+        bool hasHit(Quack::Math::Vector3 pos) const;
 
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
@@ -53,7 +53,7 @@ namespace Quack {
         BodyInterface *body_interface = nullptr;
 
         void parseInfo(EntityCreationInfo &info);
-        glm::mat4 getTransformMatrix();
+        glm::mat4 getTransformMatrix() const;
     };
 }// Quack
 

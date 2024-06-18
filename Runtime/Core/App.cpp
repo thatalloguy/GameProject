@@ -13,9 +13,9 @@
 #include "FishingManager.h"
 #include "../Inventory/Inventory.h"
 #include "../Inventory/UI/BookUI.h"
-#include "../Inventory/Items/FishingRod.h"
 
 
+// Core Game Systems
 namespace Game {
     VulkanEngine engine;
     Camera* camera;
@@ -27,6 +27,29 @@ namespace Game {
     BookUI* bookUI;
 
     float deltaTime = 0.0f;
+
+    void loadAssets() {
+        // Temp model
+        std::string structurePath = {"..//Assets/basicmesh.glb"};
+        auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
+        auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
+        auto sphereFile = VkLoader::loadGltf(&Game::engine, "..//Assets/sphere.glb");
+        auto bobberFile = VkLoader::loadGltf(&Game::engine, "..//Assets/bobber.glb");
+        // just a check, not necessary
+        assert(structureFile.has_value());
+        Game::engine.loadedScenes[1] = *structureFile;
+        Game::engine.loadedScenes[2] = *testFile;
+        Game::engine.loadedScenes[3] = *sphereFile;
+        Game::engine.loadedScenes[4] = *bobberFile;
+
+    }
+    void initPhysics() {
+
+        // load Physics
+        Game::engineCreationInfo = new Quack::PhysicsEngineCreationInfo{};
+        Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
+
+    }
 }
 
 
@@ -37,36 +60,31 @@ namespace Level {
 
 
 void App::init() {
-                                   // Nothing wrong with this code, fight me :)
-    window = new Quack::Window(*new Quack::WindowCreationData{});
+
+    //initialize the window
+    Quack::WindowCreationData windowCreationData {
+      .title = "Duck Watchers Remake"
+    };
+
+    window = new Quack::Window(windowCreationData);
+
+
     Quack::Input::setTargetWindow(*window);
 
     Game::engine.Init(window->getRawWindow(), false);
 
+    Game::loadAssets();
 
-    // Temp model
-    std::string structurePath = {"..//Assets/basicmesh.glb"};
-    auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
-    auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
-    auto sphereFile = VkLoader::loadGltf(&Game::engine, "..//Assets/sphere.glb");
-    auto bobberFile = VkLoader::loadGltf(&Game::engine, "..//Assets/bobber.glb");
-    // just a check, not necessary
-    assert(structureFile.has_value());
-    Game::engine.loadedScenes[1] = *structureFile;
-    Game::engine.loadedScenes[2] = *testFile;
-    Game::engine.loadedScenes[3] = *sphereFile;
-    Game::engine.loadedScenes[4] = *bobberFile;
+    Game::initPhysics();
 
+
+    /////// Load the Test Scene
 
     //Setup camera start.
     Game::camera = &Game::engine.getMainCamera();
     Game::camera->position.z = 20;
     Game::camera->position.y = 3;
 
-
-    // load Physics
-    Game::engineCreationInfo = new Quack::PhysicsEngineCreationInfo{};
-    Game::physicsEngine = new Quack::PhysicsEngine(*Game::engineCreationInfo);
 
     // Beautiful code, fight me >:(
     Quack::EntityCreationInfo floor_info {
@@ -101,13 +119,9 @@ void App::init() {
     Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
     Game::bookUI = new BookUI(Game::engine);
 
-    Level::player->currentItem = new FishingRod();
-
 }
 
 void App::run() {
-    int count;
-
     std::chrono::steady_clock::time_point last;
 
     Game::engine.debugRenderFuncs.pushFunction([=](){
@@ -156,8 +170,10 @@ void App::run() {
         Game::engine.Run();
 
         window->update();
+
+        //Update the delta time
         auto now = std::chrono::steady_clock::now();
-        Game::deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
+        Game::deltaTime = (float) std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
         last = now;
 
     }
@@ -165,7 +181,6 @@ void App::run() {
 }
 
 void App::cleanup() {
-    delete Level::player->currentItem;
     delete Level::player;
     delete Level::floor;
     delete Game::fishingManager;

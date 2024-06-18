@@ -13,9 +13,9 @@
 
 #endif
 
-namespace Quack {
 
-    namespace Math {
+
+    namespace Quack::Math {
 
 
         // Simple math struct that holds 2 floats.
@@ -23,13 +23,14 @@ namespace Quack {
 
             float x, y;
 
-            bool operator==(Vector2 &b) {
+            bool operator==(Vector2 &b) const {
                 return (this->x == b.x && this->y == b.y);
             }
 
-            void operator=(float val) {
+            Vector2& operator=(float val) {
                 this->x = val;
                 this->y = val;
+                return *this;
             }
 
             void operator+(Vector2 &b) {
@@ -43,20 +44,15 @@ namespace Quack {
 
             float x, y, z;
 
-            bool operator==(Vector3 &b) {
+            bool operator==(Vector3 &b) const {
                 return (this->x == b.x && this->y == b.y && this->z == b.z);
             }
 
-            void operator=(float val) {
+            Vector3& operator=(float val) {
                 this->x = val;
                 this->y = val;
                 this->z = val;
-            }
-
-            void operator=(Vector3& val) {
-                this->x = val.x;
-                this->y = val.y;
-                this->z = val.z;
+                return *this;
             }
 
             void operator+(Vector3 &b) {
@@ -68,10 +64,11 @@ namespace Quack {
 
 
 #ifdef USING_JOLT
-            void operator=(JPH::Vec3 b) {
+            Vector3& operator=(JPH::Vec3 b) {
                 this->x = b.GetX();
                 this->y = b.GetY();
                 this->z = b.GetZ();
+                return *this;
             }
 
             Vector3(float x, float y, float z) {
@@ -80,7 +77,7 @@ namespace Quack {
                 this->z = z;
             }
 
-            Vector3(JPH::RVec3 vec) {
+            explicit Vector3(JPH::RVec3 vec) {
                 this->x = vec.GetX();
                 this->y = vec.GetY();
                 this->z = vec.GetZ();
@@ -94,15 +91,16 @@ namespace Quack {
 
             float x, y, z, w;
 
-            bool operator==(Vector4 &b) {
-                return (this->x == b.x && this->y == b.y && this->z == b.z, this->w == b.w);
+            bool operator==(Vector4 &b) const {
+                return (this->x == b.x && this->y == b.y && this->z == b.z && this->w == b.w);
             }
 
-            void operator=(float val) {
+            Vector4& operator=(float val) {
                 this->x = val;
                 this->y = val;
                 this->z = val;
                 this->w = val;
+                return *this;
             }
 
             void operator+(Vector4 &b) {
@@ -122,7 +120,6 @@ namespace Quack {
 
     }
 
-};
 
 
 #endif //GAME_VECS_H

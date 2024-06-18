@@ -14,13 +14,13 @@ class BookUI {
 
 public:
 
-    BookUI(VulkanEngine& renderer);
+    explicit BookUI(VulkanEngine& renderer);
     ~BookUI();
 
-    Quack::Math::Vector2 getUISize() const;
+    [[nodiscard]] Quack::Math::Vector2 getUISize() const;
 
     void shouldRender(bool should);
-    bool isRendering();
+    bool isRendering() const;
 
 private:
 

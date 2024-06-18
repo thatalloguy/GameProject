@@ -92,16 +92,16 @@ namespace Quack {
                     mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
             }
 
-            virtual unsigned int GetNumBroadPhaseLayers() const override {
+            unsigned int GetNumBroadPhaseLayers() const override {
                 return BroadPhaseLayers::NUM_LAYERS;
             }
 
-            virtual BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override {
+            BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override {
                 JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
                 return mObjectToBroadPhase[inLayer];
             }
 
-            virtual const char *			GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
+            const char *			GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
             {
                 switch ((BroadPhaseLayer::Type)inLayer)
                 {
@@ -157,11 +157,11 @@ namespace Quack {
 
         class MyBodyActivationListener : public BodyActivationListener {
         public:
-            virtual void OnBodyActivated(const BodyID& inBodyId, uint64 inBodyUserData) override {
+            void OnBodyActivated(const BodyID& inBodyId, uint64 inBodyUserData) override {
                 //spdlog::debug("A body got activated");
             }
 
-            virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override {
+            void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override {
                 //spdlog::debug("A body went to sleep");
             }
         };
@@ -182,7 +182,7 @@ namespace Quack {
     public:
 
 
-        PhysicsEngine(PhysicsEngineCreationInfo& physicsEngineCreationInfo) {
+        explicit PhysicsEngine(PhysicsEngineCreationInfo& physicsEngineCreationInfo) {
             Initialize(physicsEngineCreationInfo);
         }
 

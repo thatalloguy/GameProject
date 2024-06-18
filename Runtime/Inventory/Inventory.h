@@ -17,18 +17,11 @@ class Page {
 
 public:
 
-    Page() {
-        init();
-    }
-    ~Page() {
-        destroy();
-    }
-
     virtual void init() {};
     virtual void destroy() {};
 
     virtual void renderLeftPage() {};
-    virtual void renderRightPage() {  };
+    virtual void renderRightPage() {};
 
     virtual const char* getName() { return "UNKNOWN"; };
 };
@@ -40,6 +33,7 @@ enum class ItemRarity : unsigned int {
     Rare = 2
 };
 
+/*
 class Item {
 public:
     virtual void init() {};
@@ -51,13 +45,7 @@ public:
     const char* name = "UNKNOWN";
     unsigned int ItemID = 0;
 };
-
-/* ItemID map
- * 0 | UNKNOWN;
- * 1 | FishingRod
- */
-
-
+*/
 
 
 

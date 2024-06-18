@@ -2,7 +2,7 @@
 
 int main() {
 
-    App application;
+    App application{};
 
 
     application.init();

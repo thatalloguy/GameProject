@@ -5,18 +5,13 @@
 #ifndef GAME_FISHINGMANAGER_H
 #define GAME_FISHINGMANAGER_H
 
-#define MAX_CURSOR_DIST 3
-
 #include <Objects/Entity.h>
+#include <Physics/PhysicsEngine.h>
+#include <Input/InputManager.h>
 
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
 #include "Jolt/Physics/Collision/Shape/CylinderShape.h"
-#include "../Inventory/Inventory.h"
-
-
-#include <Physics/PhysicsEngine.h>
-#include <Input/InputManager.h>
 
 #include <tweeny.h>
 
@@ -26,15 +21,17 @@ enum class PlayerState : unsigned int {
 };
 
 class Player  {
-    friend class FishingManager;
 
 public:
-    Player(Camera& camera, Quack::PhysicsEngine& physicsEngine) : _camera(camera), physicsEngine(physicsEngine) {
+
+    Player(Camera& camera, Quack::PhysicsEngine& physicsEngine) : _camera(camera) {
         // initialize physics character
 
+        // First create the physics shapes
         _standingShape = RotatedTranslatedShapeSettings({0, 8, 0}, Quat::sIdentity(), new CylinderShape(1, 1)).Create().Get();
         _crouchingShape = RotatedTranslatedShapeSettings({0, 8, 0}, Quat::sIdentity(), new BoxShape({1, 1, 1})).Create().Get();
 
+        // Create the character by hand since the Entity class doenst support it.
         Ref<CharacterSettings> settings = new CharacterSettings();
         settings->mMaxSlopeAngle = DegreesToRadians(90.0f);
         settings->mLayer = Quack::Layers::MOVING;
@@ -47,24 +44,25 @@ public:
         _character = new Character(settings, RVec3::sZero(), Quat::sIdentity(), 0, &physicsEngine.getSystem());
         _character->AddToPhysicsSystem(EActivation::Activate);
     }
+
     ~Player() {
         _character->RemoveFromPhysicsSystem();
     }
 
     void update() {
 
+        // Only update the movement while in the moving state
         if (state == PlayerState::Moving) {
+
+            //getMovement relies on 'updateCamera' so it must be called first.
             updateCamera();
             auto vec = getMovement();
 
-
+            // Set the linear velocity and update the position of the player.
             _character->SetLinearVelocity({vec.x, vec.y, vec.z});
 
             position = _character->GetPosition();
 
-            if (currentItem) {
-                currentItem->update();
-            }
         } else {
             // stop movement
             _character->SetLinearVelocity({0, 0, 0});
@@ -84,16 +82,14 @@ public:
     Quack::Math::Vector3 position{0, 0, 0};
     PlayerState state = PlayerState::Moving;
 
-    Item* currentItem = nullptr;
-
 private:
     void updateCamera() {
 
-        auto position = _character->GetPosition();
+        auto character_position = _character->GetPosition();
 
-        _camera.position.x = position.GetX();
-        _camera.position.y = position.GetY() + playerHeight;
-        _camera.position.z = position.GetZ();
+        _camera.position.x = character_position.GetX();
+        _camera.position.y = character_position.GetY() + playerHeight;
+        _camera.position.z = character_position.GetZ();
 
     };
 
@@ -145,46 +141,12 @@ private:
 
         }
             //todo fix keyboard controller
-        else {
-
-            //Keyboard.
-/*            if (Quack::Input::isKeyPressed(Quack::Key::A)) {
-                out.x = -10 * speed * Game::deltaTime;
-            }
-            if (Quack::Input::isKeyPressed(Quack::Key::D)) {
-                out.x = 10 * speed * Game::deltaTime;
-            }
-            if (Quack::Input::isKeyPressed(Quack::Key::W)) {
-                out.z = -10 * speed * Game::deltaTime;
-            }
-            if (Quack::Input::isKeyPressed(Quack::Key::S)) {
-                out.z = 10 * speed * Game::deltaTime;
-            }
-
-            if (Quack::Input::isKeyPressed(Quack::Key::UP)) {
-                _camera.pitch -= 0.03f * Game::deltaTime;
-                _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
-            }
-
-            if (Quack::Input::isKeyPressed(Quack::Key::DOWN)) {
-                _camera.pitch += 0.03f * Game::deltaTime;
-                _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
-            }
-
-            if (Quack::Input::isKeyPressed(Quack::Key::LEFT)) {
-                _camera.yaw -= 0.03f;
-            }
-            if (Quack::Input::isKeyPressed(Quack::Key::RIGHT)) {
-                _camera.yaw += 0.03f;
-            }*/
-        }
 
 
-
-
+        // Rotate the move direction based on where the camera is looking.
         auto dir = glm::vec3(_camera.getRotationMatrix() * glm::vec4(out.x, out.y, out.z, 0));
         out.x = dir.x;
-        out.y = out.y; // dont change y.
+        out.y = out.y; // ignore y.
         out.z = dir.z;
 
 
@@ -196,7 +158,8 @@ private:
     RefConst<Shape> _crouchingShape;
 
     Camera& _camera;
-    Quack::PhysicsEngine& physicsEngine;
+
+    friend class FishingManager;
 
 };
 
@@ -217,7 +180,7 @@ enum class FishState : unsigned  int {
  * HOW THE AI WORKS.
  * First the Fish calc each rect of each corner. (see calcRects)
  * Then the fish picks a corner with a few rules:
- * - If the fish hasnt picked any corners in its lifetime (meaning currentCorner == -1) it will pick a random corner.
+ * - If the fish hasn't picked any corners in its lifetime (meaning currentCorner == -1) it will pick a random corner.
  * - Each corner has a weight. The fish will favor the corner that weighs the most
  * - Every time the fish needs to pick a  new corner a few things happen to the corners:
  * - - The current corner gets -0.2f weight
@@ -226,7 +189,7 @@ enum class FishState : unsigned  int {
  *   - - The diagonal corner of the current corner gets + 0.1 weight
  *
  * - For picking the best corner, the corner must:
- * - Have a weight greater then 0.9
+ * - Have a weight greater than 0.9
  * - not be the last or current corner
  *
  * - If for some reason the fish cant pick the best corner (if all the weights are to low)
@@ -237,7 +200,7 @@ enum class FishState : unsigned  int {
  * - How Curiosity works:
  *  -- Curiosity increase over time generally.
  *  -- Curiosity increases when the bobber makes small movements
- *  -- Curiosity increases automatically baised on the bait used. -- NOT IMPL YET.
+ *  -- Curiosity increases automatically based on the bait used. -- NOT IMPL YET.
  */
 struct Fish {
     friend class FishingManager;
@@ -256,7 +219,7 @@ struct Fish {
 
     void genNextPos() {
 
-        curiosity += ((std::rand() % 3) + 1.0f) / 10.0f;
+        curiosity += (std::rand() % 3 + 1.0f) / 10.0f;
 
         //then pick a corner
         pickCorner();
@@ -273,8 +236,7 @@ struct Fish {
         });
 
         // change speed randomly.
-        float neww = (std::rand() % 3) + 1.5f;
-        moveSpeed = 0.0f + (neww / 10.0f);
+        moveSpeed = 0.0f + ((std::rand() % 3 + 1.5f) / 10.0f);
     }
 
     void update(float deltaTime, Quack::Math::Vector3& bobberPosition) {
@@ -296,13 +258,12 @@ struct Fish {
                     });
 
                     // change speed randomly.
-                    float neww = (std::rand() % 3) + 1.5f;
                     moveSpeed = 0.35f;
                 }
 
 
                 travelPath.step(deltaTime * moveSpeed);
-                if (travelPath.progress() == 1.0f && rand() % 5) {
+                if (travelPath.progress() == 1.0f && std::rand() % 5) {
                     genNextPos();
                 }
                 break;
@@ -322,6 +283,7 @@ struct Fish {
 
                 moveSpeed  = 0.75f;
 
+                //Randomly Change direction if the fish reaches the outer edge.
                 if (travelPath.progress() == 1.0f && rand() % 75 == 1) {
                     pickDirection(bobberPosition);
                 }
@@ -349,7 +311,7 @@ struct Fish {
         curiosity = 0.0f;
 
         stamina = maxStamina;
-        // dont reset moveleft for some reason.
+        moveLeft = false;
     }
 
 private:
@@ -378,7 +340,7 @@ private:
     void pickCorner() {
         //if its the first time just pick a random corner
         if (currentCorner <= -1) {
-            currentCorner = (rand() % 4);
+            currentCorner = std::rand() % 4;
         }
         else {
 
@@ -401,7 +363,7 @@ private:
             }
 
             corners[currentCorner].weight -= 0.2f;
-            if (rand() % 2) {
+            if (std::rand() % 2) {
                 corners[lastCorner].weight += 0.1f;
             } else {
                 corners[diagonalCorner].weight += 0.1f;
@@ -424,11 +386,11 @@ private:
                 corners[1].weight = 1.0f;
                 corners[2].weight = 1.0f;
                 corners[3].weight = 1.0f;
-                currentCorner = (rand() % 4);
+                currentCorner = std::rand() % 4;
             }
             else {
                 // pick the best corner.
-                currentCorner = best.ID;
+                currentCorner = (int) best.ID;
             }
         }
 
@@ -443,8 +405,8 @@ private:
         int randX = rand() % static_cast<int>(rect.z - rect.x);
         int randY = rand() % static_cast<int>(rect.w - rect.y);
 
-        desiredPos.x = rect.x + randX;
-        desiredPos.z = rect.y + randY; // z instead of y since the lake should be viewed as a 2d square
+        desiredPos.x = rect.x + (float) randX;
+        desiredPos.z = rect.y + (float) randY; // z instead of y since the lake is viewed as a 2d square
     };
 
     void pickDirection(Quack::Math::Vector3& bobberPos) {
@@ -500,7 +462,7 @@ private:
     Player& _player;
     Quack::PhysicsEngine& _physicsEngine;
 
-
+    //Entities
     Quack::Entity* fishCollider;
     Quack::Entity* lake;
     Quack::Entity* debugPoint;

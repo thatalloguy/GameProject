@@ -1,6 +1,7 @@
 //
 // Created by allos on 6/14/2024.
 //
+/*
 
 #include "FishingRod.h"
 
@@ -20,3 +21,4 @@ void FishingRod::init() {
 
     this->ItemID = 1; // fishingrod = 1
 }
+*/

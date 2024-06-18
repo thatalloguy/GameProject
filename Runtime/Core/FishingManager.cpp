@@ -71,7 +71,6 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
         if (ImGui::TreeNode("FishingManager: ")) {
             ImGui::Text("Player Speed %f", _player.speed);
             ImGui::Text("Line Durability: %f", fishlineDurability);
-            ImGui::Text("Current Item: %s", _player.currentItem->name);
 
             ImGui::TreePop();
         }

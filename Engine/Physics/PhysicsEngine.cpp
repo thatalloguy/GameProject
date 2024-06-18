@@ -19,7 +19,7 @@ void Quack::PhysicsEngine::Initialize(Quack::PhysicsEngineCreationInfo &creation
 
     temp_allocator = new TempAllocatorImpl(creationInfo.preallocation_size);
 
-    job_system = new JobSystemThreadPool(1024, 100, thread::hardware_concurrency() - 1);
+    job_system = new JobSystemThreadPool(1024, 100, (int) thread::hardware_concurrency() - 1);
 
 
     physicsSystem = new PhysicsSystem();

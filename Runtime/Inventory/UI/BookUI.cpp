@@ -18,14 +18,12 @@ BookUI::BookUI(VulkanEngine &renderer) : _renderer(renderer) {
 
 BookUI::~BookUI() {
     for (auto page : pages) {
-        if (page != nullptr) {
-            delete page;
-        }
+         delete page;
     }
 }
 
 Quack::Math::Vector2 BookUI::getUISize() const {
-    return Quack::Math::Vector2(_renderer._drawExtent.width * 0.75f, _renderer._drawExtent.height * 0.75f);
+    return Quack::Math::Vector2((float) _renderer._drawExtent.width * 0.75f,(float) _renderer._drawExtent.height * 0.75f);
 }
 
 void BookUI::registerInternalPages() {
@@ -45,6 +43,6 @@ void BookUI::shouldRender(bool should) {
     renderUI = should;
 }
 
-bool BookUI::isRendering() {
+bool BookUI::isRendering() const {
     return renderUI;
 }

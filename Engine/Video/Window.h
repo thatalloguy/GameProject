@@ -14,8 +14,7 @@ namespace Quack {
 
     enum class WindowMode {
         Windowed   = 0,
-        Borderless = 1,
-        Fullscreen = 2
+        Fullscreen = 1
     };
 
     // Info for the init phase of the window
@@ -30,7 +29,7 @@ namespace Quack {
 
     public:
 
-        Window(WindowCreationData& creation_info);
+        explicit Window(WindowCreationData& creation_info);
         ~Window();
 
 
@@ -45,8 +44,6 @@ namespace Quack {
         GLFWwindow* getRawWindow();
 
     private:
-        inline void loadGlfwConfig();
-
 
         WindowCreationData* window_info;
         GLFWwindow* raw_window;

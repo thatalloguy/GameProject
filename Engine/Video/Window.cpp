@@ -1,8 +1,6 @@
 //
 // Created by allos on 6/1/2024.
 //
-
-#include <glad/glad.h>
 #include "Window.h"
 
 
@@ -35,7 +33,7 @@ namespace Quack {
 
         spdlog::info("[WINDOW] loaded Glfw");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        raw_window = glfwCreateWindow(creation_info.size.x, creation_info.size.y, creation_info.title, NULL, NULL);
+        raw_window = glfwCreateWindow((int) creation_info.size.x, (int)creation_info.size.y, creation_info.title, nullptr, nullptr);
 
         if (!raw_window) {
             spdlog::error("Could not create window");
@@ -53,10 +51,10 @@ namespace Quack {
 
         BOOL USE_DARK_MODE = true;
 
-        BOOL status = SUCCEEDED(DwmSetWindowAttribute(
+        DwmSetWindowAttribute(
                 glfwGetWin32Window(raw_window), DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
                 &USE_DARK_MODE, sizeof(USE_DARK_MODE)
-        ));
+        );
 
 #endif
     }
@@ -77,9 +75,6 @@ namespace Quack {
         should_shutdown = true;
     }
 
-    void Window::loadGlfwConfig() {
-
-    }
 
     void Window::pushWindowMode(WindowMode mode) {
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
@@ -91,7 +86,7 @@ namespace Quack {
                 break;
 
             case WindowMode::Windowed:
-                glfwSetWindowMonitor(raw_window, NULL, 100, 100, window_info->size.x, window_info->size.y, vid_mode->refreshRate);
+                glfwSetWindowMonitor(raw_window, nullptr, 100, 100, (int) window_info->size.x, (int) window_info->size.y, vid_mode->refreshRate);
                 break;
         }
     }
