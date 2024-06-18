@@ -426,7 +426,7 @@ private:
     Quack::Math::Vector2 cursor{0, 0};
 
     void setUpFishing();
-
+    void cleanUpFishing();
 };
 
 

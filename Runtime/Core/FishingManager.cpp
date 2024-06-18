@@ -140,10 +140,7 @@ void FishingManager::Update(float dt) {
         pause = true;
     }
     if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isButtonPressed(0, 3)) {
-        _player.state = PlayerState::Moving;
-        _player._camera.pitch = 0.f;
-        // cancel the rest
-        updateFishing = false;
+        cleanUpFishing();
     }
 
     if (pause) {
@@ -156,6 +153,8 @@ void FishingManager::Update(float dt) {
             pause = false;
         }
     }
+
+
     if (updateFishing) {
         dummy.update(dt);
         debugPoint->position = dummy.position;
@@ -166,23 +165,13 @@ void FishingManager::Update(float dt) {
 
         // Bobber movement
         if (Quack::Input::isControllerPresent(0)) {
-            auto vec = Quack::Input::getJoystickAxis(0);
+            if (Quack::Input::isButtonPressed(0, 0)) {
+                cursor.y -= 2 * (dt * 2.5f);
+                if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
+                    cleanUpFishing();
+                }
 
-            vec.x = ceil(vec.x * 11) / 11;
-            vec.y = ceil(vec.y * 11) / 11;
-
-
-
-            if (vec.x > 0.1 || vec.x < -0.1 || vec.y > 0.1 || vec.y < -0.1) {
-                vec.x *= (dt * 1.45f);
-                vec.y *= (dt * 1.45f);
-
-                cursor.x -= vec.x;
-                cursor.y -= vec.y;
-                cursor.x = max(lake->position.x - 2.0f, min(lake->position.x + 2.0f, cursor.x));
-                cursor.y = max(lake->position.z - 2.0f, min(lake->position.z + 2.0f, cursor.y));
             }
-
         }
     }
 
@@ -208,4 +197,11 @@ void FishingManager::setUpFishing() {
 
 
     updateFishing = true;
+}
+
+void FishingManager::cleanUpFishing() {
+    _player.state = PlayerState::Moving;
+    _player._camera.pitch = 0.f;
+    // cancel the rest
+    updateFishing = false;
 }
