@@ -33,5 +33,17 @@ namespace Quack {
         int count;
         return (glfwGetJoystickButtons(controllerId, &count)[button] == GLFW_PRESS);
     }
+
+    void Input::setMouseMode(MouseMode mode) {
+        glfwSetInputMode(currentWindow->getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
+    }
+
+    Math::Vector2 getMousePos() {
+        Math::Vector2 vec{};
+
+        glfwGetCursorPos(currentWindow->getRawWindow(), (double*) &vec.x, (double*) &vec.y);
+
+        return vec;
+    }
 }
 

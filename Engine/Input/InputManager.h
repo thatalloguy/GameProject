@@ -139,6 +139,11 @@ namespace Quack {
         MENU               = GLFW_KEY_MENU
     };
 
+    enum class MouseMode {
+        Disabled = GLFW_CURSOR_DISABLED,
+        Hidden = GLFW_CURSOR_HIDDEN,
+        Normal = GLFW_CURSOR_NORMAL
+    };
 
     namespace Input {
 
@@ -155,6 +160,10 @@ namespace Quack {
        // 2 = left
        // 3 = up
        bool isButtonPressed(int controllerId, int button);
+
+
+       // Mouse stuff
+       void setMouseMode(MouseMode mode);
 
     }
 
