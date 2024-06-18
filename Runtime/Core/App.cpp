@@ -147,7 +147,7 @@ void App::run() {
 
         Level::floor->render(Game::engine);
         Level::floor->updatePhysics(*Game::physicsEngine);
-        Level::player->update();
+        Level::player->update(Game::deltaTime);
 
         //via f3 you can toggle debug menu
         if (Quack::Input::isKeyPressed(Quack::Key::F3) && toggle) {
@@ -166,6 +166,11 @@ void App::run() {
 
         Game::fishingManager->Update(Game::deltaTime);
 
+        if (Game::engine.displayDebugMenu) {
+            Quack::Input::setMouseMode(Quack::MouseMode::Normal);
+        } else {
+            Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
+        }
 
         Game::engine.Run();
 

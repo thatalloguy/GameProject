@@ -17,7 +17,8 @@
 
 enum class PlayerState : unsigned int {
     Moving = 0,
-    Fishing = 1
+    Fishing = 1,
+    Idle = 2
 };
 
 class Player  {
@@ -51,13 +52,13 @@ public:
         _character->RemoveFromPhysicsSystem();
     }
 
-    void update() {
+    void update(float deltaTime) {
 
         // Only update the movement while in the moving state
         if (state == PlayerState::Moving) {
 
             //getMovement relies on 'updateCamera' so it must be called first.
-            updateCamera();
+            updateCamera(deltaTime);
             auto vec = getMovement();
 
             // Set the linear velocity and update the position of the player.
@@ -78,6 +79,7 @@ public:
 
     float speed = 10.0f;
     const float sensitivity = 0.02f;
+    const float mouseSensitivity = 0.1f;
     float playerHeight = 3.0f;
     float jumpForce = 3.0f;
 
@@ -85,7 +87,7 @@ public:
     PlayerState state = PlayerState::Moving;
 
 private:
-    void updateCamera() {
+    void updateCamera(float deltaTime) {
 
         auto character_position = _character->GetPosition();
 
@@ -95,8 +97,8 @@ private:
 
         auto rel = Quack::Input::getMousePos() - lastMousePos;
 
-        rel.x *= sensitivity;
-        rel.y *= sensitivity;
+        rel.x *= deltaTime * mouseSensitivity;
+        rel.y *= deltaTime * mouseSensitivity;
 
         _camera.yaw += rel.x;
 
@@ -112,7 +114,7 @@ private:
 
     Quack::Math::Vector3 getMovement() {
         auto currentVel = _character->GetLinearVelocity();
-        Quack::Math::Vector3 out = {currentVel.GetX(), currentVel.GetY(), currentVel.GetZ()};
+        Quack::Math::Vector3 out = {0, currentVel.GetY(), 0};
 
         // controller
         if (Quack::Input::isControllerPresent(0)) {
@@ -156,7 +158,38 @@ private:
 
 
         }
-            //todo fix keyboard controller
+
+        if (Quack::Input::isKeyPressed(Quack::Key::W)) {
+            out.z = -speed;
+            out.z *= 0.9f;
+        }
+        else if (Quack::Input::isKeyPressed(Quack::Key::S)) {
+            out.z = speed;
+            out.z *= 0.9f;
+        }
+
+        if (Quack::Input::isKeyPressed(Quack::Key::A)) {
+            out.x = -speed;
+            out.x *= 0.9f;
+        }
+        else if (Quack::Input::isKeyPressed(Quack::Key::D)) {
+            out.x = speed;
+            out.x *= 0.9f;
+        }
+
+
+        if (Quack::Input::isKeyPressed(Quack::Key::LEFT_SHIFT)) {
+            speed = 17.5f;
+            _camera.fov = 94.0f;
+        }
+        else {
+            speed = 10.0f;
+            _camera.fov = 90.0f;
+        }
+
+        if (_character->GetGroundNormal().GetY() > 0 && Quack::Input::isKeyPressed(Quack::Key::SPACE)) {
+            out.y += jumpForce;
+        }
 
 
         // Rotate the move direction based on where the camera is looking.
@@ -164,7 +197,6 @@ private:
         out.x = dir.x;
         out.y = out.y; // ignore y.
         out.z = dir.z;
-
 
         return out;
     }

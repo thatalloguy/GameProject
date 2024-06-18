@@ -130,7 +130,29 @@ void FishingManager::Update(float dt) {
 
     lake->updatePhysics(_physicsEngine);
 
-    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving && Quack::Input::isButtonPressed(0, 1)) {
+    if (Quack::Input::isControllerPresent(0)) {
+        if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving && Quack::Input::isButtonPressed(0, 1)) {
+            _player.state = PlayerState::Fishing;
+
+            //setup animation
+            vec3Tween = tweeny::from(_player.position.x, _player.position.y + _player.playerHeight, _player.position.z, _player._camera.pitch, _player._camera.yaw).to(-10, 10, 30, 0.9f, 3.15f).during(1000).via(tweeny::easing::sinusoidalOut);
+            vec3Tween.onStep([=, this](float x, float y, float z, float pitch, float yaw) {
+                this->_player._camera.position.x = x;
+                this->_player._camera.position.y = y;
+                this->_player._camera.position.z = z;
+                this->_player._camera.pitch = pitch;
+                this->_player._camera.yaw = yaw;
+                return false;
+            });
+            pause = true;
+        }
+        if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isButtonPressed(0, 3)) {
+            cleanUpFishing();
+        }
+
+    }
+
+    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving && Quack::Input::isKeyPressed(Quack::Key::E)) {
         _player.state = PlayerState::Fishing;
 
         //setup animation
@@ -145,9 +167,10 @@ void FishingManager::Update(float dt) {
         });
         pause = true;
     }
-    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isButtonPressed(0, 3)) {
+    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isKeyPressed(Quack::Key::E)) {
         cleanUpFishing();
     }
+
 
     if (pause) {
         vec3Tween.step(dt);

@@ -315,7 +315,8 @@ void VulkanEngine::Run()
                 resizeSwapchain();
             }
 
-            mainCamera.processEvent(_window);
+            // no need for this since the game handles the camera now.
+            ///mainCamera.processEvent(_window);
 
             // Imgui
             ImGui_ImplVulkan_NewFrame();
