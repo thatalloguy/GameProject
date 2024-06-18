@@ -43,10 +43,9 @@
 - - - [ ] Items tab
 - - - [ ] Fish Tab
 - - - [ ] Journal Tab 
-- - [ ] Item interaction (fishing hook)
-- - [ ] Fishing (DESIGN NEEDED)
+- - [x] Fishing 
 - - [ ] Shop system
-- - [ ] Duck AI
+- -  [ ] ~~duck AI~~
 ----
 - Map Editor
 - - [ ] Creating new entities
