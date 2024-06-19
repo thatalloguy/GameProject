@@ -130,6 +130,49 @@ void FishingManager::Update(float dt) {
 
     lake->updatePhysics(_physicsEngine);
 
+    checkUserCanFish(dt);
+
+    updateBobberMovement(dt);
+
+    cameraCutsceneTick(dt);
+
+
+}
+
+void FishingManager::setUpFishing() {
+
+    //center debug point
+    debugPoint->position.x = lake->position.x + (lake->size.x * 0.8f);
+    debugPoint->position.z = lake->position.z + (lake->size.z * 0.8f);
+
+    debugPoint->position.y  = lake->position.y + lake->size.y + 1;
+
+    bobber->position.y = lake->position.y + lake->size.y + 0.2f;
+
+    cursor.x = lake->position.x;
+    cursor.y = lake->position.z;
+
+    dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
+    dummy.genNextPos();
+
+
+    updateFishing = true;
+}
+
+void FishingManager::cleanUpFishing() {
+    _player.state = PlayerState::Moving;
+    _player._camera.pitch = 0.f;
+    // cancel the rest
+    updateFishing = false;
+    cursor.x = lake->position.x;
+    cursor.y = lake->position.z;
+    dummy.reset();
+
+    fishlineDurability = 10.0f;
+}
+
+void FishingManager::checkUserCanFish(float deltaTime) {
+
     if (Quack::Input::isControllerPresent(0)) {
         if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving && Quack::Input::isButtonPressed(0, 1)) {
             _player.state = PlayerState::Fishing;
@@ -172,20 +215,13 @@ void FishingManager::Update(float dt) {
     }
 
 
-    if (pause) {
-        vec3Tween.step(dt);
-        if (vec3Tween.progress() == 1.0f) {
+}
 
-            spdlog::info("setting up fishing");
-            setUpFishing();
-
-            pause = false;
-        }
-    }
+void FishingManager::updateBobberMovement(float deltaTime) {
 
 
     if (updateFishing) {
-        dummy.update(dt, bobber->position);
+        dummy.update(deltaTime, bobber->position);
         debugPoint->position = dummy.position;
         bobber->position.x = cursor.x;
         bobber->position.z = cursor.y;
@@ -201,11 +237,11 @@ void FishingManager::Update(float dt) {
 
                 // We movin correctly
                 if (vec.x > 0.1 && !dummy.moveLeft) {
-                    dummy.stamina -= vec.x * dt * 1.45f;
+                    dummy.stamina -= vec.x * deltaTime * 1.45f;
                 } else if (vec.x < 0.1 && dummy.moveLeft) {
-                    dummy.stamina -= -vec.x * dt * 1.45f;
+                    dummy.stamina -= -vec.x * deltaTime * 1.45f;
                 } else {// We arent movin correctly
-                    fishlineDurability -= dt * 1.05f;
+                    fishlineDurability -= deltaTime * 1.05f;
                 }
 
 
@@ -213,7 +249,7 @@ void FishingManager::Update(float dt) {
             }
 
             if (Quack::Input::isButtonPressed(0, 0)) {
-                cursor.y -= 2 * (dt * 2.5f);
+                cursor.y -= 2 * (deltaTime * 2.5f);
                 if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
                     cleanUpFishing();
                 }
@@ -237,11 +273,11 @@ void FishingManager::Update(float dt) {
 
                 // We movin correctly
                 if (Quack::Input::isKeyPressed(Quack::Key::D) && !dummy.moveLeft) {
-                    dummy.stamina -= 1.0f * dt * 1.45f;
+                    dummy.stamina -= 1.0f * deltaTime * 1.45f;
                 } else if (Quack::Input::isKeyPressed(Quack::Key::A) && dummy.moveLeft) {
-                    dummy.stamina -= 1.0f * dt * 1.45f;
+                    dummy.stamina -= 1.0f * deltaTime * 1.45f;
                 } else {// We arent movin correctly
-                    fishlineDurability -= dt * 1.05f;
+                    fishlineDurability -= deltaTime * 1.05f;
                 }
 
 
@@ -249,7 +285,7 @@ void FishingManager::Update(float dt) {
             }
 
             if (Quack::Input::isKeyPressed(Quack::Key::E)) {
-                cursor.y -= 2 * (dt * 2.5f);
+                cursor.y -= 2 * (deltaTime * 2.5f);
                 if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
                     cleanUpFishing();
                 }
@@ -272,37 +308,17 @@ void FishingManager::Update(float dt) {
     }
 
 
-
 }
 
-void FishingManager::setUpFishing() {
+void FishingManager::cameraCutsceneTick(float dt) {
+    if (pause) {
+        vec3Tween.step(dt);
+        if (vec3Tween.progress() == 1.0f) {
 
-    //center debug point
-    debugPoint->position.x = lake->position.x + (lake->size.x * 0.8f);
-    debugPoint->position.z = lake->position.z + (lake->size.z * 0.8f);
+            spdlog::info("setting up fishing");
+            setUpFishing();
 
-    debugPoint->position.y  = lake->position.y + lake->size.y + 1;
-
-    bobber->position.y = lake->position.y + lake->size.y + 0.2f;
-
-    cursor.x = lake->position.x;
-    cursor.y = lake->position.z;
-
-    dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
-    dummy.genNextPos();
-
-
-    updateFishing = true;
-}
-
-void FishingManager::cleanUpFishing() {
-    _player.state = PlayerState::Moving;
-    _player._camera.pitch = 0.f;
-    // cancel the rest
-    updateFishing = false;
-    cursor.x = lake->position.x;
-    cursor.y = lake->position.z;
-    dummy.reset();
-
-    fishlineDurability = 10.0f;
+            pause = false;
+        }
+    }
 }

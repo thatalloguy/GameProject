@@ -530,6 +530,11 @@ private:
     void setUpFishing();
     void cleanUpFishing();
 
+    void checkUserCanFish(float deltaTime);
+    void updateBobberMovement(float deltaTime);
+    void cameraCutsceneTick(float dt);
+
+
     //bobber movement
     bool bobberMovedLastFrame = false;
     float fishlineDurability = 10.0f;
