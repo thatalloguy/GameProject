@@ -167,7 +167,7 @@ void FishingManager::Update(float dt) {
         });
         pause = true;
     }
-    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isKeyPressed(Quack::Key::E)) {
+    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isKeyPressed(Quack::Key::Q)) {
         cleanUpFishing();
     }
 
@@ -227,6 +227,44 @@ void FishingManager::Update(float dt) {
                 bobberMovedLastFrame = false;
             }
         }
+        else {
+
+
+            // Keyboard version of bobber / fishing
+            if (dummy._state == FishState::escaping) {
+
+
+
+                // We movin correctly
+                if (Quack::Input::isKeyPressed(Quack::Key::D) && !dummy.moveLeft) {
+                    dummy.stamina -= 1.0f * dt * 1.45f;
+                } else if (Quack::Input::isKeyPressed(Quack::Key::A) && dummy.moveLeft) {
+                    dummy.stamina -= 1.0f * dt * 1.45f;
+                } else {// We arent movin correctly
+                    fishlineDurability -= dt * 1.05f;
+                }
+
+
+
+            }
+
+            if (Quack::Input::isKeyPressed(Quack::Key::E)) {
+                cursor.y -= 2 * (dt * 2.5f);
+                if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
+                    cleanUpFishing();
+                }
+
+                if (!bobberMovedLastFrame) {
+                    dummy.curiosity += 0.1f;
+                    bobberMovedLastFrame = true;
+                }
+            } else {
+                // reset if the button is not pressed anymore.
+                bobberMovedLastFrame = false;
+            }
+        }
+
+
 
         if (fishlineDurability <= 0.1f || dummy.stamina <= 0.1f) {
             cleanUpFishing();
