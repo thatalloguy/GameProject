@@ -41,6 +41,7 @@ namespace Game {
         Game::engine.loadedScenes[2] = *testFile;
         Game::engine.loadedScenes[3] = *sphereFile;
         Game::engine.loadedScenes[4] = *bobberFile;
+        Game::engine.loadedScenes[5] = *VkLoader::loadGltf(&Game::engine, "..//Assets/Chest.glb");;
 
     }
     void initPhysics() {
@@ -56,6 +57,7 @@ namespace Game {
 namespace Level {
     Quack::Entity* floor;
     Player* player;
+    Quack::Entity* chest;
 }
 
 
@@ -111,9 +113,18 @@ void App::init() {
 
     };
 
+    Quack::EntityCreationInfo Chest_info {
+            .position = {2, -2, 2},
+            .size = {4, 4.0f, 4},
+            .model = 5,
+            .isPhysical = false,
+
+    };
+
 
     Level::player = new Player(Game::engine.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
+    Level::chest = new Quack::Entity(Chest_info);
 
 
     Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
@@ -146,7 +157,9 @@ void App::run() {
         Game::physicsEngine->update();
 
         Level::floor->render(Game::engine);
+        Level::chest->render(Game::engine);
         Level::floor->updatePhysics(*Game::physicsEngine);
+        Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
 
         //via f3 you can toggle debug menu
@@ -187,6 +200,7 @@ void App::run() {
 
 void App::cleanup() {
     delete Level::player;
+    delete Level::chest;
     delete Level::floor;
     delete Game::fishingManager;
     delete Game::physicsEngine;

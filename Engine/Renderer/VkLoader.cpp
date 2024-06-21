@@ -428,7 +428,7 @@ namespace VkLoader {
             case fastgltf::Filter::Nearest:
             case fastgltf::Filter::NearestMipMapNearest:
             case fastgltf::Filter::NearestMipMapLinear:
-                return VK_FILTER_LINEAR;
+                return VK_FILTER_NEAREST;
 
             // linear samplers
             case fastgltf::Filter::Linear:
