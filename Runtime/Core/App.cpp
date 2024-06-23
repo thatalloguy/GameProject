@@ -17,7 +17,7 @@
 
 // Core Game Systems
 namespace Game {
-    VulkanEngine engine;
+    VulkanEngine renderer;
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
@@ -31,17 +31,17 @@ namespace Game {
     void loadAssets() {
         // Temp model
         std::string structurePath = {"..//Assets/basicmesh.glb"};
-        auto structureFile = VkLoader::loadGltf(&Game::engine, structurePath);
-        auto testFile = VkLoader::loadGltf(&Game::engine, "..//Assets/cube.glb");
-        auto sphereFile = VkLoader::loadGltf(&Game::engine, "..//Assets/sphere.glb");
-        auto bobberFile = VkLoader::loadGltf(&Game::engine, "..//Assets/bobber.glb");
+        auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
+        auto testFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/cube.glb");
+        auto sphereFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/sphere.glb");
+        auto bobberFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/bobber.glb");
         // just a check, not necessary
         assert(structureFile.has_value());
-        Game::engine.loadedScenes[1] = *structureFile;
-        Game::engine.loadedScenes[2] = *testFile;
-        Game::engine.loadedScenes[3] = *sphereFile;
-        Game::engine.loadedScenes[4] = *bobberFile;
-        Game::engine.loadedScenes[5] = *VkLoader::loadGltf(&Game::engine, "..//Assets/Chest.glb");;
+        Game::renderer.loadedScenes[1] = *structureFile;
+        Game::renderer.loadedScenes[2] = *testFile;
+        Game::renderer.loadedScenes[3] = *sphereFile;
+        Game::renderer.loadedScenes[4] = *bobberFile;
+        Game::renderer.loadedScenes[5] = *VkLoader::loadGltf(&Game::renderer, "..//Assets/Chest.glb");;
 
     }
     void initPhysics() {
@@ -73,7 +73,7 @@ void App::init() {
 
     Quack::Input::setTargetWindow(*window);
 
-    Game::engine.Init(window->getRawWindow(), false);
+    Game::renderer.Init(window->getRawWindow(), false);
 
     Game::loadAssets();
 
@@ -83,7 +83,7 @@ void App::init() {
     /////// Load the Test Scene
 
     //Setup camera start.
-    Game::camera = &Game::engine.getMainCamera();
+    Game::camera = &Game::renderer.getMainCamera();
     Game::camera->position.z = 20;
     Game::camera->position.y = 3;
 
@@ -122,20 +122,20 @@ void App::init() {
     };
 
 
-    Level::player = new Player(Game::engine.getMainCamera(), *Game::physicsEngine);
+    Level::player = new Player(Game::renderer.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
     Level::chest = new Quack::Entity(Chest_info);
 
 
-    Game::fishingManager = new FishingManager(Game::engine, *Level::player, *Game::physicsEngine);
-    Game::bookUI = new BookUI(Game::engine);
+    Game::fishingManager = new FishingManager(Game::renderer, *Level::player, *Game::physicsEngine);
+    Game::bookUI = new BookUI(Game::renderer);
 
 }
 
 void App::run() {
     std::chrono::steady_clock::time_point last;
 
-    Game::engine.debugRenderFuncs.pushFunction([=](){
+    Game::renderer.debugRenderFuncs.pushFunction([=](){
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
        ImGui::Begin("Duck Watcher Debug");
@@ -151,20 +151,20 @@ void App::run() {
     bool booktoggle = false;
 
     while (!window->shouldShutdown()) {
-        Game::engine.updateScene();
+        Game::renderer.updateScene();
 
 
         Game::physicsEngine->update();
 
-        Level::floor->render(Game::engine);
-        Level::chest->render(Game::engine);
+        Level::floor->render(Game::renderer);
+        Level::chest->render(Game::renderer);
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
 
         //via f3 you can toggle debug menu
         if (Quack::Input::isKeyPressed(Quack::Key::F3) && toggle) {
-            Game::engine.displayDebugMenu = !Game::engine.displayDebugMenu;
+            Game::renderer.displayDebugMenu = !Game::renderer.displayDebugMenu;
             toggle = false;
         } else if (!Quack::Input::isKeyPressed(Quack::Key::F3)) {
             toggle = true;
@@ -179,13 +179,13 @@ void App::run() {
 
         Game::fishingManager->Update(Game::deltaTime);
 
-        if (Game::engine.displayDebugMenu) {
+        if (Game::renderer.displayDebugMenu) {
             Quack::Input::setMouseMode(Quack::MouseMode::Normal);
         } else {
             Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
         }
 
-        Game::engine.Run();
+        Game::renderer.Run();
 
         window->update();
 
@@ -210,6 +210,6 @@ void App::cleanup() {
 
 
 
-    Game::engine.CleanUp();
+    Game::renderer.CleanUp();
     delete window;
 }

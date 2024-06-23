@@ -20,7 +20,7 @@
 - Window
 - - [x] Window creation
 - - [x] darkmode titlebar (windows only)
-- - [x] Resizing (NOTE: resizing isnt finished on the render engine side).
+- - [x] Resizing (NOTE: resizing isnt finished on the render renderer side).
 - - [x] Fullscreen + borderless
 ----
 - Input

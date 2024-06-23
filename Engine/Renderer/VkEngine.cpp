@@ -366,6 +366,13 @@ void VulkanEngine::Run()
                         ImGui::TreePop();
                     }
 
+                    if (ImGui::TreeNode("Scene Info")) {
+
+                        ImGui::InputFloat4("LightDir", (float* ) &sceneData.sunLightDirection);
+
+                        ImGui::TreePop();
+                    }
+
 
                 ImGui::End();
 
@@ -1388,7 +1395,7 @@ void VulkanEngine::updateScene() {
     //some default lighting parameters
     sceneData.ambientColor = glm::vec4(.1f);
     sceneData.sunlightColor = glm::vec4(1.f);
-    sceneData.sunLightDirection = glm::vec4(0,1,0.5,1.f);
+    //sceneData.sunLightDirection = glm::vec4(0,1,0.5,1.f);
 
     ///loadedScenes["structure"]->Draw(glm::mat4{1.f}, mainDrawContext);
 
