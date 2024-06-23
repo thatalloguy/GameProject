@@ -7,10 +7,13 @@
 - glm
 - imgui
 - Jolt
+- SDL_Mixer
+- SteamAudio
 - spdlog
 - stb (image)
 - vk-bootstrap
 - VulkanMemoryAllocator
+- Tweeny
 
 
 ### Planning:
@@ -36,13 +39,19 @@
 - - [x] Character controller
 - - [x] Triggers
 ----
+
+- Audio:
+- - [ ] Steam Audio impl:
+- - [ ] SDL_Mixer impl
+
+
 - Gameplay
 - - [x] Player controller?
 - - [ ] Inventory:
-- - - [ ] Money Tab
-- - - [ ] Items tab
-- - - [ ] Fish Tab
-- - - [ ] Journal Tab 
+- - - [ ] ~~Money Tab~~
+- - - [ ] ~~Items tab~~
+- - - [ ] ~~Fish Tab~~
+- - - [ ] ~~Journal Tab~~
 - - [x] Fishing 
 - - [ ] Shop system
 - -  [ ] ~~duck AI~~
