@@ -100,6 +100,7 @@ include_directories("Engine")
 include_directories("Thirdparty/glfw/include")
 include_directories("Thirdparty/glad/include")
 include_directories("Thirdparty/spdlog/include")
+include_directories("Thirdparty/steamaudio/include")
 
 
 
@@ -120,6 +121,10 @@ target_link_libraries(Game PRIVATE spdlog)
 target_link_libraries(Game PRIVATE fastgltf)
 target_link_libraries(Game PRIVATE glfw Vulkan::Vulkan)
 
+#TODO make this work work on every platform
+if(${MSVC})
+    target_link_libraries(Game PUBLIC "Thirdparty/steamaudio/lib/windows-x64/phonon")
+endif()
 
 
 target_include_directories(Game PRIVATE "Thirdparty/imgui")
