@@ -1,3 +1,6 @@
 [submodule "Thirdparty/spdlog"]
 	path = Thirdparty/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Thirdparty/SDL_mixer"]
+	path = Thirdparty/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer

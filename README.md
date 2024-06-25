@@ -7,7 +7,7 @@
 - glm
 - imgui
 - Jolt
-- SDL_Mixer
+- MiniAudio
 - SteamAudio
 - spdlog
 - stb (image)

@@ -126,7 +126,6 @@ if(${MSVC})
     target_link_libraries(Game PUBLIC "Thirdparty/steamaudio/lib/windows-x64/phonon")
 endif()
 
-
 target_include_directories(Game PRIVATE "Thirdparty/imgui")
 target_include_directories(Game PRIVATE "Thirdparty/stb")
 target_include_directories(Game PRIVATE "Thirdparty/glm")
