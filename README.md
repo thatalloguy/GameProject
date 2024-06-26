@@ -41,9 +41,11 @@
 ----
 
 - Audio:
-- - [ ] Steam Audio impl:
-- - [ ] SDL_Mixer impl
-
+- - [x] Loading sound
+- - [ ] Binaural Effect.
+- - [ ] Scene sound simulation.
+- - [ ] Scene sound Materials
+- - [ ] More configs.
 
 - Gameplay
 - - [x] Player controller?
