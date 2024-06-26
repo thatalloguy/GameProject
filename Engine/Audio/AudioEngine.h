@@ -13,7 +13,7 @@ namespace Quack {
 
     struct AudioBuffer{
         int channel;
-        void *data;
+        float* data;
         int length;
     };
 
@@ -25,7 +25,8 @@ namespace Quack {
         void initialize();
         void destroy();
 
-        void processEffect(unsigned int soundId, AudioBuffer& buffer);
+
+        void processEffect(unsigned int soundId, AudioBuffer& in);
 
 
     private:

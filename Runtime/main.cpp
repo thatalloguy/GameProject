@@ -15,7 +15,7 @@ struct Structure {
 static void callback(int chan, void *stream, int len, void *udata) {
     Quack::SoundEffectInfo* info = static_cast<Quack::SoundEffectInfo*>(udata);
 
-    auto buf =  Quack::AudioBuffer{chan, stream, len};
+    auto buf =  Quack::AudioBuffer{chan, (float*) stream, len};
 
     info->audioEngine->processEffect(info->soundId, buf);
 
@@ -74,7 +74,6 @@ int main() {
     if (!music) {
         printf("COuldnt load: %s \n ",  Mix_GetError());
     }
-
 
 
     Mix_RegisterEffect(0, &callback, nullptr, &soundEffectInfo);

@@ -1,3 +1,5 @@
 
 -101 = Could not load GLFW.
 -102 = Could not load GLAD
+-103 = Could not load SteamAudio.
+-103 = Could not create HRTF.
