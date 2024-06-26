@@ -1,8 +1,11 @@
 #include "Core/App.h"
 
-#include <phonon.h>
+#include <Audio/AudioEngine.h>
 
+#include <phonon.h>
 #include <SDL3_mixer/SDL_mixer.h>
+
+
 
 struct Structure {
 
@@ -11,7 +14,11 @@ struct Structure {
 };
 
 static void callback(int chan, void *stream, int len, void *udata) {
-    printf("tick: ID: %i\n", static_cast<Structure*>(udata)->id);
+    Quack::SoundEffectInfo* info = static_cast<Quack::SoundEffectInfo*>(udata);
+
+    auto buf =  Quack::AudioBuffer{chan, stream, len};
+
+    info->audioEngine->processEffect(info->soundId, buf);
 
 }
 
@@ -54,7 +61,13 @@ int main() {
 
     Mix_OpenAudio(0, &spec);
 
+    Quack::AudioEngine audioEngine;
 
+    audioEngine.initialize();
+
+    Quack::SoundEffectInfo soundEffectInfo = {
+            &audioEngine, 1
+    };
 
 
     auto music = Mix_LoadWAV("../Assets/Audio/bluebonnet_in_b_major_looped.mp3");
@@ -63,9 +76,9 @@ int main() {
         printf("COuldnt load: %s \n ",  Mix_GetError());
     }
 
-    Structure structure{.id = 1};
 
-    Mix_RegisterEffect(0, &callback, nullptr, &structure);
+
+    Mix_RegisterEffect(0, &callback, nullptr, &soundEffectInfo);
 
     Mix_PlayChannel(0, music, 1);
 
@@ -75,6 +88,8 @@ int main() {
 
     Mix_FreeChunk(music);
 
+
+    audioEngine.destroy();
     Mix_Quit();
     SDL_Quit();
     return 0;

@@ -12,6 +12,6 @@ void Quack::AudioEngine::destroy() {
 
 }
 
-void Quack::AudioEngine::processEffect(Quack::AudioEngine *engine, unsigned int soundId) {
+void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& buffer) {
 
 }
