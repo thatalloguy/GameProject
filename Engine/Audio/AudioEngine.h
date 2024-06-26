@@ -17,6 +17,19 @@ namespace Quack {
         int length;
     };
 
+    struct SoundCreateInfo {
+        int length;
+        int channel = 2;
+        int frameSize;
+    };
+
+    struct SoundCache {
+        IPLAudioBuffer inBuffer;
+        IPLAudioBuffer outBuffer;
+        IPLHRTF hrtf;
+        IPLBinauralEffect effect;
+    };
+
     class AudioEngine {
 
 
@@ -25,18 +38,22 @@ namespace Quack {
         void initialize();
         void destroy();
 
+        unsigned int registerSound(SoundCreateInfo& info);
 
         void processEffect(unsigned int soundId, AudioBuffer& in);
 
 
     private:
         IPLContext _context;
+        SoundCache bufferInfo; // temp
+        unsigned int idCount = 0;
 
+        void destroySoundBufferCache(SoundCache& soundBufferInfo);
     };
 
 
 
-    struct SoundEffectInfo {
+    struct EffectUserData {
         AudioEngine* audioEngine;
         unsigned int soundId;
     };

@@ -26,6 +26,7 @@ void Quack::AudioEngine::initialize() {
 }
 
 void Quack::AudioEngine::destroy() {
+    destroySoundBufferCache(bufferInfo);
     iplContextRelease(&_context);
 }
 
@@ -33,67 +34,70 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
 
 
 
-    // NOTE im unsure if all of this allocation every frame is a good idea :|
+    // NOTE im unsure if all of this allocation every frame is a good idea :| // UPDATE it was indeed not a good idea ;-;
     // NOTE NOTE we can do all this processing only once if you have something like registering the sound to the audioEngine.
 
-    //First convert Quack::AudioBuffer.data to Deinterleaved format (Required by steam audio).
-    float* inData = in.data;
+    IPLBinauralEffectParams  params{};
 
-    //copy data to phonon abuf.
-    IPLAudioBuffer tempBuffer;
-    IPLAudioBuffer outBuffer;
-    tempBuffer.data = &in.data;
-    tempBuffer.numSamples = in.length;
+    //make it come from the right?
+    params.direction = IPLVector3{0.0f, 0.0f, 0.8f};
+    params.hrtf = bufferInfo.hrtf;
+    params.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
+    params.spatialBlend = 0.2f;
+    params.peakDelays = nullptr;
 
-    iplAudioBufferAllocate(_context, in.channel, in.length, &tempBuffer);
-    iplAudioBufferAllocate(_context, in.channel, in.length, &outBuffer);
+    iplBinauralEffectApply(bufferInfo.effect, &params, &bufferInfo.inBuffer, &bufferInfo.outBuffer);
 
+
+    in.data = *bufferInfo.outBuffer.data;
+}
+
+unsigned int Quack::AudioEngine::registerSound(Quack::SoundCreateInfo &info) {
+    iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.inBuffer);
+    iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.outBuffer);
+
+
+    //iplAudioBufferDeinterleave(_context, in.data, &outBuffer);
 
     IPLAudioSettings audioSettings{};
     audioSettings.samplingRate = 44100; // What the hell is this value?
-    audioSettings.frameSize = in.length;
+    audioSettings.frameSize = info.length;
 
     IPLHRTFSettings hrtfSettings;
     hrtfSettings.type = IPL_HRTFTYPE_DEFAULT;
+    hrtfSettings.normType = IPL_HRTFNORMTYPE_NONE;
+    hrtfSettings.volume = 0.2f;
 
-    IPLHRTF hrtf = nullptr;
-    iplHRTFCreate(_context, &audioSettings, &hrtfSettings, &hrtf);
+    hrtfSettings.sofaData = nullptr;
+    hrtfSettings.sofaFileName = nullptr;
 
-    if (!hrtf) {
+
+    iplHRTFCreate(_context, &audioSettings, &hrtfSettings, &bufferInfo.hrtf);
+
+    if (bufferInfo.hrtf ==  nullptr) {
         spdlog::error("Could not create HRTF");
         exit(-104);
     }
 
 
     //Convert SDLmixer interleave audio to deinterleave for steamaudio to use.
-    iplAudioBufferDeinterleave(_context, inData, &tempBuffer);
 
 
     //create a new effect/
     IPLBinauralEffectSettings  effectSettings{};
-    effectSettings.hrtf = hrtf;
+    effectSettings.hrtf = bufferInfo.hrtf;
 
 
-    IPLBinauralEffect effect = nullptr;
-    iplBinauralEffectCreate(_context, &audioSettings, &effectSettings, &effect);
-
-    IPLBinauralEffectParams  params{};
-
-    //make it come from the right?
-    params.direction = IPLVector3{1.0f, 0.0f, 0.0f};
-    params.hrtf = hrtf;
-    params.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
-    params.spatialBlend = 1.0f;
-    params.peakDelays = nullptr;
-
-    iplBinauralEffectApply(effect, &params, &tempBuffer, &outBuffer);
-
-    in.data = (float*) tempBuffer.data;
-    in.length = tempBuffer.numSamples;
+    iplBinauralEffectCreate(_context, &audioSettings, &effectSettings, &bufferInfo.effect);
 
 
-    //destroy
-    iplAudioBufferFree(_context, &tempBuffer);
-    iplBinauralEffectRelease(&effect);
-    iplHRTFRelease(&hrtf);
+    spdlog::info("Cooked data for soundeffect");
+    return idCount++;
+}
+
+void Quack::AudioEngine::destroySoundBufferCache(Quack::SoundCache &soundBufferInfo) {
+    iplAudioBufferFree(_context, &soundBufferInfo.inBuffer);
+    iplAudioBufferFree(_context, &soundBufferInfo.outBuffer);
+    iplBinauralEffectRelease(&soundBufferInfo.effect);
+    iplHRTFRelease(&soundBufferInfo.hrtf);
 }

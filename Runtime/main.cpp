@@ -12,16 +12,20 @@ struct Structure {
 
 };
 
+static bool isFirst = true;
+
 static void callback(int chan, void *stream, int len, void *udata) {
-    Quack::SoundEffectInfo* info = static_cast<Quack::SoundEffectInfo*>(udata);
+    Quack::EffectUserData* info = static_cast<Quack::EffectUserData*>(udata);
 
-    auto buf =  Quack::AudioBuffer{chan, (float*) stream, len};
+    if (isFirst) {
+        Quack::SoundCreateInfo createInfo = {len, 2, 44100};
+        info->audioEngine->registerSound(createInfo);
 
+        isFirst = false;
+    }
+
+    auto buf =  Quack::AudioBuffer{2, (float*) stream, len};
     info->audioEngine->processEffect(info->soundId, buf);
-
-    stream = buf.data;
-    len = buf.length;
-
 }
 
 /*
@@ -67,16 +71,19 @@ int main() {
 
     audioEngine.initialize();
 
-    Quack::SoundEffectInfo soundEffectInfo = {
+    Quack::EffectUserData soundEffectInfo = {
             &audioEngine, 1
     };
 
 
     auto music = Mix_LoadWAV("../Assets/Audio/bluebonnet_in_b_major_looped.mp3");
 
+
     if (!music) {
         printf("COuldnt load: %s \n ",  Mix_GetError());
     }
+
+
 
 
     Mix_RegisterEffect(0, &callback, nullptr, &soundEffectInfo);
@@ -84,7 +91,7 @@ int main() {
     Mix_PlayChannel(0, music, 1);
 
 
-    printf("Press enter to exit");
+    printf("Press enter to exit\n");
     getchar();
 
     Mix_FreeChunk(music);
