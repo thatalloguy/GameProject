@@ -41,10 +41,12 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
 
     //copy data to phonon abuf.
     IPLAudioBuffer tempBuffer;
+    IPLAudioBuffer outBuffer;
     tempBuffer.data = &in.data;
     tempBuffer.numSamples = in.length;
 
     iplAudioBufferAllocate(_context, in.channel, in.length, &tempBuffer);
+    iplAudioBufferAllocate(_context, in.channel, in.length, &outBuffer);
 
 
     IPLAudioSettings audioSettings{};
@@ -67,8 +69,31 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
     iplAudioBufferDeinterleave(_context, inData, &tempBuffer);
 
 
+    //create a new effect/
+    IPLBinauralEffectSettings  effectSettings{};
+    effectSettings.hrtf = hrtf;
+
+
+    IPLBinauralEffect effect = nullptr;
+    iplBinauralEffectCreate(_context, &audioSettings, &effectSettings, &effect);
+
+    IPLBinauralEffectParams  params{};
+
+    //make it come from the right?
+    params.direction = IPLVector3{1.0f, 0.0f, 0.0f};
+    params.hrtf = hrtf;
+    params.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
+    params.spatialBlend = 1.0f;
+    params.peakDelays = nullptr;
+
+    iplBinauralEffectApply(effect, &params, &tempBuffer, &outBuffer);
+
+    in.data = (float*) tempBuffer.data;
+    in.length = tempBuffer.numSamples;
+
 
     //destroy
     iplAudioBufferFree(_context, &tempBuffer);
-
+    iplBinauralEffectRelease(&effect);
+    iplHRTFRelease(&hrtf);
 }

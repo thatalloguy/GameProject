@@ -19,6 +19,9 @@ static void callback(int chan, void *stream, int len, void *udata) {
 
     info->audioEngine->processEffect(info->soundId, buf);
 
+    stream = buf.data;
+    len = buf.length;
+
 }
 
 /*
