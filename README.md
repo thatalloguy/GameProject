@@ -45,7 +45,7 @@
 - - [ ] Binaural Effect.
 - - [ ] Scene sound simulation.
 - - [ ] Scene sound Materials
-- - [ ] More configs.
+- - [ ] More configs. 
 
 - Gameplay
 - - [x] Player controller?
