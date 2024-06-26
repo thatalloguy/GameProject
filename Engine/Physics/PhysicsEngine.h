@@ -101,7 +101,7 @@ namespace Quack {
                 return mObjectToBroadPhase[inLayer];
             }
 
-            const char *			GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
+            const char *			GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const
             {
                 switch ((BroadPhaseLayer::Type)inLayer)
                 {

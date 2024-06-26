@@ -6,9 +6,30 @@
 #define GAME_AUDIOENGINE_H
 
 
-class AudioEngine {
+namespace Quack {
 
-};
+
+
+    class AudioEngine {
+
+
+    public:
+
+        void initialize();
+        void destroy();
+
+        void processEffect(AudioEngine* engine, unsigned int soundId);
+
+    };
+
+
+
+    struct SoundEffectInfo {
+        AudioEngine* audioEngine;
+        unsigned int soundId;
+    };
+
+}// namespace quack
 
 
 #endif //GAME_AUDIOENGINE_H

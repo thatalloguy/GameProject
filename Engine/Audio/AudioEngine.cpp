@@ -3,3 +3,15 @@
 //
 
 #include "AudioEngine.h"
+
+void Quack::AudioEngine::initialize() {
+
+}
+
+void Quack::AudioEngine::destroy() {
+
+}
+
+void Quack::AudioEngine::processEffect(Quack::AudioEngine *engine, unsigned int soundId) {
+
+}
