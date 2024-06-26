@@ -6,6 +6,8 @@
 #define GAME_AUDIOENGINE_H
 
 
+#include <phonon.h>
+
 namespace Quack {
 
 
@@ -24,6 +26,10 @@ namespace Quack {
         void destroy();
 
         void processEffect(unsigned int soundId, AudioBuffer& buffer);
+
+
+    private:
+        IPLContext _context;
 
     };
 

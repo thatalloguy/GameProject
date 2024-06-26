@@ -2,7 +2,6 @@
 
 #include <Audio/AudioEngine.h>
 
-#include <phonon.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
 
