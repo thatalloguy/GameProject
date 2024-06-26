@@ -24,7 +24,7 @@ static void callback(int chan, void *stream, int len, void *udata) {
         isFirst = false;
     }
 
-    auto buf =  Quack::AudioBuffer{2, (float*) stream, len};
+    auto buf =  Quack::AudioBuffer{2, stream, len};
     info->audioEngine->processEffect(info->soundId, buf);
     stream = buf.data;
 

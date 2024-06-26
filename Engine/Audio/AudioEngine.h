@@ -13,7 +13,7 @@ namespace Quack {
 
     struct AudioBuffer{
         int channel;
-        float* data;
+        void* data;
         int length;
     };
 

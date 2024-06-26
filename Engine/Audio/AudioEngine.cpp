@@ -31,13 +31,16 @@ void Quack::AudioEngine::destroy() {
 }
 
 void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
-    // NOTE im unsure if all of this allocation every frame is a good idea :| // UPDATE it was indeed not a good idea ;-;
-    // NOTE NOTE we can do all this processing only once if you have something like registering the sound to the audioEngine.
+
+
+
+    // Should we deinterleave first? would that even work?
+    bufferInfo.inBuffer.data =  { (float**) in.data };
 
     IPLBinauralEffectParams  params{};
 
     //make it come from the right?
-    params.direction = IPLVector3{0.0f, 0.0f, 0.8f};
+    params.direction = IPLVector3{1.0f, 0.0f, 0.0f};
     params.hrtf = bufferInfo.hrtf;
     params.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
     params.spatialBlend = 1.0f;
