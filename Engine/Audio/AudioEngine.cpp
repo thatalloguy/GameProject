@@ -31,9 +31,6 @@ void Quack::AudioEngine::destroy() {
 }
 
 void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
-
-
-
     // NOTE im unsure if all of this allocation every frame is a good idea :| // UPDATE it was indeed not a good idea ;-;
     // NOTE NOTE we can do all this processing only once if you have something like registering the sound to the audioEngine.
 
@@ -43,7 +40,7 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
     params.direction = IPLVector3{0.0f, 0.0f, 0.8f};
     params.hrtf = bufferInfo.hrtf;
     params.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
-    params.spatialBlend = 0.2f;
+    params.spatialBlend = 1.0f;
     params.peakDelays = nullptr;
 
     iplBinauralEffectApply(bufferInfo.effect, &params, &bufferInfo.inBuffer, &bufferInfo.outBuffer);
@@ -53,7 +50,11 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
 }
 
 unsigned int Quack::AudioEngine::registerSound(Quack::SoundCreateInfo &info) {
-    iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.inBuffer);
+
+    bufferInfo.inBuffer.numChannels = 1;
+    bufferInfo.inBuffer.numSamples = info.length;
+
+    //iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.inBuffer);
     iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.outBuffer);
 
 
@@ -66,7 +67,7 @@ unsigned int Quack::AudioEngine::registerSound(Quack::SoundCreateInfo &info) {
     IPLHRTFSettings hrtfSettings;
     hrtfSettings.type = IPL_HRTFTYPE_DEFAULT;
     hrtfSettings.normType = IPL_HRTFNORMTYPE_NONE;
-    hrtfSettings.volume = 0.2f;
+    hrtfSettings.volume = 1.0f;
 
     hrtfSettings.sofaData = nullptr;
     hrtfSettings.sofaFileName = nullptr;
