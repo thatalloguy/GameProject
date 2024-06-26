@@ -35,6 +35,8 @@ file(GLOB_RECURSE ENGINE_SOURCE
         Engine/Objects/Entity.h
         Engine/Objects/Entity.cpp
 
+        Engine/Audio/AudioEngine.cpp
+        Engine/Audio/AudioEngine.h
 )
 
 
