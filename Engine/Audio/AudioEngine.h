@@ -1,13 +1,14 @@
 //
 // Created by allos on 6/26/2024.
 //
+#pragma once
 
-#ifndef GAME_AUDIOENGINE_H
-#define GAME_AUDIOENGINE_H
 
-#define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
+
+
 #include <phonon.h>
+#include "Math/Vecs.h"
 
 #define FORMAT ma_format_32
 #define CHANNELS 2
@@ -37,6 +38,12 @@ namespace Quack {
         void* _heap;
     };
 
+    struct SoundCreationInfo {
+        const char* filePath = nullptr;
+        bool shouldLoop = false;
+        //todo add  steamaudio options here?
+    };
+
 
     class AudioEngine {
 
@@ -46,7 +53,11 @@ namespace Quack {
         void Init();
         void CleanUp();
 
-        SoundID registerSound(const char* filePath);
+        SoundID registerSound(SoundCreationInfo info);
+
+        void playSound(SoundID id);
+
+        void doSillyDirectionTest();
 
     private:
 
@@ -99,6 +110,3 @@ namespace Quack {
 
 
 }// namespace quack
-
-
-#endif //GAME_AUDIOENGINE_H

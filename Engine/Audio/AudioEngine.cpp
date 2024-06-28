@@ -1,6 +1,10 @@
-
+#pragma once
 #include "AudioEngine.h"
 #include <spdlog/spdlog.h>
+
+
+#define MINIAUDIO_IMPLEMENTATION
+#include <miniaudio.h>
 
 void Quack::AudioEngine::binauralEffectProccessPCMFrames(ma_node *pNode, const float **ppFramesIn, ma_uint32 *pFrameCountIn, float **ppFramesOut, ma_uint32 *pFrameCountOut)  {
     BinauralEffect* binauralEffect = (BinauralEffect*)pNode;
@@ -225,5 +229,80 @@ void Quack::AudioEngine::destroyMiniAudioObjects() {
     ma_sound_uninit(&g_sound);
     destroyBinauralEffect(&g_binauralEffect, nullptr);
     ma_engine_uninit(&engine);
+
+}
+
+Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
+    ma_sound_config soundConfig;
+
+    soundConfig = ma_sound_config_init();
+    soundConfig.pFilePath = info.filePath;
+    soundConfig.flags = MA_SOUND_FLAG_NO_DEFAULT_ATTACHMENT;
+    result = ma_sound_init_ex(&engine, &soundConfig, &g_sound);
+    if (result != MA_SUCCESS) {
+        return -108;
+    }
+
+    // No need for miniaudio to do this, since steam audio does this already
+    ma_sound_set_directional_attenuation_factor(&g_sound, 0);
+
+    ma_sound_set_looping(&g_sound, info.shouldLoop);
+
+
+
+
+    // add binauralEffect
+    BinauralEffectConfig binauralEffectConfig;
+
+    binauralEffectConfig = initBinauralEffectConfig(CHANNELS, iplAudioSettings, iplContext, iplHRTF);
+
+    result = initBinauralEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, g_binauralEffect);
+
+    if (result != MA_SUCCESS) {
+        spdlog::error("Could not initialize binaural Effect: {}", result);
+        return -1;
+    }
+
+    ma_node_attach_output_bus(&g_binauralEffect, 0, ma_engine_get_endpoint(&engine), 0);
+
+    ma_node_attach_output_bus(&g_sound, 0, &g_binauralEffect, 0);
+
+}
+
+void Quack::AudioEngine::playSound(Quack::SoundID id) {
+    ma_sound_start(&g_sound);
+}
+
+void Quack::AudioEngine::doSillyDirectionTest() {
+
+
+    float stepAngle = 0.002f;
+    float angle = 0;
+    float distance = 2;
+
+
+    int i = 0;
+    for (;;) {
+        double x = ma_cosd(angle) - ma_sind(angle);
+        double y = ma_sind(angle) + ma_cosd(angle);
+        ma_vec3f direction;
+
+        ma_sound_set_position(&g_sound, (float)x * distance, 0, (float)y * distance);
+        direction = ma_sound_get_direction_to_listener(&g_sound);
+
+        g_binauralEffect.direction.x = direction.x;
+        g_binauralEffect.direction.y = direction.y;
+        g_binauralEffect.direction.z = direction.z;
+        angle += stepAngle;
+
+        spdlog::info("D {} {} {}", direction.x, direction.y, direction.z);
+
+        ma_sleep(1);
+        if (i > 1000) {
+            break;
+        }
+        i++;
+    };
+
 
 }
