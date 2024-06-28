@@ -41,8 +41,8 @@
 ----
 
 - Audio:
-- - [ ] Loading sound
-- - [ ] Binaural Effect.
+- - [x] Loading sound
+- - [x] Binaural Effect.
 - - [ ] Scene sound simulation.
 - - [ ] Scene sound Materials
 - - [ ] More configs. 
