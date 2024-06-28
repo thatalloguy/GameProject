@@ -155,3 +155,75 @@ void Quack::AudioEngine::destroyBinauralEffect(Quack::BinauralEffect *binauralEf
     ma_free(binauralEffect->_heap, allocationCallbacks);
 
 }
+
+void Quack::AudioEngine::Init() {
+    initializeMiniAudioObjects();
+    initializeSteamAudioObjects();
+}
+
+void Quack::AudioEngine::CleanUp() {
+    destroySteamAudioObjects();
+    destroyMiniAudioObjects();
+}
+
+void Quack::AudioEngine::initializeMiniAudioObjects() {
+    // load engine config
+    engineConfig = ma_engine_config_init();
+    engineConfig.channels = CHANNELS;
+    engineConfig.sampleRate = SAMPLE_RATE;
+    engineConfig.periodSizeInFrames = 256;
+
+    result = ma_engine_init(&engineConfig, &engine);
+    if (result != MA_SUCCESS) {
+        spdlog::info("Miniaudio initialization error: {}", ma_result_description(result));
+        exit(-105);
+    }
+
+
+}
+
+void Quack::AudioEngine::initializeSteamAudioObjects() {
+    // Steam audio initialization.
+    MA_ZERO_OBJECT(&iplAudioSettings);
+    iplAudioSettings.samplingRate = ma_engine_get_sample_rate(&engine);
+
+    iplAudioSettings.frameSize = engineConfig.periodSizeInFrames;
+
+
+
+    iplContextSettings.version = STEAMAUDIO_VERSION;
+    auto success = iplContextCreate(&iplContextSettings, &iplContext);
+    if (success != IPL_STATUS_SUCCESS) {
+        spdlog::info("steamaudio initialization error: {}",success);
+        exit(-106);
+    }
+
+
+    //HRTF
+    MA_ZERO_OBJECT(&iplhrtfSettings);
+    iplhrtfSettings.type = IPL_HRTFTYPE_DEFAULT;
+    iplhrtfSettings.volume = 1.0f;
+
+    success = iplHRTFCreate(iplContext, &iplAudioSettings, &iplhrtfSettings, &iplHRTF);
+
+    if (success != IPL_STATUS_SUCCESS) {
+        spdlog::info("steamaudio initialization error: {}", success);
+        exit(-107);
+    }
+}
+
+void Quack::AudioEngine::destroySteamAudioObjects() {
+
+
+
+    iplContextRelease(&iplContext);
+    iplHRTFRelease(&iplHRTF);
+}
+
+void Quack::AudioEngine::destroyMiniAudioObjects() {
+
+    ma_sound_uninit(&g_sound);
+    destroyBinauralEffect(&g_binauralEffect, nullptr);
+    ma_engine_uninit(&engine);
+
+}

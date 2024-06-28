@@ -50,6 +50,16 @@ namespace Quack {
 
     private:
 
+        // lifetime functions
+        void initializeSteamAudioObjects();
+        void initializeMiniAudioObjects();
+
+        void destroySteamAudioObjects();
+        void destroyMiniAudioObjects();
+
+
+
+        // helper functions
         static void binauralEffectProccessPCMFrames(ma_node* pNode, const float** ppFramesIn, ma_uint32* pFrameCountIn, float** ppFramesOut, ma_uint32* pFrameCountOut);
 
         BinauralEffectConfig initBinauralEffectConfig(ma_uint32 channelsIn, IPLAudioSettings audioSettings, IPLContext context, IPLHRTF hrtf);
@@ -66,11 +76,23 @@ namespace Quack {
         };
 
 
-
-
-
         // Dummy
         ma_sound g_sound;
+        BinauralEffect g_binauralEffect;
+
+        //MiniAudio Objects
+        ma_result result;
+        ma_engine engine;
+        ma_engine_config    engineConfig;
+
+        // SteamAudio objects
+        IPLAudioSettings    iplAudioSettings;
+        IPLContextSettings  iplContextSettings{};
+        IPLContext          iplContext = nullptr;
+        IPLHRTFSettings     iplhrtfSettings;
+        IPLHRTF             iplHRTF;
+
+
 
     };
 

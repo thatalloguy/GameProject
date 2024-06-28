@@ -19,57 +19,7 @@ int main() {
 
 */
 
-    ma_sound g_sound;
 
-    BinauralEffect g_binauralEffect {
-        .direction = {0, 0, 0}
-    };
-    ma_result result;
-    ma_engine engine;
-    ma_engine_config    engineConfig;
-    IPLAudioSettings    iplAudioSettings;
-    IPLContextSettings  iplContextSettings{};
-    IPLContext          iplContext = nullptr;
-    IPLHRTFSettings     iplhrtfSettings;
-    IPLHRTF             iplHRTF;
-
-
-    // load engine config
-    engineConfig = ma_engine_config_init();
-    engineConfig.channels = CHANNELS;
-    engineConfig.sampleRate = SAMPLE_RATE;
-    engineConfig.periodSizeInFrames = 256;
-
-    result = ma_engine_init(&engineConfig, &engine);
-    if (result != MA_SUCCESS) {
-        return -105;
-    }
-
-    // Steam audio initialization.
-    MA_ZERO_OBJECT(&iplAudioSettings);
-    iplAudioSettings.samplingRate = ma_engine_get_sample_rate(&engine);
-
-    iplAudioSettings.frameSize = engineConfig.periodSizeInFrames;
-
-
-
-    iplContextSettings.version = STEAMAUDIO_VERSION;
-    auto success = iplContextCreate(&iplContextSettings, &iplContext);
-    if (success != IPL_STATUS_SUCCESS) {
-        return -106;
-    }
-
-
-    //HRTF
-    MA_ZERO_OBJECT(&iplhrtfSettings);
-    iplhrtfSettings.type = IPL_HRTFTYPE_DEFAULT;
-    iplhrtfSettings.volume = 1.0f;
-
-    success = iplHRTFCreate(iplContext, &iplAudioSettings, &iplhrtfSettings, &iplHRTF);
-
-    if (success != IPL_STATUS_SUCCESS) {
-        return -107;
-    }
 
     // Sound Effect Config
     ma_sound_config soundConfig;
