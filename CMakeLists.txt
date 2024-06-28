@@ -63,8 +63,6 @@ add_subdirectory("Thirdparty/glfw")
 add_subdirectory("Thirdparty/spdlog")
 add_subdirectory("Thirdparty/glad")
 add_subdirectory("Thirdparty/tweeny")
-add_subdirectory("Thirdparty/SDL")
-add_subdirectory("Thirdparty/SDL_mixer")
 
 
 find_package(Vulkan REQUIRED)
@@ -124,17 +122,14 @@ target_link_libraries(Game PRIVATE GPUOpen::VulkanMemoryAllocator)
 target_link_libraries(Game PRIVATE spdlog)
 target_link_libraries(Game PRIVATE fastgltf)
 target_link_libraries(Game PRIVATE glfw Vulkan::Vulkan)
-target_link_libraries(Game PRIVATE SDL3::SDL3)
-target_link_libraries(Game PRIVATE SDL3_mixer::SDL3_mixer)
 
 #TODO make this work work on every platform
 if(${MSVC})
+    # NOTE THIS DOENST WORK ON RELEASE TARGET ;-;
     target_link_libraries(Game PUBLIC "Thirdparty/steamaudio/lib/windows-x64/phonon")
 endif()
 
 target_include_directories(Game PRIVATE "Thirdparty/imgui")
 target_include_directories(Game PRIVATE "Thirdparty/stb")
 target_include_directories(Game PRIVATE "Thirdparty/glm")
-target_include_directories(Game PRIVATE "Thirdparty/SDL/include/")
-target_include_directories(Game PRIVATE "Thirdparty/SDL_mixer/include/")
 target_include_directories(Game PUBLIC  ${JoltPhysics_SOURCE_DIR}/..)

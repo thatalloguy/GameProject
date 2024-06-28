@@ -35,7 +35,10 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
 
 
     // Should we deinterleave first? would that even work?
-    bufferInfo.inBuffer.data =  { (float**) in.data };
+    bufferInfo.inBuffer.numChannels = 0;
+    bufferInfo.inBuffer.numSamples = in.length;
+
+    iplAudioBufferDeinterleave(_context, (float *) in.data,  &bufferInfo.inBuffer);
 
     IPLBinauralEffectParams  params{};
 
@@ -46,7 +49,7 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
     params.spatialBlend = 1.0f;
     params.peakDelays = nullptr;
 
-    iplBinauralEffectApply(bufferInfo.effect, &params, &bufferInfo.inBuffer, &bufferInfo.outBuffer);
+    //iplBinauralEffectApply(bufferInfo.effect, &params, &bufferInfo.inBuffer, &bufferInfo.outBuffer);
 
 
     in.data = *bufferInfo.outBuffer.data;
@@ -54,11 +57,10 @@ void Quack::AudioEngine::processEffect(unsigned int soundId, AudioBuffer& in) {
 
 unsigned int Quack::AudioEngine::registerSound(Quack::SoundCreateInfo &info) {
 
-    bufferInfo.inBuffer.numChannels = 1;
-    bufferInfo.inBuffer.numSamples = info.length;
+
 
     //iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.inBuffer);
-    iplAudioBufferAllocate(_context, info.channel, info.length, &bufferInfo.outBuffer);
+    iplAudioBufferAllocate(_context, 2, info.length, &bufferInfo.outBuffer);
 
 
     //iplAudioBufferDeinterleave(_context, in.data, &outBuffer);
