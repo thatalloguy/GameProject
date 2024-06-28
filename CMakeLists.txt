@@ -103,6 +103,8 @@ include_directories("Thirdparty/glfw/include")
 include_directories("Thirdparty/glad/include")
 include_directories("Thirdparty/spdlog/include")
 include_directories("Thirdparty/steamaudio/include")
+include_directories("Thirdparty/Miniaudio/")
+
 
 
 
