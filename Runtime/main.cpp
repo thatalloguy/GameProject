@@ -43,6 +43,7 @@ static void binauralEffectProccessPCMFrames(ma_node* pNode, const float** ppFram
     binauralEffectParams.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
     binauralEffectParams.spatialBlend = 1.0f;
     binauralEffectParams.hrtf = binauralEffect->HRTF;
+    binauralEffectParams.peakDelays = nullptr;
 
     inputBufferDesc.numChannels = (IPLint32) ma_node_get_input_channels(pNode, 0);
 
@@ -111,7 +112,7 @@ BinauralEffectConfig initBinauralEffectConfig(ma_uint32 channelsIn, IPLAudioSett
     return config;
 }
 
-ma_result initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, BinauralEffect* binauralEffect) {
+ma_result initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, BinauralEffect& binauralEffect) {
 
     ma_result result;
     ma_node_config baseConfig;
@@ -122,7 +123,7 @@ ma_result initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfi
 
     MA_ZERO_OBJECT(&binauralEffect);
 
-    if (binauralEffect == NULL || config == NULL ||config->channelsIn < 1 || config->channelsIn > 2) {
+    if (config == NULL || !(config->channelsIn == 2 || config->channelsIn == 1)) {
         return MA_INVALID_ARGS;
     }
 
@@ -134,44 +135,61 @@ ma_result initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfi
     baseConfig.pInputChannels = &channelsIn;
     baseConfig.pOutputChannels = &channelsOut;
 
-    result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &binauralEffect->baseNode);
+
+    binauralEffect.audioSettings = config->audioSettings;
+    binauralEffect.context       = config->context;
+    binauralEffect.HRTF          = config->HRTF;
+
+    MA_ZERO_OBJECT(&iplBinauralEffectSettings);
+    iplBinauralEffectSettings.hrtf = binauralEffect.HRTF;
+
+    result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &binauralEffect.baseNode);
     if (result != MA_SUCCESS) {
         return result;
     }
 
-    binauralEffect->audioSettings = config->audioSettings;
-    binauralEffect->context       = config->context;
-    binauralEffect->HRTF          = config->HRTF;
 
-    MA_ZERO_OBJECT(&iplBinauralEffectSettings);
-    iplBinauralEffectSettings.hrtf = binauralEffect->HRTF;
 
-    auto success = iplBinauralEffectCreate(binauralEffect->context, &binauralEffect->audioSettings, &iplBinauralEffectSettings, &binauralEffect->iplEffect);
+    auto success = iplBinauralEffectCreate(binauralEffect.context, &binauralEffect.audioSettings, &iplBinauralEffectSettings, &binauralEffect.iplEffect);
     if (success != IPL_STATUS_SUCCESS) {
         return MA_INVALID_DATA;
     }
 
     heapSizeInBytes = 0;
 
-    heapSizeInBytes += sizeof(float) * channelsOut * binauralEffect->audioSettings.frameSize; // out buffer
-    heapSizeInBytes += sizeof(float) * channelsIn  * binauralEffect->audioSettings.frameSize; // in buffer
+    heapSizeInBytes += sizeof(float) * channelsOut * binauralEffect.audioSettings.frameSize; // out buffer
+    heapSizeInBytes += sizeof(float) * channelsIn  * binauralEffect.audioSettings.frameSize; // in buffer
 
-    binauralEffect->_heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
-    if (binauralEffect->_heap == NULL) {
-        iplBinauralEffectRelease(&binauralEffect->iplEffect);
-        ma_node_uninit(&binauralEffect->baseNode, allocationCallbacks);
+    binauralEffect._heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
+    if (binauralEffect._heap == NULL) {
+        iplBinauralEffectRelease(&binauralEffect.iplEffect);
+        ma_node_uninit(&binauralEffect.baseNode, allocationCallbacks);
         return MA_OUT_OF_MEMORY;
     }
 
-    binauralEffect->outBuffer[0] = (float*)binauralEffect->_heap;
-    binauralEffect->outBuffer[1] = (float*)ma_offset_ptr(binauralEffect->_heap, sizeof(float) * binauralEffect->audioSettings.frameSize);
+    binauralEffect.outBuffer[0] = (float*)binauralEffect._heap;
+    binauralEffect.outBuffer[1] = (float*)ma_offset_ptr(binauralEffect._heap, sizeof(float) * binauralEffect.audioSettings.frameSize);
 
     ma_uint32 iChannelIn;
     for (iChannelIn = 0; iChannelIn < channelsIn; iChannelIn += 1) {
-        binauralEffect->inBuffer[iChannelIn] = (float*)ma_offset_ptr(binauralEffect->_heap, sizeof(float) * binauralEffect->audioSettings.frameSize * (channelsOut + iChannelIn));
+        binauralEffect.inBuffer[iChannelIn] = (float*)ma_offset_ptr(binauralEffect._heap, sizeof(float) * binauralEffect.audioSettings.frameSize * (channelsOut + iChannelIn));
     }
 
     return MA_SUCCESS;
+}
+
+
+void destroyBinauralEffect(BinauralEffect* binauralEffect, const ma_allocation_callbacks * allocationCallbacks) {
+    if (binauralEffect == NULL) {
+        spdlog::error("CPP IS TWEAKING IS SWEAR TO GOD");
+        return;
+    }
+
+    ma_node_uninit(&binauralEffect->baseNode, allocationCallbacks);
+
+    iplBinauralEffectRelease(&binauralEffect->iplEffect);
+
+    ma_free(binauralEffect->_heap, allocationCallbacks);
 }
 
 int main() {
@@ -188,17 +206,18 @@ int main() {
 */
 
     ma_sound g_sound;
-    BinauralEffect g_binauralEffect;
 
+    BinauralEffect g_binauralEffect {
+        .direction = {0, 0, 0}
+    };
     ma_result result;
     ma_engine engine;
     ma_engine_config    engineConfig;
     IPLAudioSettings    iplAudioSettings;
-    IPLContextSettings  iplContextSettings;
-    IPLContext          iplContext;
+    IPLContextSettings  iplContextSettings{};
+    IPLContext          iplContext = nullptr;
     IPLHRTFSettings     iplhrtfSettings;
     IPLHRTF             iplHRTF;
-
 
 
     // load engine config
@@ -218,7 +237,7 @@ int main() {
 
     iplAudioSettings.frameSize = engineConfig.periodSizeInFrames;
 
-    MA_ZERO_OBJECT(&iplContext);
+
 
     iplContextSettings.version = STEAMAUDIO_VERSION;
     auto success = iplContextCreate(&iplContextSettings, &iplContext);
@@ -230,6 +249,7 @@ int main() {
     //HRTF
     MA_ZERO_OBJECT(&iplhrtfSettings);
     iplhrtfSettings.type = IPL_HRTFTYPE_DEFAULT;
+    iplhrtfSettings.volume = 1.0f;
 
     success = iplHRTFCreate(iplContext, &iplAudioSettings, &iplhrtfSettings, &iplHRTF);
 
@@ -241,7 +261,7 @@ int main() {
     ma_sound_config soundConfig;
 
     soundConfig = ma_sound_config_init();
-    soundConfig.pFilePath = "../Assets/Audio/bluebonnet_in_b_major_looped.wav";
+    soundConfig.pFilePath = "../Assets/Audio/bluebonnet_in_b_major_looped.mp3";
     soundConfig.flags = MA_SOUND_FLAG_NO_DEFAULT_ATTACHMENT;
     result = ma_sound_init_ex(&engine, &soundConfig, &g_sound);
     if (result != MA_SUCCESS) {
@@ -259,26 +279,59 @@ int main() {
 
     binauralEffectConfig = initBinauralEffectConfig(CHANNELS, iplAudioSettings, iplContext, iplHRTF);
 
-    result = initBinauralEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, &g_binauralEffect);
+    result = initBinauralEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, g_binauralEffect);
 
     if (result != MA_SUCCESS) {
-        spdlog::error("Could not initialize binaural Effect");
+        spdlog::error("Could not initialize binaural Effect: {}", result);
         return -1;
     }
 
     ma_node_attach_output_bus(&g_binauralEffect, 0, ma_engine_get_endpoint(&engine), 0);
 
     ma_node_attach_output_bus(&g_sound, 0, &g_binauralEffect, 0);
-    ma_sound_start(&g_sound);
+    result = ma_sound_start(&g_sound);
 
-    printf("Press Enter to quit..\n");
-    getchar();
+    if (result != MA_SUCCESS) {
+        spdlog::info("Cant start :(");
+        return result;
+    }
+
+    float stepAngle = 0.002f;
+    float angle = 0;
+    float distance = 2;
+
+
+    int i = 0;
+    for (;;) {
+        double x = ma_cosd(angle) - ma_sind(angle);
+        double y = ma_sind(angle) + ma_cosd(angle);
+        ma_vec3f direction;
+
+        ma_sound_set_position(&g_sound, (float)x * distance, 0, (float)y * distance);
+        direction = ma_sound_get_direction_to_listener(&g_sound);
+
+        g_binauralEffect.direction.x = direction.x;
+        g_binauralEffect.direction.y = direction.y;
+        g_binauralEffect.direction.z = direction.z;
+        angle += stepAngle;
+
+        spdlog::info("D {} {} {}", direction.x, direction.y, direction.z);
+
+        ma_sleep(1);
+        if (i > 1000) {
+            break;
+        }
+        i++;
+    };
+
 
 
     ma_sound_uninit(&g_sound);
-
+    destroyBinauralEffect(&g_binauralEffect, nullptr);
     ma_engine_uninit(&engine);
 
+    iplContextRelease(&iplContext);
+    iplHRTFRelease(&iplHRTF);
 
 
     return 0;
