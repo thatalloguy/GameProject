@@ -31,8 +31,10 @@ namespace Quack {
         IPLAudioSettings  audioSettings;
         IPLContext context;
         IPLHRTF HRTF;
-        IPLBinauralEffect  iplEffect;
+        IPLBinauralEffect binauralEffect;
+        IPLDirectEffect  directEffect;
         Quack::Math::Vector3 direction;
+        Quack::Math::Vector3 soundPosition;
         float* inBuffer[2];
         float* outBuffer[2];
         void* _heap;

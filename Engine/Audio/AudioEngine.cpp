@@ -49,7 +49,7 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
         inputBufferDesc.data = soundEffect->inBuffer;
         inputBufferDesc.numSamples = (IPLint32) framesToProcessThisIteration;
         // spannend
-        iplBinauralEffectApply(soundEffect->iplEffect, &binauralEffectParams, &inputBufferDesc, &outputBufferDesc);
+        iplBinauralEffectApply(soundEffect->binauralEffect, &binauralEffectParams, &inputBufferDesc, &outputBufferDesc);
 
         ma_interleave_pcm_frames(
                 ma_format_f32,
@@ -85,7 +85,7 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
     ma_node_config baseConfig;
     ma_uint32 channelsIn;
     ma_uint32 channelsOut;
-    IPLBinauralEffectSettings iplBinauralEffectSettings;
+    IPLBinauralEffectSettings  effectSettings{};
     size_t heapSizeInBytes;
 
     MA_ZERO_OBJECT(&soundEffect);
@@ -107,8 +107,10 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
     soundEffect.context       = config->context;
     soundEffect.HRTF          = config->HRTF;
 
-    MA_ZERO_OBJECT(&iplBinauralEffectSettings);
-    iplBinauralEffectSettings.hrtf = soundEffect.HRTF;
+
+    //Initialize Binaural effect
+    effectSettings.hrtf = soundEffect.HRTF;
+
 
     result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &soundEffect.baseNode);
     if (result != MA_SUCCESS) {
@@ -117,7 +119,7 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
 
 
 
-    auto success = iplBinauralEffectCreate(soundEffect.context, &soundEffect.audioSettings, &iplBinauralEffectSettings, &soundEffect.iplEffect);
+    auto success = iplBinauralEffectCreate(soundEffect.context, &soundEffect.audioSettings, &effectSettings, &soundEffect.binauralEffect);
     if (success != IPL_STATUS_SUCCESS) {
         return MA_INVALID_DATA;
     }
@@ -129,7 +131,7 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
 
     soundEffect._heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
     if (soundEffect._heap == NULL) {
-        iplBinauralEffectRelease(&soundEffect.iplEffect);
+        iplBinauralEffectRelease(&soundEffect.binauralEffect);
         ma_node_uninit(&soundEffect.baseNode, allocationCallbacks);
         return MA_OUT_OF_MEMORY;
     }
@@ -154,7 +156,7 @@ void Quack::AudioEngine::destroySoundEffect(SoundEffect *binauralEffect,
 
     ma_node_uninit(&binauralEffect->baseNode, allocationCallbacks);
 
-    iplBinauralEffectRelease(&binauralEffect->iplEffect);
+    iplBinauralEffectRelease(&binauralEffect->binauralEffect);
 
     ma_free(binauralEffect->_heap, allocationCallbacks);
 
