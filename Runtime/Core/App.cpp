@@ -13,6 +13,7 @@
 #include "FishingManager.h"
 #include "../Inventory/Inventory.h"
 #include "../Inventory/UI/BookUI.h"
+#include "Audio/AudioEngine.h"
 
 
 // Core Game Systems
@@ -21,7 +22,7 @@ namespace Game {
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
-
+    Quack::AudioEngine* audioEngine;
 
     FishingManager* fishingManager;
     BookUI* bookUI;
@@ -114,8 +115,8 @@ void App::init() {
     };
 
     Quack::EntityCreationInfo Chest_info {
-            .position = {2, -2, 2},
-            .size = {4, 4.0f, 4},
+            .position = {20, -2, 20},
+            .size = {1, 1.0f, 1},
             .model = 5,
             .isPhysical = false,
 
@@ -129,6 +130,16 @@ void App::init() {
 
     Game::fishingManager = new FishingManager(Game::renderer, *Level::player, *Game::physicsEngine);
     Game::bookUI = new BookUI(Game::renderer);
+
+    Game::audioEngine = new Quack::AudioEngine();
+
+    Game::audioEngine->Init();
+
+    Game::audioEngine->registerSound({"../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
+
+
+
+
 
 }
 
@@ -149,6 +160,11 @@ void App::run() {
 
     bool toggle = false;
     bool booktoggle = false;
+
+    Game::audioEngine->playSound(1);
+    Game::audioEngine->g_soundEffect.soundPosition = Level::chest->position;
+
+
 
     while (!window->shouldShutdown()) {
         Game::renderer.updateScene();
@@ -187,6 +203,8 @@ void App::run() {
 
         Game::renderer.Run();
 
+        Game::audioEngine->g_soundEffect.playerPosition = Level::player->position;
+
         window->update();
 
         //Update the delta time
@@ -194,11 +212,17 @@ void App::run() {
         Game::deltaTime = (float) std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
         last = now;
 
+
+        auto dir = glm::normalize(glm::vec3{Level::player->position.x - Game::audioEngine->g_soundEffect.soundPosition.x, Level::player->position.y - Game::audioEngine->g_soundEffect.soundPosition.y, Level::player->position.z - Game::audioEngine->g_soundEffect.soundPosition.z});
+        Game::audioEngine->g_soundEffect.direction.x = dir.x;
+        Game::audioEngine->g_soundEffect.direction.y = dir.y;
+        Game::audioEngine->g_soundEffect.direction.z = dir.z;
     }
 
 }
 
 void App::cleanup() {
+    Game::audioEngine->CleanUp();
     delete Level::player;
     delete Level::chest;
     delete Level::floor;
@@ -206,6 +230,7 @@ void App::cleanup() {
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
     delete Game::bookUI;
+    delete Game::audioEngine;
 
 
 

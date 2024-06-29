@@ -7,7 +7,7 @@
 
 
 int main() {
-/*
+
     App application{};
 
 
@@ -17,21 +17,6 @@ int main() {
 
     application.cleanup();
 
-*/
-
-
-    Quack::AudioEngine audioEngine;
-
-    audioEngine.Init();
-
-    audioEngine.registerSound({"../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
-
-    audioEngine.playSound(1);
-
-    audioEngine.doSillyDirectionTest();
-
-
-    audioEngine.CleanUp();
 
     return 0;
 }

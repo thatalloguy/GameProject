@@ -33,8 +33,9 @@ namespace Quack {
         IPLHRTF HRTF;
         IPLBinauralEffect binauralEffect;
         IPLDirectEffect  directEffect;
-        Quack::Math::Vector3 direction;
+        Quack::Math::Vector3 direction{1, 1, 1};
         Quack::Math::Vector3 soundPosition{1, 0, 0};
+        Quack::Math::Vector3 playerPosition{1, 0, 0};
         float* inBuffer[2];
         float* outBuffer[2];
         void* _heap;
@@ -61,6 +62,7 @@ namespace Quack {
 
         void doSillyDirectionTest();
 
+        SoundEffect g_soundEffect;
     private:
 
         // lifetime functions
@@ -89,7 +91,6 @@ namespace Quack {
         };
 
 
-        SoundEffect g_soundEffect;
         // Dummy
         ma_sound g_sound;
 
