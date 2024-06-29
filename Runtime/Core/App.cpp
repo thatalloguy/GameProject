@@ -213,10 +213,14 @@ void App::run() {
         last = now;
 
 
-        auto dir = glm::normalize(glm::vec3{Level::player->position.x - Game::audioEngine->g_soundEffect.soundPosition.x, Level::player->position.y - Game::audioEngine->g_soundEffect.soundPosition.y, Level::player->position.z - Game::audioEngine->g_soundEffect.soundPosition.z});
+        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Game::audioEngine->g_soundEffect.soundPosition.x - Level::player->position.x  , Level::player->position.y - Game::audioEngine->g_soundEffect.soundPosition.y, Level::player->position.z - Game::audioEngine->g_soundEffect.soundPosition.z, 0)));
+
+
         Game::audioEngine->g_soundEffect.direction.x = dir.x;
         Game::audioEngine->g_soundEffect.direction.y = dir.y;
         Game::audioEngine->g_soundEffect.direction.z = dir.z;
+
+
     }
 
 }

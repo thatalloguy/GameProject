@@ -29,7 +29,7 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
     model.type = IPL_DISTANCEATTENUATIONTYPE_DEFAULT;
     directEffectParams.flags = IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION;
     directEffectParams.distanceAttenuation = iplDistanceAttenuationCalculate(soundEffect->context, IPLVector3{soundEffect->soundPosition.x, soundEffect->soundPosition.y, soundEffect->soundPosition.z}, IPLVector3{soundEffect->playerPosition.x, soundEffect->playerPosition.y, soundEffect->playerPosition.z}, &model);
-    spdlog::info("Ds {}", directEffectParams.distanceAttenuation);
+    spdlog::info("D {} {} {}", binauralEffectParams.direction.x, binauralEffectParams.direction.y, binauralEffectParams.direction.z);
 
     inputBufferDesc.numChannels = (IPLint32) ma_node_get_input_channels(pNode, 0);
 
