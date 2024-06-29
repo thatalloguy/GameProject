@@ -43,6 +43,7 @@
 - Audio:
 - - [x] Loading sound
 - - [x] Binaural Effect.
+- - [x] Spatial effect.
 - - [ ] Scene sound simulation.
 - - [ ] Scene sound Materials
 - - [ ] More configs. 
