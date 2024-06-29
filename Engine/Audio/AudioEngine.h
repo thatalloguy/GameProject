@@ -34,7 +34,7 @@ namespace Quack {
         IPLBinauralEffect binauralEffect;
         IPLDirectEffect  directEffect;
         Quack::Math::Vector3 direction;
-        Quack::Math::Vector3 soundPosition;
+        Quack::Math::Vector3 soundPosition{1, 0, 0};
         float* inBuffer[2];
         float* outBuffer[2];
         void* _heap;
@@ -89,9 +89,9 @@ namespace Quack {
         };
 
 
+        SoundEffect g_soundEffect;
         // Dummy
         ma_sound g_sound;
-        SoundEffect g_soundEffect;
 
         //MiniAudio Objects
         ma_result result;

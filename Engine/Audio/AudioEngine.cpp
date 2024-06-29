@@ -22,6 +22,15 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
     binauralEffectParams.hrtf = soundEffect->HRTF;
     binauralEffectParams.peakDelays = nullptr;
 
+
+    IPLDirectEffectParams directEffectParams{};
+    IPLDistanceAttenuationModel model{};
+
+    model.type = IPL_DISTANCEATTENUATIONTYPE_DEFAULT;
+    directEffectParams.flags = IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION;
+    directEffectParams.distanceAttenuation = iplDistanceAttenuationCalculate(soundEffect->context, IPLVector3{soundEffect->soundPosition.x, soundEffect->soundPosition.y, soundEffect->soundPosition.z}, IPLVector3{0, 0, 0}, &model);
+    spdlog::info("Ds {}", directEffectParams.distanceAttenuation);
+
     inputBufferDesc.numChannels = (IPLint32) ma_node_get_input_channels(pNode, 0);
 
     //use a loop in case the deinterleaved buffers are too small
@@ -49,7 +58,13 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
         inputBufferDesc.data = soundEffect->inBuffer;
         inputBufferDesc.numSamples = (IPLint32) framesToProcessThisIteration;
         // spannend
+
+
+
         iplBinauralEffectApply(soundEffect->binauralEffect, &binauralEffectParams, &inputBufferDesc, &outputBufferDesc);
+
+        iplDirectEffectApply(soundEffect->directEffect, &directEffectParams, &outputBufferDesc, &outputBufferDesc);
+        // then apply the direct efffect?
 
         ma_interleave_pcm_frames(
                 ma_format_f32,
@@ -85,8 +100,11 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
     ma_node_config baseConfig;
     ma_uint32 channelsIn;
     ma_uint32 channelsOut;
-    IPLBinauralEffectSettings  effectSettings{};
     size_t heapSizeInBytes;
+
+    IPLBinauralEffectSettings  effectSettings{};
+    IPLDirectEffectSettings  directEffectSettings{};
+
 
     MA_ZERO_OBJECT(&soundEffect);
 
@@ -112,6 +130,8 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
     effectSettings.hrtf = soundEffect.HRTF;
 
 
+    directEffectSettings.numChannels = 2;
+
     result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &soundEffect.baseNode);
     if (result != MA_SUCCESS) {
         return result;
@@ -124,6 +144,11 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
         return MA_INVALID_DATA;
     }
 
+    success = iplDirectEffectCreate(soundEffect.context, &soundEffect.audioSettings, &directEffectSettings, &soundEffect.directEffect);
+    if (success != IPL_STATUS_SUCCESS) {
+        return MA_INVALID_DATA;
+    }
+
     heapSizeInBytes = 0;
 
     heapSizeInBytes += sizeof(float) * channelsOut * soundEffect.audioSettings.frameSize; // out buffer
@@ -132,6 +157,7 @@ ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const So
     soundEffect._heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
     if (soundEffect._heap == NULL) {
         iplBinauralEffectRelease(&soundEffect.binauralEffect);
+        iplDirectEffectRelease(&soundEffect.directEffect);
         ma_node_uninit(&soundEffect.baseNode, allocationCallbacks);
         return MA_OUT_OF_MEMORY;
     }
@@ -157,6 +183,7 @@ void Quack::AudioEngine::destroySoundEffect(SoundEffect *binauralEffect,
     ma_node_uninit(&binauralEffect->baseNode, allocationCallbacks);
 
     iplBinauralEffectRelease(&binauralEffect->binauralEffect);
+    iplDirectEffectRelease(&binauralEffect->directEffect);
 
     ma_free(binauralEffect->_heap, allocationCallbacks);
 
@@ -295,6 +322,8 @@ void Quack::AudioEngine::doSillyDirectionTest() {
         g_soundEffect.direction.x = direction.x;
         g_soundEffect.direction.y = direction.y;
         g_soundEffect.direction.z = direction.z;
+
+        g_soundEffect.soundPosition.x += 0.02f;
         angle += stepAngle;
 
         spdlog::info("D {} {} {}", direction.x, direction.y, direction.z);
