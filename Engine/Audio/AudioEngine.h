@@ -18,7 +18,7 @@ namespace Quack {
 
     typedef unsigned int SoundID;
 
-    struct BinauralEffectConfig {
+    struct SoundEffectConfig {
         ma_node_config nodeConfig;
         ma_uint32 channelsIn;
         IPLAudioSettings  audioSettings;
@@ -26,7 +26,7 @@ namespace Quack {
         IPLHRTF HRTF;
     };
 
-    struct BinauralEffect {
+    struct SoundEffect {
         ma_node_base baseNode;
         IPLAudioSettings  audioSettings;
         IPLContext context;
@@ -71,15 +71,15 @@ namespace Quack {
 
 
         // helper functions
-        static void binauralEffectProccessPCMFrames(ma_node* pNode, const float** ppFramesIn, ma_uint32* pFrameCountIn, float** ppFramesOut, ma_uint32* pFrameCountOut);
+        static void soundEffectProccessPCMFrames(ma_node* pNode, const float** ppFramesIn, ma_uint32* pFrameCountIn, float** ppFramesOut, ma_uint32* pFrameCountOut);
 
-        BinauralEffectConfig initBinauralEffectConfig(ma_uint32 channelsIn, IPLAudioSettings audioSettings, IPLContext context, IPLHRTF hrtf);
-        ma_result initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, BinauralEffect& binauralEffect);
+        SoundEffectConfig initSoundEffectConfig(ma_uint32 channelsIn, IPLAudioSettings audioSettings, IPLContext context, IPLHRTF hrtf);
+        ma_result initSoundEffect(ma_node_graph* nodeGraph, const SoundEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, SoundEffect& soundEffect);
 
-        void destroyBinauralEffect(BinauralEffect* binauralEffect, const ma_allocation_callbacks * allocationCallbacks);
+        void destroySoundEffect(SoundEffect* binauralEffect, const ma_allocation_callbacks * allocationCallbacks);
 
-        ma_node_vtable binauralNodeVTable {
-            AudioEngine::binauralEffectProccessPCMFrames,
+        ma_node_vtable soundNodeVTable {
+            AudioEngine::soundEffectProccessPCMFrames,
             NULL,
             1,
             1,
@@ -89,7 +89,7 @@ namespace Quack {
 
         // Dummy
         ma_sound g_sound;
-        BinauralEffect g_binauralEffect;
+        SoundEffect g_soundEffect;
 
         //MiniAudio Objects
         ma_result result;

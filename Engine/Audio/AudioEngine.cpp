@@ -6,56 +6,56 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
 
-void Quack::AudioEngine::binauralEffectProccessPCMFrames(ma_node *pNode, const float **ppFramesIn, ma_uint32 *pFrameCountIn, float **ppFramesOut, ma_uint32 *pFrameCountOut)  {
-    BinauralEffect* binauralEffect = (BinauralEffect*)pNode;
+void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const float **ppFramesIn, ma_uint32 *pFrameCountIn, float **ppFramesOut, ma_uint32 *pFrameCountOut)  {
+    SoundEffect* soundEffect = (SoundEffect*)pNode;
     IPLBinauralEffectParams  binauralEffectParams;
     IPLAudioBuffer inputBufferDesc;
     IPLAudioBuffer outputBufferDesc;
     ma_uint32 totalFramesToProcess = *pFrameCountOut;
     ma_uint32 totalFramesProcessed = 0;
 
-    binauralEffectParams.direction.x = binauralEffect->direction.x;
-    binauralEffectParams.direction.y = binauralEffect->direction.y;
-    binauralEffectParams.direction.z = binauralEffect->direction.z;
+    binauralEffectParams.direction.x = soundEffect->direction.x;
+    binauralEffectParams.direction.y = soundEffect->direction.y;
+    binauralEffectParams.direction.z = soundEffect->direction.z;
     binauralEffectParams.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
     binauralEffectParams.spatialBlend = 1.0f;
-    binauralEffectParams.hrtf = binauralEffect->HRTF;
+    binauralEffectParams.hrtf = soundEffect->HRTF;
     binauralEffectParams.peakDelays = nullptr;
 
     inputBufferDesc.numChannels = (IPLint32) ma_node_get_input_channels(pNode, 0);
 
     //use a loop in case the deinterleaved buffers are too small
-    outputBufferDesc.numSamples = binauralEffect->audioSettings.frameSize;
+    outputBufferDesc.numSamples = soundEffect->audioSettings.frameSize;
     outputBufferDesc.numChannels = 2;
-    outputBufferDesc.data = binauralEffect->outBuffer;
+    outputBufferDesc.data = soundEffect->outBuffer;
 
     while (totalFramesProcessed < totalFramesToProcess) {
 
         ma_uint32  framesToProcessThisIteration = totalFramesToProcess - totalFramesProcessed;
-        if  (framesToProcessThisIteration > (ma_uint32)binauralEffect->audioSettings.frameSize) {
-            framesToProcessThisIteration = (ma_uint32)binauralEffect->audioSettings.frameSize;
+        if  (framesToProcessThisIteration > (ma_uint32)soundEffect->audioSettings.frameSize) {
+            framesToProcessThisIteration = (ma_uint32)soundEffect->audioSettings.frameSize;
         }
 
         if (inputBufferDesc.numChannels == 1) {
             // no need for deinterleaving since its a mono stream.
-            binauralEffect->inBuffer[0] = (float*) ma_offset_pcm_frames_const_ptr_f32(ppFramesIn[0], totalFramesProcessed, 1);
+            soundEffect->inBuffer[0] = (float*) ma_offset_pcm_frames_const_ptr_f32(ppFramesIn[0], totalFramesProcessed, 1);
         } else {
             // womp womp we need to deinterleave the input stream.
             ma_deinterleave_pcm_frames(ma_format_f32, inputBufferDesc.numChannels, framesToProcessThisIteration,
                                        ma_offset_pcm_frames_const_ptr_f32(ppFramesIn[0], totalFramesProcessed, inputBufferDesc.numChannels),
-                                       (void **) binauralEffect->inBuffer); // note the example doenst cast to (void **)
+                                       (void **) soundEffect->inBuffer); // note the example doenst cast to (void **)
         }
 
-        inputBufferDesc.data = binauralEffect->inBuffer;
+        inputBufferDesc.data = soundEffect->inBuffer;
         inputBufferDesc.numSamples = (IPLint32) framesToProcessThisIteration;
         // spannend
-        iplBinauralEffectApply(binauralEffect->iplEffect, &binauralEffectParams, &inputBufferDesc, &outputBufferDesc);
+        iplBinauralEffectApply(soundEffect->iplEffect, &binauralEffectParams, &inputBufferDesc, &outputBufferDesc);
 
         ma_interleave_pcm_frames(
                 ma_format_f32,
                 2,
                 framesToProcessThisIteration,
-                (const void **) binauralEffect->outBuffer, // note the example also doenst cast anything here.
+                (const void **) soundEffect->outBuffer, // note the example also doenst cast anything here.
                 ma_offset_pcm_frames_ptr_f32(ppFramesOut[0], totalFramesProcessed, 2)
         );
 
@@ -67,8 +67,8 @@ void Quack::AudioEngine::binauralEffectProccessPCMFrames(ma_node *pNode, const f
 
 }
 
-Quack::BinauralEffectConfig Quack::AudioEngine::initBinauralEffectConfig(ma_uint32 channelsIn, IPLAudioSettings audioSettings, IPLContext context, IPLHRTF hrtf)  {
-    BinauralEffectConfig config;
+Quack::SoundEffectConfig Quack::AudioEngine::initSoundEffectConfig(ma_uint32 channelsIn, IPLAudioSettings audioSettings, IPLContext context, IPLHRTF hrtf)  {
+    SoundEffectConfig config;
 
     MA_ZERO_OBJECT(&config);
     config.nodeConfig = ma_node_config_init();
@@ -80,7 +80,7 @@ Quack::BinauralEffectConfig Quack::AudioEngine::initBinauralEffectConfig(ma_uint
     return config;
 }
 
-ma_result Quack::AudioEngine::initBinauralEffect(ma_node_graph* nodeGraph, const BinauralEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, BinauralEffect& binauralEffect) {
+ma_result Quack::AudioEngine::initSoundEffect(ma_node_graph* nodeGraph, const SoundEffectConfig* config, const ma_allocation_callbacks* allocationCallbacks, SoundEffect& soundEffect) {
     ma_result result;
     ma_node_config baseConfig;
     ma_uint32 channelsIn;
@@ -88,7 +88,7 @@ ma_result Quack::AudioEngine::initBinauralEffect(ma_node_graph* nodeGraph, const
     IPLBinauralEffectSettings iplBinauralEffectSettings;
     size_t heapSizeInBytes;
 
-    MA_ZERO_OBJECT(&binauralEffect);
+    MA_ZERO_OBJECT(&soundEffect);
 
     if (config == NULL || !(config->channelsIn == 2 || config->channelsIn == 1)) {
         return MA_INVALID_ARGS;
@@ -98,55 +98,55 @@ ma_result Quack::AudioEngine::initBinauralEffect(ma_node_graph* nodeGraph, const
     channelsOut = 2; // must be stereo
 
     baseConfig = ma_node_config_init();
-    baseConfig.vtable = &this->binauralNodeVTable;
+    baseConfig.vtable = &this->soundNodeVTable;
     baseConfig.pInputChannels = &channelsIn;
     baseConfig.pOutputChannels = &channelsOut;
 
 
-    binauralEffect.audioSettings = config->audioSettings;
-    binauralEffect.context       = config->context;
-    binauralEffect.HRTF          = config->HRTF;
+    soundEffect.audioSettings = config->audioSettings;
+    soundEffect.context       = config->context;
+    soundEffect.HRTF          = config->HRTF;
 
     MA_ZERO_OBJECT(&iplBinauralEffectSettings);
-    iplBinauralEffectSettings.hrtf = binauralEffect.HRTF;
+    iplBinauralEffectSettings.hrtf = soundEffect.HRTF;
 
-    result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &binauralEffect.baseNode);
+    result = ma_node_init(nodeGraph, &baseConfig, allocationCallbacks, &soundEffect.baseNode);
     if (result != MA_SUCCESS) {
         return result;
     }
 
 
 
-    auto success = iplBinauralEffectCreate(binauralEffect.context, &binauralEffect.audioSettings, &iplBinauralEffectSettings, &binauralEffect.iplEffect);
+    auto success = iplBinauralEffectCreate(soundEffect.context, &soundEffect.audioSettings, &iplBinauralEffectSettings, &soundEffect.iplEffect);
     if (success != IPL_STATUS_SUCCESS) {
         return MA_INVALID_DATA;
     }
 
     heapSizeInBytes = 0;
 
-    heapSizeInBytes += sizeof(float) * channelsOut * binauralEffect.audioSettings.frameSize; // out buffer
-    heapSizeInBytes += sizeof(float) * channelsIn  * binauralEffect.audioSettings.frameSize; // in buffer
+    heapSizeInBytes += sizeof(float) * channelsOut * soundEffect.audioSettings.frameSize; // out buffer
+    heapSizeInBytes += sizeof(float) * channelsIn * soundEffect.audioSettings.frameSize; // in buffer
 
-    binauralEffect._heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
-    if (binauralEffect._heap == NULL) {
-        iplBinauralEffectRelease(&binauralEffect.iplEffect);
-        ma_node_uninit(&binauralEffect.baseNode, allocationCallbacks);
+    soundEffect._heap = ma_malloc(heapSizeInBytes, allocationCallbacks);
+    if (soundEffect._heap == NULL) {
+        iplBinauralEffectRelease(&soundEffect.iplEffect);
+        ma_node_uninit(&soundEffect.baseNode, allocationCallbacks);
         return MA_OUT_OF_MEMORY;
     }
 
-    binauralEffect.outBuffer[0] = (float*)binauralEffect._heap;
-    binauralEffect.outBuffer[1] = (float*)ma_offset_ptr(binauralEffect._heap, sizeof(float) * binauralEffect.audioSettings.frameSize);
+    soundEffect.outBuffer[0] = (float*)soundEffect._heap;
+    soundEffect.outBuffer[1] = (float*)ma_offset_ptr(soundEffect._heap, sizeof(float) * soundEffect.audioSettings.frameSize);
 
     ma_uint32 iChannelIn;
     for (iChannelIn = 0; iChannelIn < channelsIn; iChannelIn += 1) {
-        binauralEffect.inBuffer[iChannelIn] = (float*)ma_offset_ptr(binauralEffect._heap, sizeof(float) * binauralEffect.audioSettings.frameSize * (channelsOut + iChannelIn));
+        soundEffect.inBuffer[iChannelIn] = (float*)ma_offset_ptr(soundEffect._heap, sizeof(float) * soundEffect.audioSettings.frameSize * (channelsOut + iChannelIn));
     }
 
     return MA_SUCCESS;
 }
 
-void Quack::AudioEngine::destroyBinauralEffect(Quack::BinauralEffect *binauralEffect,
-                                               const ma_allocation_callbacks *allocationCallbacks) {
+void Quack::AudioEngine::destroySoundEffect(SoundEffect *binauralEffect,
+                                            const ma_allocation_callbacks *allocationCallbacks) {
     if (binauralEffect == NULL) {
         spdlog::error("CPP IS TWEAKING IS SWEAR TO GOD");
         return;
@@ -227,7 +227,7 @@ void Quack::AudioEngine::destroySteamAudioObjects() {
 void Quack::AudioEngine::destroyMiniAudioObjects() {
 
     ma_sound_uninit(&g_sound);
-    destroyBinauralEffect(&g_binauralEffect, nullptr);
+    destroySoundEffect(&g_soundEffect, nullptr);
     ma_engine_uninit(&engine);
 
 }
@@ -252,20 +252,20 @@ Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
 
 
     // add binauralEffect
-    BinauralEffectConfig binauralEffectConfig;
+    SoundEffectConfig binauralEffectConfig;
 
-    binauralEffectConfig = initBinauralEffectConfig(CHANNELS, iplAudioSettings, iplContext, iplHRTF);
+    binauralEffectConfig = initSoundEffectConfig(CHANNELS, iplAudioSettings, iplContext, iplHRTF);
 
-    result = initBinauralEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, g_binauralEffect);
+    result = initSoundEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, g_soundEffect);
 
     if (result != MA_SUCCESS) {
         spdlog::error("Could not initialize binaural Effect: {}", result);
         return -1;
     }
 
-    ma_node_attach_output_bus(&g_binauralEffect, 0, ma_engine_get_endpoint(&engine), 0);
+    ma_node_attach_output_bus(&g_soundEffect, 0, ma_engine_get_endpoint(&engine), 0);
 
-    ma_node_attach_output_bus(&g_sound, 0, &g_binauralEffect, 0);
+    ma_node_attach_output_bus(&g_sound, 0, &g_soundEffect, 0);
 
 }
 
@@ -290,9 +290,9 @@ void Quack::AudioEngine::doSillyDirectionTest() {
         ma_sound_set_position(&g_sound, (float)x * distance, 0, (float)y * distance);
         direction = ma_sound_get_direction_to_listener(&g_sound);
 
-        g_binauralEffect.direction.x = direction.x;
-        g_binauralEffect.direction.y = direction.y;
-        g_binauralEffect.direction.z = direction.z;
+        g_soundEffect.direction.x = direction.x;
+        g_soundEffect.direction.y = direction.y;
+        g_soundEffect.direction.z = direction.z;
         angle += stepAngle;
 
         spdlog::info("D {} {} {}", direction.x, direction.y, direction.z);
