@@ -8,6 +8,7 @@
 
 
 #include <phonon.h>
+#include <unordered_map>
 #include "Math/Vecs.h"
 
 #define FORMAT ma_format_32
@@ -25,6 +26,8 @@ namespace Quack {
         IPLContext context;
         IPLHRTF HRTF;
     };
+
+
 
     struct SoundEffect {
         ma_node_base baseNode;
@@ -47,6 +50,11 @@ namespace Quack {
         //todo add  steamaudio options here?
     };
 
+    struct SoundObject {
+        ma_sound g_sound;
+        SoundEffect soundEffect;
+    };
+
 
     class AudioEngine {
 
@@ -60,9 +68,8 @@ namespace Quack {
 
         void playSound(SoundID id);
 
-        void doSillyDirectionTest();
+        void updateSoundPosition(SoundID id, Quack::Math::Vector3& playerPos, Quack::Math::Vector3& soundDirection);
 
-        SoundEffect g_soundEffect;
     private:
 
         // lifetime functions
@@ -90,10 +97,6 @@ namespace Quack {
             0
         };
 
-
-        // Dummy
-        ma_sound g_sound;
-
         //MiniAudio Objects
         ma_result result;
         ma_engine engine;
@@ -107,6 +110,8 @@ namespace Quack {
         IPLHRTF             iplHRTF;
 
 
+        std::unordered_map<SoundID, SoundObject*> registry;
+        unsigned int idCounter = 0;
 
     };
 

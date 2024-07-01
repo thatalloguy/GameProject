@@ -195,8 +195,15 @@ void Quack::AudioEngine::Init() {
 }
 
 void Quack::AudioEngine::CleanUp() {
+
     destroySteamAudioObjects();
     destroyMiniAudioObjects();
+
+
+    for (auto soundObject : registry) {
+        delete soundObject.second;
+    }
+
 }
 
 void Quack::AudioEngine::initializeMiniAudioObjects() {
@@ -255,27 +262,35 @@ void Quack::AudioEngine::destroySteamAudioObjects() {
 
 void Quack::AudioEngine::destroyMiniAudioObjects() {
 
-    ma_sound_uninit(&g_sound);
-    destroySoundEffect(&g_soundEffect, nullptr);
+
+    for (auto soundObject : registry) {
+        ma_sound_uninit(&soundObject.second->g_sound);
+        destroySoundEffect(&soundObject.second->soundEffect, nullptr);
+    }
+
+
     ma_engine_uninit(&engine);
 
 }
 
 Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
+
+    SoundObject* newSoundObject = new SoundObject{};
+
     ma_sound_config soundConfig;
 
     soundConfig = ma_sound_config_init();
     soundConfig.pFilePath = info.filePath;
     soundConfig.flags = MA_SOUND_FLAG_NO_DEFAULT_ATTACHMENT;
-    result = ma_sound_init_ex(&engine, &soundConfig, &g_sound);
+    result = ma_sound_init_ex(&engine, &soundConfig, &newSoundObject->g_sound);
     if (result != MA_SUCCESS) {
         return -108;
     }
 
     // No need for miniaudio to do this, since steam audio does this already
-    ma_sound_set_directional_attenuation_factor(&g_sound, 0);
+    ma_sound_set_directional_attenuation_factor(&newSoundObject->g_sound, 0);
 
-    ma_sound_set_looping(&g_sound, info.shouldLoop);
+    ma_sound_set_looping(&newSoundObject->g_sound, info.shouldLoop);
 
 
 
@@ -285,22 +300,32 @@ Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
 
     binauralEffectConfig = initSoundEffectConfig(CHANNELS, iplAudioSettings, iplContext, iplHRTF);
 
-    result = initSoundEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, g_soundEffect);
+    result = initSoundEffect(ma_engine_get_node_graph(&engine), &binauralEffectConfig, NULL, newSoundObject->soundEffect);
 
     if (result != MA_SUCCESS) {
         spdlog::error("Could not initialize binaural Effect: {}", result);
         return -1;
     }
 
-    ma_node_attach_output_bus(&g_soundEffect, 0, ma_engine_get_endpoint(&engine), 0);
+    ma_node_attach_output_bus(&newSoundObject->soundEffect, 0, ma_engine_get_endpoint(&engine), 0);
 
-    ma_node_attach_output_bus(&g_sound, 0, &g_soundEffect, 0);
+    ma_node_attach_output_bus(&newSoundObject->g_sound, 0, &newSoundObject->soundEffect, 0);
+
+    return idCounter++;
+}
+
+void Quack::AudioEngine::updateSoundPosition(Quack::SoundID id, Quack::Math::Vector3 &playerPos, Quack::Math::Vector3 &soundDirection) {
+    auto sound = registry[id];
+
+    sound->soundEffect.playerPosition = playerPos;
+    sound->soundEffect.direction = soundDirection;
 
 }
 
 void Quack::AudioEngine::playSound(Quack::SoundID id) {
-    ma_sound_start(&g_sound);
+    ma_sound_start(&registry[id]->g_sound);
 }
+/*
 
 void Quack::AudioEngine::doSillyDirectionTest() {
 
@@ -337,3 +362,4 @@ void Quack::AudioEngine::doSillyDirectionTest() {
 
 
 }
+*/
