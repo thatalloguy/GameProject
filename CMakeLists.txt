@@ -111,7 +111,7 @@ include_directories("Thirdparty/Miniaudio/")
 
 
 add_executable(Game Runtime/main.cpp ${RUNTIME_SOURCE} ${ENGINE_SOURCE} ${IMGUI_SOURCE} ${FASTGLTF_DEPS})
-
+add_subdirectory(Editor)
 
 target_link_libraries(Game PUBLIC dwmapi)
 target_link_libraries(Game PUBLIC glad)
