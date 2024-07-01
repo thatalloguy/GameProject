@@ -2,7 +2,7 @@
 // Created by allos on 7/1/2024.
 //
 
-
+//Falllback defines.
 #ifndef LAKE_EDITOR_VERSION_DATA
 #define LAKE_EDITOR_VERSION 1
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
@@ -27,7 +27,7 @@ namespace Lake {
         void init(ProjectManagerCreateInfo* createInfo);
 
         bool doesProjectExist(const char* projectName);
-        void createProject(const char* projectName);
+        void createProject(const char* projectName, bool auto_open=true);
         void openProject(const char* projectName);
 
         void destroy();
@@ -35,9 +35,9 @@ namespace Lake {
 
 
     private:
-        const char* defaultProjPath;
-        unsigned int version;
-        unsigned int minCompatibleVer;
+        const char* _defaultProjPath;
+        unsigned int _version;
+        unsigned int _minCompatibleVer;
 
     };
 
