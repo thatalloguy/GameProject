@@ -29,7 +29,6 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
     model.type = IPL_DISTANCEATTENUATIONTYPE_DEFAULT;
     directEffectParams.flags = IPL_DIRECTEFFECTFLAGS_APPLYDISTANCEATTENUATION;
     directEffectParams.distanceAttenuation = iplDistanceAttenuationCalculate(soundEffect->context, IPLVector3{soundEffect->soundPosition.x, soundEffect->soundPosition.y, soundEffect->soundPosition.z}, IPLVector3{soundEffect->playerPosition.x, soundEffect->playerPosition.y, soundEffect->playerPosition.z}, &model);
-    spdlog::info("D {} {} {}", binauralEffectParams.direction.x, binauralEffectParams.direction.y, binauralEffectParams.direction.z);
 
     inputBufferDesc.numChannels = (IPLint32) ma_node_get_input_channels(pNode, 0);
 
@@ -274,7 +273,7 @@ void Quack::AudioEngine::destroyMiniAudioObjects() {
 }
 
 Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
-
+    idCounter++;
     SoundObject* newSoundObject = new SoundObject{};
 
     ma_sound_config soundConfig;
@@ -310,11 +309,11 @@ Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
     ma_node_attach_output_bus(&newSoundObject->soundEffect, 0, ma_engine_get_endpoint(&engine), 0);
 
     ma_node_attach_output_bus(&newSoundObject->g_sound, 0, &newSoundObject->soundEffect, 0);
-
-    return idCounter++;
+    registry.emplace(idCounter, newSoundObject);
+    return idCounter;
 }
 
-void Quack::AudioEngine::updateSoundPosition(Quack::SoundID id, Quack::Math::Vector3 &playerPos, Quack::Math::Vector3 &soundDirection) {
+void Quack::AudioEngine::updateSound(Quack::SoundID id, Quack::Math::Vector3 &playerPos, Quack::Math::Vector3 &soundDirection) {
     auto sound = registry[id];
 
     sound->soundEffect.playerPosition = playerPos;
@@ -324,6 +323,12 @@ void Quack::AudioEngine::updateSoundPosition(Quack::SoundID id, Quack::Math::Vec
 
 void Quack::AudioEngine::playSound(Quack::SoundID id) {
     ma_sound_start(&registry[id]->g_sound);
+}
+
+void Quack::AudioEngine::setSoundPosition(Quack::SoundID id, Quack::Math::Vector3 newPos) {
+    auto sound = registry[id];
+
+    sound->soundEffect.soundPosition = newPos;
 }
 /*
 

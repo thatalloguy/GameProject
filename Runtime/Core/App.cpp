@@ -24,6 +24,8 @@ namespace Game {
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
     Quack::AudioEngine* audioEngine;
 
+    Quack::SoundID pianoId;
+
     FishingManager* fishingManager;
     BookUI* bookUI;
 
@@ -135,7 +137,7 @@ void App::init() {
 
     Game::audioEngine->Init();
 
-    Game::audioEngine->registerSound({"../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
+    Game::pianoId = Game::audioEngine->registerSound({"../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
 
 
 
@@ -162,7 +164,7 @@ void App::run() {
     bool booktoggle = false;
 
     Game::audioEngine->playSound(1);
-    Game::audioEngine->g_soundEffect.soundPosition = Level::chest->position;
+    Game::audioEngine->setSoundPosition(Game::pianoId, Level::chest->position);
 
 
 
@@ -203,8 +205,6 @@ void App::run() {
 
         Game::renderer.Run();
 
-        Game::audioEngine->g_soundEffect.playerPosition = Level::player->position;
-
         window->update();
 
         //Update the delta time
@@ -213,13 +213,13 @@ void App::run() {
         last = now;
 
 
-        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Game::audioEngine->g_soundEffect.soundPosition.x - Level::player->position.x  , Level::player->position.y - Game::audioEngine->g_soundEffect.soundPosition.y, Level::player->position.z - Game::audioEngine->g_soundEffect.soundPosition.z, 0)));
+        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::chest->position.x - Level::player->position.x  , Level::player->position.y - Level::chest->position.y, Level::player->position.z - Level::chest->position.z, 0)));
+        Quack::Math::Vector3 soundDir{0, 0, 0};
+        soundDir.x = dir.x;
+        soundDir.y = dir.y;
+        soundDir.z = dir.z;
 
-
-        Game::audioEngine->g_soundEffect.direction.x = dir.x;
-        Game::audioEngine->g_soundEffect.direction.y = dir.y;
-        Game::audioEngine->g_soundEffect.direction.z = dir.z;
-
+        Game::audioEngine->updateSound(Game::pianoId, Level::player->position, soundDir);
 
     }
 
