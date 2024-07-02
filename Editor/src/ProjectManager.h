@@ -20,8 +20,9 @@ namespace Lake {
         const char* defaultProjectPath = "../../Projects/";
     };
 
+
     struct ProjectConfig {
-        const char* Message;
+        int projectVersion;
     };
 
 
@@ -30,6 +31,7 @@ namespace Lake {
         Failed_To_Create_Base_Folder = -2,
         Failed_To_Create_Asset_Folder = -3,
 
+        Project_Incompatible_With_Editor = -4,
         Failed_To_Open_Project = -5,
 
         Success = 0
@@ -52,16 +54,21 @@ namespace Lake {
 
 
 
+        ProjectConfig _config{-1};
     private:
+
+
+        bool doesPathExist(const char* projectName);
         const char* _defaultProjPath;
         unsigned int _version;
+
         unsigned int _minCompatibleVer;
 
         bool _isProjectOpen = false;
 
         const char* _currentProject = nullptr;
 
-        ProjectConfig config{"TESTING"};
+        ProjectConfig _readingProjectConfig{-1};
 
     };
 

@@ -25,12 +25,17 @@ int main() {
         spdlog::info("Folder does not exist!");
 
 
-        projectManager.createProject("TestLevel");
+        if (projectManager.createProject("TestLevel") == Lake::ProjectManagerError::Success) {
+            spdlog::info("Yippie");
+        };
 
         // do the rest
 
     } else {
         spdlog::info("Folder does exist!");
+
+        projectManager.openProject("../../Projects/TestLevel");
+        spdlog::info("Project name: {}", projectManager._config.ProjectName);
     }
 
 

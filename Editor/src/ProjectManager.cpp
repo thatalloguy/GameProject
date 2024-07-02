@@ -37,27 +37,42 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
     }
 
 
-    path += "/Levels/test.lake";
+    path += "/config.lake";
 
-    std::ofstream t(path);
+    _config.projectVersion = (int) _version;
+    _config.ProjectName = projectName;
 
-    t.close();
-
-    Lake::Utils::saveStructToFile(path.c_str(), config);
-
-    Lake::Utils::getStructFromFile(path.c_str(), config);
+    Lake::Utils::saveStructToFile(path.c_str(), _config);
 
     // auto open
     if (auto_open) {
-        openProject(projectName);
+        path = std::string(_defaultProjPath) + projectName;
+        return openProject(path.c_str());
     }
+
+    return Lake::ProjectManagerError::Success;
 }
 
 Lake::ProjectManagerError Lake::ProjectManager::openProject(const char *projectName) {
-    if (!doesProjectExist(projectName)) {
+
+    // do some checks if the editor can actually open the project.
+    if (!doesPathExist(projectName)) {
         return Lake::ProjectManagerError::Failed_To_Open_Project;
     }
 
+    auto path = std::string(projectName) + "/config.lake";
+    Lake::Utils::getStructFromFile(path.c_str(), _readingProjectConfig);
+
+    if (_readingProjectConfig.projectVersion < _minCompatibleVer || _readingProjectConfig.projectVersion < 0) {
+        return Lake::ProjectManagerError::Project_Incompatible_With_Editor;
+    }
+
+    _currentProject = projectName;
+    _isProjectOpen = true;
+
+    _config = _readingProjectConfig;
+
+    return Lake::ProjectManagerError::Success;
 }
 
 void Lake::ProjectManager::destroy() {
@@ -77,10 +92,17 @@ const char *Lake::ProjectManager::getErrorMessage(Lake::ProjectManagerError erro
             return "Failed to create the Asset Folder\n";
 
         case Lake::ProjectManagerError::Unknown:
-            return "Unknown error code ;-; \n";
+            return "Unknown error ;-; \n";
+
+        case Lake::ProjectManagerError::Project_Incompatible_With_Editor:
+            return "Project is incompatible with the Editor\n";
 
         default:
             return "Unknown Error Code\n";
 
     }
+}
+
+bool Lake::ProjectManager::doesPathExist(const char *projectName) {
+    return std::filesystem::is_directory(projectName);
 }
