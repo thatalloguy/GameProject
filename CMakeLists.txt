@@ -32,6 +32,8 @@ file(GLOB_RECURSE IMGUI_SOURCE
         Thirdparty/imgui/backends/imgui_impl_vulkan.cpp
         Thirdparty/imgui/backends/imgui_impl_glfw.h
         Thirdparty/imgui/backends/imgui_impl_glfw.cpp
+
+        Thirdparty/imgui/IconsFontAwesome6.h
 )
 
 file(GLOB_RECURSE FASTGLTF_DEPS

@@ -8,6 +8,7 @@
 
 #include <Video/Window.h>
 #include "ProjectManager.h"
+#include "imgui.h"
 
 
 namespace Lake {
@@ -23,11 +24,15 @@ namespace Lake {
         void Destroy();
 
     private:
+        void loadImGuiStyle();
+        void loadImGuiFont();
+
+
         Quack::Window* _window;
 
         Lake::ProjectManager* _projectMang;
         VulkanEngine* _renderer;
-
+        ImFont* icon;
     };
 
 }// Lake

@@ -319,8 +319,8 @@ void VulkanEngine::Run()
             ///mainCamera.processEvent(_window);
 
             // Imgui
-            ImGui_ImplVulkan_NewFrame();
             ImGui_ImplGlfw_NewFrame();
+            ImGui_ImplVulkan_NewFrame();
             ImGui::NewFrame();
 
             if (displayDebugMenu) {
@@ -782,34 +782,37 @@ void VulkanEngine::initImGui() {
     ///NOTE i have no idea if this should be true or false ;-;
     ImGui_ImplGlfw_InitForVulkan(_window, true);
 
-    ImGui_ImplVulkan_InitInfo initInfo = {};
-    initInfo.Instance = _instance;
-    initInfo.PhysicalDevice = _chosenGPU;
-    initInfo.Device = _device;
-    initInfo.Queue = _graphicsQueue;
-    initInfo.DescriptorPool = imguiPool;
-    initInfo.MinImageCount = 3;
-    initInfo.ImageCount = 3;
-    initInfo.UseDynamicRendering = true;
-    initInfo.ColorAttachmentFormat = _swapchainImageFormat;
+    ImGui_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance = _instance;
+    init_info.PhysicalDevice = _chosenGPU;
+    init_info.Device = _device;
+    init_info.Queue = _graphicsQueue;
+    init_info.DescriptorPool = imguiPool;
+    init_info.MinImageCount = 3;
+    init_info.ImageCount = 3;
+    init_info.UseDynamicRendering = true;
 
-    initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    //dynamic rendering parameters for imgui to use
+    init_info.PipelineRenderingCreateInfo = {.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO};
+    init_info.PipelineRenderingCreateInfo.colorAttachmentCount = 1;
+    init_info.PipelineRenderingCreateInfo.pColorAttachmentFormats = &_swapchainImageFormat;
 
-    ImGui_ImplVulkan_Init(&initInfo, VK_NULL_HANDLE);
 
-    ///NOTE the vkguide passes cmd here, but in the version im using its not needed???
-    immediate_submit([&](VkCommandBuffer cmd) { ImGui_ImplVulkan_CreateFontsTexture(cmd); });
+    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
-    ImGui_ImplVulkan_DestroyFontUploadObjects();
+    ImGui_ImplVulkan_Init(&init_info);
 
+    ImGui_ImplVulkan_CreateFontsTexture();
+
+    // add the destroy the imgui created structures
     _mainDeletionQueue.pushFunction([=]() {
-        vkDestroyDescriptorPool(_device, imguiPool, nullptr);
         ImGui_ImplVulkan_Shutdown();
+        vkDestroyDescriptorPool(_device, imguiPool, nullptr);
     });
 }
 
 void VulkanEngine::drawImgui(VkCommandBuffer cmd, VkImageView targetImageView) {
-    VkRenderingAttachmentInfo colorAttachment = VkInit::attachmentInfo(targetImageView, nullptr, VK_IMAGE_LAYOUT_GENERAL);
+    VkRenderingAttachmentInfo colorAttachment = VkInit::attachmentInfo(targetImageView, nullptr, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
     VkRenderingInfo renderInfo = VkInit::renderingInfo(_swapchainExtent, &colorAttachment, nullptr);
 
     vkCmdBeginRendering(cmd, &renderInfo);
