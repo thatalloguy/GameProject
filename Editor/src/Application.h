@@ -7,6 +7,7 @@
 
 
 #include <Video/Window.h>
+#include "ProjectManager.h"
 
 
 namespace Lake {
@@ -15,7 +16,7 @@ namespace Lake {
     class Application {
     public:
 
-        void Init();
+        void Init(ProjectManager* projectManager);
 
         void Run();
 
@@ -23,6 +24,9 @@ namespace Lake {
 
     private:
         Quack::Window* _window;
+
+        Lake::ProjectManager* _projectMang;
+        VulkanEngine* _renderer;
 
     };
 

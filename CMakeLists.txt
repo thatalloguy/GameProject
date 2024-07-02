@@ -17,6 +17,27 @@ add_subdirectory("Thirdparty/VulkanMemoryAllocator")
 add_subdirectory("Thirdparty/fastgltf")
 add_subdirectory("Thirdparty/Jolt")
 
+file(GLOB_RECURSE IMGUI_SOURCE
+        Thirdparty/imgui/imgui.cpp
+        Thirdparty/imgui/imgui.h
+        Thirdparty/imgui/imgui_internal.h
+        Thirdparty/imgui/imgui_internal.cpp
+        Thirdparty/imgui/imconfig.h
+        Thirdparty/imgui/imstb_rectpack.h
+        Thirdparty/imgui/imgui_draw.cpp
+        Thirdparty/imgui/imgui_tables.cpp
+        Thirdparty/imgui/imgui_widgets.cpp
+        Thirdparty/imgui/imgui_demo.cpp
+        Thirdparty/imgui/backends/imgui_impl_vulkan.h
+        Thirdparty/imgui/backends/imgui_impl_vulkan.cpp
+        Thirdparty/imgui/backends/imgui_impl_glfw.h
+        Thirdparty/imgui/backends/imgui_impl_glfw.cpp
+)
+
+file(GLOB_RECURSE FASTGLTF_DEPS
+        Thirdparty/fastgltf/deps/simdjson/simdjson.h
+        Thirdparty/fastgltf/deps/simdjson/simdjson.cpp
+)
 
 
 

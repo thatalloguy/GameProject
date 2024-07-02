@@ -45,7 +45,7 @@ int main() {
 
     Lake::Application app;
 
-    app.Init();
+    app.Init(&projectManager);
     app.Run();
     app.Destroy();
 

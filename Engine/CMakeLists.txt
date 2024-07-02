@@ -47,6 +47,8 @@ file(GLOB_RECURSE QUACK_ENGINE_SRC
 
 
 
+
+
 add_library(quack-runtime-static STATIC ${QUACK_ENGINE_SRC}  ${IMGUI_SOURCE} ${FASTGLTF_DEPS})
 
 target_link_libraries(quack-runtime-static PUBLIC quack-runtime)
