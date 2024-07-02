@@ -7,6 +7,7 @@
 #define LAKE_EDITOR_VERSION 1
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
 #include "src/ProjectManager.h"
+#include "spdlog/spdlog.h"
 
 int main() {
 
@@ -20,11 +21,16 @@ int main() {
 
 
     if (!projectManager.doesProjectExist("TestLevel")) {
+
+        spdlog::info("Folder does not exist!");
+
+
         projectManager.createProject("TestLevel");
 
         // do the rest
 
-    }else {
+    } else {
+        spdlog::info("Folder does exist!");
     }
 
 
