@@ -19,7 +19,7 @@ file(GLOB_RECURSE GAME_SRC
 
 )
 
-add_executable(Game main.cpp ${EDITOR_SRC})
+add_executable(Game main.cpp ${GAME_SRC})
 
 
 target_link_libraries(Game PRIVATE quack-runtime-static)
