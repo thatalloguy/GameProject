@@ -2,12 +2,15 @@
 // Created by allos on 7/1/2024.
 //
 
-#include <cstdio>
 #define LAKE_EDITOR_VERSION_DATA
 #define LAKE_EDITOR_VERSION 1
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
+
+
 #include "src/ProjectManager.h"
+
 #include "spdlog/spdlog.h"
+#include "src/Application.h"
 
 int main() {
 
@@ -35,8 +38,16 @@ int main() {
         spdlog::info("Folder does exist!");
 
         projectManager.openProject("../../Projects/TestLevel");
-        spdlog::info("Project name: {}", projectManager._config.ProjectName);
+
+
     }
+
+
+    Lake::Application app;
+
+    app.Init();
+    app.Run();
+    app.Destroy();
 
 
     return 0;

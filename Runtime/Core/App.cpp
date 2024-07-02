@@ -67,11 +67,11 @@ namespace Level {
 void App::init() {
 
     //initialize the window
-    auto windowCreationData = new Quack::WindowCreationData {
+    auto windowCreationData = Quack::WindowCreationData {
       .title = "Duck Watchers Remake"
     };
 
-    window = new Quack::Window(*windowCreationData);
+    window = new Quack::Window(windowCreationData);
 
 
     Quack::Input::setTargetWindow(*window);

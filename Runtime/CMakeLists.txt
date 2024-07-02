@@ -1,0 +1,25 @@
+
+find_package(Vulkan REQUIRED)
+
+file(GLOB_RECURSE GAME_SRC
+
+        Core/App.h
+        Core/App.cpp
+
+        Core/FishingManager.h
+        Core/FishingManager.cpp
+
+        Inventory/Inventory.h
+        Inventory/Items/FishingRod.h
+        Inventory/Items/FishingRod.cpp
+
+        Inventory/UI/BookUI.h
+        Inventory/UI/BookUI.cpp
+        Inventory/UI/Pages/Testpage.h
+
+)
+
+add_executable(Game main.cpp ${EDITOR_SRC})
+
+
+target_link_libraries(Game PRIVATE quack-runtime-static)

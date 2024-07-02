@@ -1,13 +1,18 @@
 
+find_package(Vulkan REQUIRED)
+
 file(GLOB_RECURSE EDITOR_SRC
 
+        src/LakeUtils.h
         src/ProjectManager.h
         src/ProjectManager.cpp
-
-        src/LakeUtils.h
+        src/AssetManager.h
+        src/AssetManager.cpp
+        src/Application.h
+        src/Application.cpp
 )
 
+add_executable(Lake-Editor main.cpp ${EDITOR_SRC})
 
-add_executable(Quack-Editor ${EDITOR_SRC}
-    main.cpp
-)
+
+target_link_libraries(Lake-Editor PRIVATE quack-runtime-static)

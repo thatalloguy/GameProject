@@ -40,7 +40,6 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
     path += "/config.lake";
 
     _config.projectVersion = (int) _version;
-    _config.ProjectName = projectName;
 
     Lake::Utils::saveStructToFile(path.c_str(), _config);
 

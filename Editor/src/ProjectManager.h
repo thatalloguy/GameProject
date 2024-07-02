@@ -48,10 +48,7 @@ namespace Lake {
         ProjectManagerError openProject(const char* projectName);
 
         void destroy();
-
-
         const char* getErrorMessage(ProjectManagerError errorCode);
-
 
 
         ProjectConfig _config{-1};

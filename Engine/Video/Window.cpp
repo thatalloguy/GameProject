@@ -64,7 +64,6 @@ namespace Quack {
 
         glfwTerminate();
 
-        delete window_info;
     }
 
     bool Window::shouldShutdown() {
