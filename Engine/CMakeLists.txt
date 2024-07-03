@@ -40,6 +40,8 @@ file(GLOB_RECURSE QUACK_ENGINE_SRC
 
         Objects/Entity.h
         Objects/Entity.cpp
+        Objects/Level.h
+        Objects/Level.cpp
 
         Audio/AudioEngine.cpp
         Audio/AudioEngine.h

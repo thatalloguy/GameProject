@@ -7,6 +7,7 @@
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
 
 
+#include <Users/allos/source/Game/Editor/src/AssetManager.h>
 #include "src/ProjectManager.h"
 
 #include "spdlog/spdlog.h"
@@ -19,6 +20,9 @@ int main() {
     Lake::ProjectManagerCreateInfo projectManagerCreateInfo{};
 
     Lake::ProjectManager projectManager;
+    Lake::AssetManager assetManager;
+
+
 
     projectManager.init(&projectManagerCreateInfo);
 
@@ -26,7 +30,6 @@ int main() {
     if (!projectManager.doesProjectExist("TestLevel")) {
 
         spdlog::info("Folder does not exist!");
-
 
         if (projectManager.createProject("TestLevel") == Lake::ProjectManagerError::Success) {
             spdlog::info("Yippie");
@@ -39,8 +42,9 @@ int main() {
 
         projectManager.openProject("../../Projects/TestLevel");
 
-
     }
+
+
 
 
     Lake::Application app;
