@@ -44,12 +44,14 @@ int main() {
 
     }
 
+    assetManager.Initialize("../../Projects/TestLevel/Assets/assetData.lake");
+
 
 
 
     Lake::Application app;
 
-    app.Init(&projectManager);
+    app.Init(&projectManager, &assetManager);
     app.Run();
     app.Destroy();
 

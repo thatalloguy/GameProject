@@ -9,6 +9,7 @@
 #include <Video/Window.h>
 #include "ProjectManager.h"
 #include "imgui.h"
+#include "AssetManager.h"
 
 
 namespace Lake {
@@ -17,7 +18,7 @@ namespace Lake {
     class Application {
     public:
 
-        void Init(ProjectManager* projectManager);
+        void Init(ProjectManager* projectManager, AssetManager* assetManager);
 
         void Run();
 
@@ -34,6 +35,7 @@ namespace Lake {
         Quack::Window* _window;
 
         Lake::ProjectManager* _projectMang;
+        Lake::AssetManager* _assetManager;
         VulkanEngine* _renderer;
         ImFont* icon;
     };

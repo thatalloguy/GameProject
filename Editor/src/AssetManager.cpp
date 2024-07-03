@@ -7,6 +7,8 @@
 
 #include "LakeUtils.h"
 #include "spdlog/spdlog.h"
+#include "imgui.h"
+#include "IconsFontAwesome6.h"
 
 void Lake::AssetManager::Initialize(const char *assetDataFile) {
     // Do this check so that we dont try to load a struct that doesnt exist
@@ -64,6 +66,33 @@ void Lake::AssetManager::loadAssetDataFromFile(const char *assetDataFile) {
 
 }
 
-void Lake::AssetManager::renderAssetUI() {
+void Lake::AssetManager::renderAssetUI(float width, float height) {
 
+
+    ImGui::BeginTable("assets", 2);
+
+    for (auto asset : _assets) {
+
+        ImGui::TableNextColumn();
+
+        ImVec2 rectMin = ImGui::GetCursorScreenPos();
+
+        rectMin.y *= 1 + ImGui::TableGetRowIndex() / 0.6f;
+
+        ImVec2 rectMax = ImVec2(rectMin.x + ImGui::GetColumnWidth(), rectMin.y + (height * 0.13f) );
+
+        ImVec4 color = ImVec4(0.125980454683304f, 0.1250980454683304f, 0.1290196138620377f, 1.0f);
+        ImGui::GetWindowDrawList()->AddRectFilled(rectMin, rectMax, IM_COL32(color.x * 255, color.y * 255, color.z * 255, color.w * 255), 10.0f);
+        ImGui::SetWindowFontScale((ImGui::GetColumnWidth() / 10) * 0.25f);
+        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x, rectMin.y + (height * 0.005f)), ImColor(255, 255, 255), ICON_FA_CUBE);
+        ImGui::SetWindowFontScale(1.0f);
+        // Draw Seperator line
+        ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(rectMin.x, rectMin.y + height * 0.075f), ImVec2(rectMax.x, rectMin.y + height * 0.075f), IM_COL32(0.4f * 255, 0.322f * 255, 0.89f * 255, 255), 10.0f);
+        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x, rectMin.y + height * 0.075f), ImColor(255, 255, 255), asset.fileName);
+
+
+        //ImGui::TableNextRow();
+    }
+
+    ImGui::EndTable();
 }

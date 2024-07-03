@@ -23,7 +23,7 @@ namespace Lake {
 
         void exportAssetData();
 
-        void renderAssetUI();
+        void renderAssetUI(float width, float height);
 
     private:
         unsigned int _assetCount = 0;

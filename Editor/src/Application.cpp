@@ -39,13 +39,14 @@ void Lake::Application::dropCallback(GLFWwindow *window, int count, const char *
 
 
 
-void Lake::Application::Init(ProjectManager* projectManager) {
+void Lake::Application::Init(ProjectManager* projectManager, AssetManager* assetManager) {
 
     Quack::WindowCreationData windowCreationData {
             .title = "Lake Editor Version 0.0.1"
     };
 
     _projectMang = projectManager;
+    _assetManager = assetManager;
 
     _window = new Quack::Window(windowCreationData);
 
@@ -81,7 +82,7 @@ void Lake::Application::Run() {
 
         if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
 
-            ImGui::Text("assets :)");
+            _assetManager->renderAssetUI(width, height);
 
             ImGui::EndTabItem();
         }
@@ -103,10 +104,9 @@ void Lake::Application::Run() {
     while (!_window->shouldShutdown()) {
         // Handle file drag and dropping
         if (Utils::hasDroppedFile) {
-            std::cout << "FIle: " << Utils::filePath << "\n";
             Utils::hasDroppedFile = false;
             _projectMang->copyFileToProjectAssetFolder(Utils::filePath.c_str(), Utils::fileName.c_str());
-            //std::filesystem::copy_file(std::string(Utils::filePath), );
+            _assetManager->newAsset(Utils::fileName.c_str(), Quack::AssetType::Model);
         }
 
 
@@ -131,7 +131,7 @@ void Lake::Application::loadImGuiStyle() {
     auto& imGuiIO{ ImGui::GetIO() };
     imGuiIO.IniFilename = NULL;
     imGuiIO.LogFilename = NULL;
-    //imGuiIO.FontGlobalScale = 0.3f; // tf did i need this for back in lomus?
+    imGuiIO.FontGlobalScale = 0.3f; // tf did i need this for back in lomus?
     style.Alpha = 1.0f;
     style.DisabledAlpha = 0.6000000238418579f;
     style.WindowPadding = ImVec2(8.0f, 8.0f);
@@ -224,23 +224,19 @@ void Lake::Application::loadImGuiFont() {
 
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->Clear();
-    io.Fonts->AddFontDefault();
+    ImFontConfig c;
+    c.SizePixels = 50.0f;
+    io.Fonts->AddFontDefault(&c);
 
     ImFontConfig config;
     config.MergeMode = true;
     config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
     static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-    auto f = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/fa-solid-900.ttf", 13.0f, &config, icon_ranges);
-
-    unsigned char* t;
-    int width; int height;
+    auto f = io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/fa-solid-900.ttf", 50.0f, &config, icon_ranges);
 
     io.Fonts->Build();
 
     ImGui_ImplVulkan_DestroyFontsTexture();
 
     ImGui_ImplVulkan_CreateFontsTexture();
-
-    spdlog::info("{} | {}", io.Fonts->Fonts.Size > 0, io.Fonts->TexReady);
-
 }
