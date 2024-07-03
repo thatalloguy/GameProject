@@ -8,6 +8,34 @@
 #include "backends/imgui_impl_vulkan.h"
 
 #include <IconsFontAwesome6.h>
+#include <iostream>
+
+
+namespace Utils {
+
+    const char* filePath = "-1";
+    bool hasDroppedFile = false;
+}
+
+
+
+void Lake::Application::dropCallback(GLFWwindow *window, int count, const char **paths) {
+
+    std::string path = paths[0];
+
+    if (path.substr(path.find_last_of(".") + 1) == "glb") {
+        Utils::filePath = paths[0];
+        Utils::hasDroppedFile = true;
+
+
+
+    } else {
+        spdlog::error("File dropped is not supported.");
+    }
+
+}
+
+
 
 void Lake::Application::Init(ProjectManager* projectManager) {
 
@@ -23,16 +51,51 @@ void Lake::Application::Init(ProjectManager* projectManager) {
 
     loadImGuiStyle();
     loadImGuiFont();
+
+    glfwSetDropCallback(_window->getRawWindow(), dropCallback);
 }
 
 void Lake::Application::Run() {
 
     _renderer->uiRenderFuncs.pushFunction([=, this](){
 
-        ImGui::ShowMetricsWindow();
+        int width, height;
 
-        ImGui::Begin(ICON_FA_EXPAND " Hello World :)");
+        glfwGetWindowSize(_window->getRawWindow(), &width, &height);
 
+        ImGui::SetNextWindowPos({width * 0.75f,0});
+        ImGui::SetNextWindowSize({width * 0.25f, (float) height});
+        ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor");
+
+        if (Utils::hasDroppedFile) {
+            std::cout << "FIle: " << Utils::filePath << "\n";
+            Utils::hasDroppedFile = false;
+            //std::filesystem::copy_file(std::string(Utils::filePath), );
+        }
+
+        ImGui::BeginTabBar("tabs");
+        if (ImGui::BeginTabItem(ICON_FA_PERSON " Entities")) {
+
+            ImGui::Text("Person :)");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
+
+            ImGui::Text("assets :)");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
+
+            ImGui::Text("animator :)");
+
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
         ImGui::End();
 
     });

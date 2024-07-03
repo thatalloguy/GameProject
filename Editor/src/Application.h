@@ -27,6 +27,9 @@ namespace Lake {
         void loadImGuiStyle();
         void loadImGuiFont();
 
+        static void dropCallback(GLFWwindow* window, int count, const char** paths);
+
+
 
         Quack::Window* _window;
 

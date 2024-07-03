@@ -5,10 +5,18 @@
 #ifndef GAME_ASSETMANAGER_H
 #define GAME_ASSETMANAGER_H
 
+namespace Lake {
 
-class AssetManager {
 
-};
+    class AssetManager {
+
+    };
+
+
+
+}
+
+
 
 
 #endif //GAME_ASSETMANAGER_H

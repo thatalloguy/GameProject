@@ -33,18 +33,18 @@ namespace Game {
 
     void loadAssets() {
         // Temp model
-        std::string structurePath = {"..//Assets/basicmesh.glb"};
+        std::string structurePath = {"../../Assets/basicmesh.glb"};
         auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
-        auto testFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/cube.glb");
-        auto sphereFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/sphere.glb");
-        auto bobberFile = VkLoader::loadGltf(&Game::renderer, "..//Assets/bobber.glb");
+        auto testFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/cube.glb");
+        auto sphereFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/sphere.glb");
+        auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
         // just a check, not necessary
         assert(structureFile.has_value());
         Game::renderer.loadedScenes[1] = *structureFile;
         Game::renderer.loadedScenes[2] = *testFile;
         Game::renderer.loadedScenes[3] = *sphereFile;
         Game::renderer.loadedScenes[4] = *bobberFile;
-        Game::renderer.loadedScenes[5] = *VkLoader::loadGltf(&Game::renderer, "..//Assets/Chest.glb");;
+        Game::renderer.loadedScenes[5] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
 
     }
     void initPhysics() {
@@ -137,7 +137,7 @@ void App::init() {
 
     Game::audioEngine->Init();
 
-    Game::pianoId = Game::audioEngine->registerSound({"../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
+    Game::pianoId = Game::audioEngine->registerSound({"../../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
 
 
 
