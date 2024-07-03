@@ -49,7 +49,7 @@ namespace Lake {
 
         void destroy();
         const char* getErrorMessage(ProjectManagerError errorCode);
-
+        void copyFileToProjectAssetFolder(const char* filePath, const char* fileName);
 
         ProjectConfig _config{-1};
     private:

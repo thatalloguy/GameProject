@@ -36,12 +36,18 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
         return Lake::ProjectManagerError::Failed_To_Create_Asset_Folder;
     }
 
+    auto str = path + "/Assets/assetData.lake";
+
+    FILE* file = fopen(str.c_str(), "w");
+
+    fclose(file);
 
     path += "/config.lake";
 
     _config.projectVersion = (int) _version;
 
     Lake::Utils::saveStructToFile(path.c_str(), _config);
+
 
     // auto open
     if (auto_open) {
@@ -104,4 +110,11 @@ const char *Lake::ProjectManager::getErrorMessage(Lake::ProjectManagerError erro
 
 bool Lake::ProjectManager::doesPathExist(const char *projectName) {
     return std::filesystem::is_directory(projectName);
+}
+
+void Lake::ProjectManager::copyFileToProjectAssetFolder(const char *filePath, const char* fileName) {
+
+    auto finalPath = std::string(_currentProject) + "/Assets/";
+
+    std::filesystem::copy_file(filePath, finalPath + fileName);
 }

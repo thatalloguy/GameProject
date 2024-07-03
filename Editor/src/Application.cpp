@@ -13,7 +13,8 @@
 
 namespace Utils {
 
-    const char* filePath = "-1";
+    std::string filePath = "-1";
+    std::string fileName = "-1";
     bool hasDroppedFile = false;
 }
 
@@ -25,6 +26,7 @@ void Lake::Application::dropCallback(GLFWwindow *window, int count, const char *
 
     if (path.substr(path.find_last_of(".") + 1) == "glb") {
         Utils::filePath = paths[0];
+        Utils::fileName = path.substr(path.find_last_of("/\\") + 1);
         Utils::hasDroppedFile = true;
 
 
@@ -42,6 +44,8 @@ void Lake::Application::Init(ProjectManager* projectManager) {
     Quack::WindowCreationData windowCreationData {
             .title = "Lake Editor Version 0.0.1"
     };
+
+    _projectMang = projectManager;
 
     _window = new Quack::Window(windowCreationData);
 
@@ -66,12 +70,6 @@ void Lake::Application::Run() {
         ImGui::SetNextWindowPos({width * 0.75f,0});
         ImGui::SetNextWindowSize({width * 0.25f, (float) height});
         ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor");
-
-        if (Utils::hasDroppedFile) {
-            std::cout << "FIle: " << Utils::filePath << "\n";
-            Utils::hasDroppedFile = false;
-            //std::filesystem::copy_file(std::string(Utils::filePath), );
-        }
 
         ImGui::BeginTabBar("tabs");
         if (ImGui::BeginTabItem(ICON_FA_PERSON " Entities")) {
@@ -103,6 +101,15 @@ void Lake::Application::Run() {
 
 
     while (!_window->shouldShutdown()) {
+        // Handle file drag and dropping
+        if (Utils::hasDroppedFile) {
+            std::cout << "FIle: " << Utils::filePath << "\n";
+            Utils::hasDroppedFile = false;
+            _projectMang->copyFileToProjectAssetFolder(Utils::filePath.c_str(), Utils::fileName.c_str());
+            //std::filesystem::copy_file(std::string(Utils::filePath), );
+        }
+
+
         _renderer->Run();
         _window->update();
     }
