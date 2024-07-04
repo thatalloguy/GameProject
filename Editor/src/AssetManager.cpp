@@ -67,8 +67,9 @@ void Lake::AssetManager::loadAssetDataFromFile(const char *assetDataFile) {
 }
 
 void Lake::AssetManager::renderAssetUI(float width, float height) {
-
-
+    // Calculate how big the asset window should be based on how much assets there are.
+    int AssetWindowSize = ceil(_assets.size() / 1.75f);
+    ImGui::BeginChild(1, ImVec2(width * 0.25f, ((height * 0.13f) * AssetWindowSize)),  false,ImGuiWindowFlags_AlwaysVerticalScrollbar);
     ImGui::BeginTable("assets", 2);
 
     for (auto asset : _assets) {
@@ -77,22 +78,28 @@ void Lake::AssetManager::renderAssetUI(float width, float height) {
 
         ImVec2 rectMin = ImGui::GetCursorScreenPos();
 
-        rectMin.y *= 1 + ImGui::TableGetRowIndex() / 0.6f;
+
+        rectMin.y = rectMin.y + (height * 0.13f) * ImGui::TableGetRowIndex();// / 0.6f;
 
         ImVec2 rectMax = ImVec2(rectMin.x + ImGui::GetColumnWidth(), rectMin.y + (height * 0.13f) );
 
         ImVec4 color = ImVec4(0.125980454683304f, 0.1250980454683304f, 0.1290196138620377f, 1.0f);
+
+        float fontSize = sqrt(((width * 0.25f * width * 0.025f)) + (height * height)) / 700;
+        float iconFontSize = sqrt(((width * 0.25f * width * 0.025f)) + (height * height)) / 250;
+
+        // THe base tile shape
         ImGui::GetWindowDrawList()->AddRectFilled(rectMin, rectMax, IM_COL32(color.x * 255, color.y * 255, color.z * 255, color.w * 255), 10.0f);
-        ImGui::SetWindowFontScale((ImGui::GetColumnWidth() / 10) * 0.25f);
-        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x, rectMin.y + (height * 0.005f)), ImColor(255, 255, 255), ICON_FA_CUBE);
-        ImGui::SetWindowFontScale(1.0f);
-        // Draw Seperator line
+        // the seperator line
         ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(rectMin.x, rectMin.y + height * 0.075f), ImVec2(rectMax.x, rectMin.y + height * 0.075f), IM_COL32(0.4f * 255, 0.322f * 255, 0.89f * 255, 255), 10.0f);
-        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x, rectMin.y + height * 0.075f), ImColor(255, 255, 255), asset.fileName);
-
-
-        //ImGui::TableNextRow();
+        ImGui::SetWindowFontScale(fontSize);
+        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x, rectMin.y + height * 0.08f), ImColor(255, 255, 255), asset.fileName);
+        ImGui::SetWindowFontScale(1.0f);
+        ImGui::SetWindowFontScale(iconFontSize);
+        ImGui::GetWindowDrawList()->AddText(ImVec2(rectMin.x + width * 0.05f, rectMin.y + height * 0.012f), ImColor(255, 255, 255), ICON_FA_CUBE);
+        ImGui::SetWindowFontScale(1.0f);
     }
 
     ImGui::EndTable();
+    ImGui::EndChild();
 }
