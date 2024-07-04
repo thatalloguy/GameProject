@@ -31,7 +31,6 @@ namespace Lake {
         static void dropCallback(GLFWwindow* window, int count, const char** paths);
 
 
-
         Quack::Window* _window;
 
         Lake::ProjectManager* _projectMang;
