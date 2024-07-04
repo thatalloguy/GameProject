@@ -70,7 +70,7 @@ void Lake::Application::Run() {
 
         ImGui::SetNextWindowPos({width * 0.75f,0});
         ImGui::SetNextWindowSize({width * 0.25f, (float) height});
-        ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor");
+        ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
         ImGui::BeginTabBar("tabs");
         if (ImGui::BeginTabItem(ICON_FA_PERSON " Entities")) {
@@ -95,7 +95,26 @@ void Lake::Application::Run() {
         }
 
         ImGui::EndTabBar();
+
+        if (ImGui::BeginMainMenuBar()) {
+
+
+
+            if (ImGui::BeginMenu("Project")) {
+
+                if (ImGui::MenuItem("save")) {
+
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMainMenuBar();
+
+        }
+
         ImGui::End();
+
 
     });
 
