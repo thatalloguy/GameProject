@@ -54,6 +54,8 @@
 - - [ ] Saving Maps
 - - [ ] Loading maps
 - - [x] Exporting maps to special format ?
+- - Animator:
+
 ---
 - Gameplay
 - - [x] Player controller?
