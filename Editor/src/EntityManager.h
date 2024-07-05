@@ -21,15 +21,17 @@ namespace Lake {
 
     public:
 
-        void Initialize(ProjectManager* projectManager);
+        void Initialize(ProjectManager* projectManager, bool shouldLoadLevels=true);
 
         void newLevel();
 
-        void loadLevel();
+        void loadLevel(const char* fileName);
 
         void newEntity();
 
         void deleteEntity(unsigned int ID);
+
+        void selectEntity(unsigned int ID);
 
         void renderUI(float windowWidth, float windowHeight);
 
@@ -39,7 +41,7 @@ namespace Lake {
         unsigned int _entityCount = 0;
         unsigned int _idCount = 0;
 
-        std::vector<Quack::EntityBlueprint> _entities;
+        std::vector<Quack::Level> _levels;
 
     };
 

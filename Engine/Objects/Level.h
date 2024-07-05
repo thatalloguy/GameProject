@@ -44,8 +44,9 @@ namespace Quack {
         unsigned int Id = 0;
     };
 
-    class Level {
-
+    struct Level {
+        char name[50]; // why 50? cant save and load a cstr to binary ;)
+        std::vector<EntityBlueprint> entities;
     };
 
 }
