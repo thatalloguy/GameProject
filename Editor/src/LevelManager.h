@@ -37,6 +37,10 @@ namespace Lake {
 
         void exportData();
 
+        bool isALevelLoaded() { return _currentLevel != nullptr; };
+        const char* getLevelName() { return _currentLevel->name; };
+
+
     private:
         unsigned int _entityCount = 0;
         unsigned int _idCount = 0;
@@ -44,7 +48,7 @@ namespace Lake {
         ProjectManager* _projectManager;
 
         std::vector<Quack::Level> _levels;
-
+        Quack::Level* _currentLevel = nullptr;
     };
 
 }

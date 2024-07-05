@@ -51,11 +51,11 @@ int main() {
     levelManager.Initialize(&projectManager);
 
 
-   /* Lake::Application app;
+    Lake::Application app;
 
-    app.Init(&projectManager, &assetManager);
+    app.Init(&projectManager, &assetManager, &levelManager);
     app.Run();
-    app.Destroy();*/
+    app.Destroy();
 
 
     return 0;

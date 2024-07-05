@@ -79,7 +79,7 @@ void Lake::Application::dropCallback(GLFWwindow *window, int count, const char *
 
 
 
-void Lake::Application::Init(ProjectManager* projectManager, AssetManager* assetManager) {
+void Lake::Application::Init(ProjectManager* projectManager, AssetManager* assetManager, LevelManager* levelManager) {
 
     Quack::WindowCreationData windowCreationData {
             .title = "Lake Editor Version 0.0.1"
@@ -87,6 +87,7 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
 
     _projectMang = projectManager;
     _assetManager = assetManager;
+    _levelManager = levelManager;
 
     _window = new Quack::Window(windowCreationData);
 
@@ -133,6 +134,7 @@ void Lake::Application::Run() {
             // Object inspector
             ImGui::BeginChild("inspector", ImVec2(width * 0.25f, height * 0.6f), ImGuiChildFlags_Border);
 
+            _levelManager->renderUI((float) width,(float) height);
 
             ImGui::EndChild();
 
@@ -142,7 +144,7 @@ void Lake::Application::Run() {
 
         if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
 
-            _assetManager->renderAssetUI(width, height);
+            _assetManager->renderAssetUI((float) width,(float) height);
 
             ImGui::EndTabItem();
         }
@@ -160,9 +162,9 @@ void Lake::Application::Run() {
 
 
 
-            if (ImGui::BeginMenu("Project")) {
+            if (ImGui::BeginMenu(ICON_FA_FOLDER " Project")) {
 
-                if (ImGui::MenuItem("save")) {
+                if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save All")) {
                     _assetManager->exportAssetData();
 
                     // other save.
@@ -170,6 +172,23 @@ void Lake::Application::Run() {
 
                 ImGui::EndMenu();
             }
+            ImGui::Separator();
+            if (ImGui::BeginMenu(ICON_FA_USERS " Level")) {
+                if (ImGui::MenuItem(ICON_FA_SQUARE_PLUS" New Level")) {
+                }
+                if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open")) {
+                }
+                if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save Current level")) {
+                }
+                if (ImGui::MenuItem(ICON_FA_TRASH_CAN" Delete current Level")) {
+
+                }
+
+
+
+                ImGui::EndMenu();
+            }
+            ImGui::Separator();
 
             ImGui::EndMainMenuBar();
 

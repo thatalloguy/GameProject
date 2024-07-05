@@ -10,6 +10,7 @@
 #include "ProjectManager.h"
 #include "imgui.h"
 #include "AssetManager.h"
+#include "LevelManager.h"
 
 
 namespace Lake {
@@ -18,7 +19,7 @@ namespace Lake {
     class Application {
     public:
 
-        void Init(ProjectManager* projectManager, AssetManager* assetManager);
+        void Init(ProjectManager* projectManager, AssetManager* assetManager, LevelManager* levelManager);
 
         void Run();
 
@@ -35,6 +36,7 @@ namespace Lake {
 
         Lake::ProjectManager* _projectMang;
         Lake::AssetManager* _assetManager;
+        Lake::LevelManager* _levelManager;
         VulkanEngine* _renderer;
         ImFont* icon;
     };
