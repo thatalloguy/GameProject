@@ -23,21 +23,21 @@ namespace Lake {
 
         void Initialize(ProjectManager* projectManager, bool shouldLoadLevels=true);
 
-        void newLevel();
+        void newLevel(const char* name);
+        void selectLevel(const char* name);
 
-        void loadLevel(const char* fileName);
+        void loadLevel(const char* fileName, const char* name);
+        void exportData();
 
-        void newEntity();
+        unsigned int newEntity();
 
         void deleteEntity(unsigned int ID);
 
         void selectEntity(unsigned int ID);
 
-        void renderUI(float windowWidth, float windowHeight);
+        void renderEntityTree();
+        void renderEntityInfo();
 
-        void exportData();
-
-        bool isALevelLoaded() { return _currentLevel != nullptr; };
         const char* getLevelName() { return _currentLevel->name; };
 
 

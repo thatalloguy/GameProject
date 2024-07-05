@@ -29,7 +29,7 @@ namespace Quack {
         Math::Vector4 rotation; // quaternion, but im too lazy to actually make a quaternion class
         ShapeType shapeType = ShapeType::Box;
         bool shouldActivate = false;
-        unsigned int objectLayer;
+        unsigned int objectLayer = 0;
         // motion = isDynamic :)
     };
 
@@ -47,7 +47,7 @@ namespace Quack {
     };
 
     struct Level {
-        char name[50]; // why 50? cant save and load a cstr to binary ;)
+        const char* name;
         std::vector<EntityBlueprint> entities;
     };
 

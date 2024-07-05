@@ -39,6 +39,8 @@ namespace Lake {
         Lake::LevelManager* _levelManager;
         VulkanEngine* _renderer;
         ImFont* icon;
+
+        bool showLevelPopUp = false;
     };
 
 }// Lake

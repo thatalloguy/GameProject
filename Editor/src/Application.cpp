@@ -128,13 +128,14 @@ void Lake::Application::Run() {
             }
 
             Utils::ItemRowsBackground();
+            _levelManager->renderEntityTree();
 
             ImGui::EndChild();
 
             // Object inspector
             ImGui::BeginChild("inspector", ImVec2(width * 0.25f, height * 0.6f), ImGuiChildFlags_Border);
 
-            _levelManager->renderUI((float) width,(float) height);
+            _levelManager->renderEntityInfo();
 
             ImGui::EndChild();
 
@@ -160,8 +161,6 @@ void Lake::Application::Run() {
 
         if (ImGui::BeginMainMenuBar()) {
 
-
-
             if (ImGui::BeginMenu(ICON_FA_FOLDER " Project")) {
 
                 if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save All")) {
@@ -175,6 +174,7 @@ void Lake::Application::Run() {
             ImGui::Separator();
             if (ImGui::BeginMenu(ICON_FA_USERS " Level")) {
                 if (ImGui::MenuItem(ICON_FA_SQUARE_PLUS" New Level")) {
+                    showLevelPopUp = true;
                 }
                 if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open")) {
                 }
@@ -183,15 +183,25 @@ void Lake::Application::Run() {
                 if (ImGui::MenuItem(ICON_FA_TRASH_CAN" Delete current Level")) {
 
                 }
-
-
-
                 ImGui::EndMenu();
             }
             ImGui::Separator();
 
             ImGui::EndMainMenuBar();
+        }
 
+        if (showLevelPopUp) {
+            ImGui::OpenPopup("New Level:");
+        }
+        if (ImGui::BeginPopupModal("New Level:")) {
+
+            ImGui::Text("New Level:");
+
+            if (ImGui::Button(ICON_FA_X)) { ImGui::CloseCurrentPopup(); showLevelPopUp = false; }
+
+
+
+            ImGui::EndPopup();
         }
 
         ImGui::End();
