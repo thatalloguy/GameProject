@@ -5,6 +5,8 @@
 #pragma once
 
 #include <Math/Vecs.h>
+#include <vector>
+
 
 namespace Quack {
 

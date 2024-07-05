@@ -3,6 +3,8 @@
 //
 
 //Falllback defines.
+#include <string>
+
 #ifndef LAKE_EDITOR_VERSION_DATA
 #define LAKE_EDITOR_VERSION 1
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
@@ -51,6 +53,8 @@ namespace Lake {
         const char* getErrorMessage(ProjectManagerError errorCode);
         void copyFileToProjectAssetFolder(const char* filePath, const char* fileName);
 
+        const char* getProjectPath() { return _currentProject.c_str(); };
+
         ProjectConfig _config{-1};
     private:
 
@@ -63,7 +67,7 @@ namespace Lake {
 
         bool _isProjectOpen = false;
 
-        const char* _currentProject = nullptr;
+        std::string _currentProject;
 
         ProjectConfig _readingProjectConfig{-1};
 

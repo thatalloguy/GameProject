@@ -8,8 +8,13 @@ file(GLOB_RECURSE EDITOR_SRC
         src/ProjectManager.cpp
         src/AssetManager.h
         src/AssetManager.cpp
+        src/LevelManager.h
+        src/LevelManager.cpp
+
         src/Application.h
         src/Application.cpp
+
+
 )
 
 add_executable(Lake-Editor main.cpp ${EDITOR_SRC})

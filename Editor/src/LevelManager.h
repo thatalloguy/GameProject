@@ -2,8 +2,8 @@
 // Created by allos on 7/5/2024.
 //
 
-#ifndef DUCKWATCHERS_ENTITYMANAGER_H
-#define DUCKWATCHERS_ENTITYMANAGER_H
+#ifndef DUCKWATCHERS_LEVELMANAGER_H
+#define DUCKWATCHERS_LEVELMANAGER_H
 
 #include <vector>
 #include "ProjectManager.h"
@@ -12,12 +12,12 @@
 namespace Lake {
 
     /*
-     * NOTE: The EntityManager actually never creates a "real" entity but only uses the
+     * NOTE: The LevelManager actually never creates a "real" entity but only uses the
      * Entity blueprint struct, since that is dynamic and editable.
      * Also the EntityBlueprint struct does not depend on the Jolt library keeping deps to minimum.
      *
      */
-    class EntityManager {
+    class LevelManager {
 
     public:
 
@@ -41,10 +41,12 @@ namespace Lake {
         unsigned int _entityCount = 0;
         unsigned int _idCount = 0;
 
+        ProjectManager* _projectManager;
+
         std::vector<Quack::Level> _levels;
 
     };
 
 }
 
-#endif //DUCKWATCHERS_ENTITYMANAGER_H
+#endif //DUCKWATCHERS_LEVELMANAGER_H
