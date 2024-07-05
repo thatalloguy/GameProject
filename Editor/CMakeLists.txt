@@ -8,8 +8,8 @@ file(GLOB_RECURSE EDITOR_SRC
         src/ProjectManager.cpp
         src/AssetManager.h
         src/AssetManager.cpp
-        src/LevelManager.h
-        src/LevelManager.cpp
+        src/EntityManager.h
+        src/EntityManager.cpp
 
         src/Application.h
         src/Application.cpp

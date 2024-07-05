@@ -79,7 +79,7 @@ void Lake::Application::dropCallback(GLFWwindow *window, int count, const char *
 
 
 
-void Lake::Application::Init(ProjectManager* projectManager, AssetManager* assetManager, LevelManager* levelManager) {
+void Lake::Application::Init(ProjectManager* projectManager, AssetManager* assetManager, EntityManager* entityManager) {
 
     Quack::WindowCreationData windowCreationData {
             .title = "Lake Editor Version 0.0.1"
@@ -87,7 +87,7 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
 
     _projectMang = projectManager;
     _assetManager = assetManager;
-    _levelManager = levelManager;
+    _entityManager = entityManager;
 
     _window = new Quack::Window(windowCreationData);
 
@@ -128,14 +128,14 @@ void Lake::Application::Run() {
             }
 
             Utils::ItemRowsBackground();
-            _levelManager->renderEntityTree();
+            _entityManager->renderEntityTree();
 
             ImGui::EndChild();
 
             // Object inspector
             ImGui::BeginChild("inspector", ImVec2(width * 0.25f, height * 0.6f), ImGuiChildFlags_Border);
 
-            _levelManager->renderEntityInfo();
+            _entityManager->renderEntityInfo();
 
             ImGui::EndChild();
 
@@ -171,38 +171,11 @@ void Lake::Application::Run() {
 
                 ImGui::EndMenu();
             }
-            ImGui::Separator();
-            if (ImGui::BeginMenu(ICON_FA_USERS " Level")) {
-                if (ImGui::MenuItem(ICON_FA_SQUARE_PLUS" New Level")) {
-                    showLevelPopUp = true;
-                }
-                if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN " Open")) {
-                }
-                if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save Current level")) {
-                }
-                if (ImGui::MenuItem(ICON_FA_TRASH_CAN" Delete current Level")) {
 
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::Separator();
 
             ImGui::EndMainMenuBar();
         }
 
-        if (showLevelPopUp) {
-            ImGui::OpenPopup("New Level:");
-        }
-        if (ImGui::BeginPopupModal("New Level:")) {
-
-            ImGui::Text("New Level:");
-
-            if (ImGui::Button(ICON_FA_X)) { ImGui::CloseCurrentPopup(); showLevelPopUp = false; }
-
-
-
-            ImGui::EndPopup();
-        }
 
         ImGui::End();
 

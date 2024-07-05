@@ -8,7 +8,7 @@
 
 
 #include <Users/allos/source/Game/Editor/src/AssetManager.h>
-#include <Users/allos/source/Game/Editor/src/LevelManager.h>
+#include <Users/allos/source/Game/Editor/src/EntityManager.h>
 #include "src/ProjectManager.h"
 
 #include "spdlog/spdlog.h"
@@ -22,7 +22,7 @@ int main() {
 
     Lake::ProjectManager projectManager;
     Lake::AssetManager assetManager;
-    Lake::LevelManager levelManager;
+    Lake::EntityManager entityManager;
 
 
 
@@ -48,12 +48,12 @@ int main() {
 
     assetManager.Initialize("../../Projects/TestLevel/Assets/assetData.lake");
 
-    levelManager.Initialize(&projectManager);
+    entityManager.Initialize(&projectManager);
 
 
     Lake::Application app;
 
-    app.Init(&projectManager, &assetManager, &levelManager);
+    app.Init(&projectManager, &assetManager, &entityManager);
     app.Run();
     app.Destroy();
 

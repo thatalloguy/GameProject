@@ -5,7 +5,7 @@
 #ifndef GAME_ASSETMANAGER_H
 #define GAME_ASSETMANAGER_H
 
-#include <Objects/Level.h>
+#include <Objects/Entity.h>
 #include <vector>
 
 namespace Lake {

@@ -30,7 +30,6 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
     }
 
     // create other stuff
-    std::filesystem::create_directory(path + std::string("/Levels/"));
     success = std::filesystem::create_directory(path + std::string("/Assets/"));
     if (!success) {
         return Lake::ProjectManagerError::Failed_To_Create_Asset_Folder;
@@ -41,6 +40,13 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
     FILE* file = fopen(str.c_str(), "w");
 
     fclose(file);
+
+    str = path + "/objs.lake";
+
+    file = fopen(str.c_str(), "w");
+
+    fclose(file);
+
 
     path += "/config.lake";
 
