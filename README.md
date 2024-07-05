@@ -29,7 +29,7 @@
 - Input
 - - [x] Keyboard
 - - [x] Controller
-- - [ ] Mouse
+- - [x] Mouse
 ----
 - Physics
 - - [x] Setup
@@ -46,7 +46,15 @@
 - - [x] Spatial effect.
 
 ----
-
+- Map Editor
+- - [x] Project Management
+- - [x] Importing Assets.
+- - [ ] Creating new entities
+- - [ ] Changing entities attributes
+- - [ ] Saving Maps
+- - [ ] Loading maps
+- - [x] Exporting maps to special format ?
+---
 - Gameplay
 - - [x] Player controller?
 - - [ ] Inventory:
@@ -54,20 +62,8 @@
 - - - [ ] ~~Items tab~~
 - - - [ ] ~~Fish Tab~~
 - - - [ ] ~~Journal Tab~~
-- - [x] Fishing 
+- - [x] Fishing
 - - [ ] Shop system
-- -  [ ] ~~duck AI~~
-----
-- Map Editor
-- - [ ] Creating new entities
-- - [ ] Changing entities attributes
-- - [ ] Saving Maps
-- - [ ] Loading maps
-- - [ ] Exporting maps to special format ?
----
-- Engine specific
-- - [ ] Baking assets
-- - [ ] Loading maps
 ---
 - Rendering part 2:
 - - [ ] Shadows

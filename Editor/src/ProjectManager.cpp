@@ -41,7 +41,7 @@ Lake::ProjectManagerError Lake::ProjectManager::createProject(const char *projec
 
     fclose(file);
 
-    str = path + "/objs.lake";
+    str = path + "/objects.lake";
 
     file = fopen(str.c_str(), "w");
 
