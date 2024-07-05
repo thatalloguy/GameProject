@@ -123,8 +123,8 @@ void Lake::Application::Run() {
             if (ImGui::Button(ICON_FA_USER_PLUS)) {
 
             }
-            if (ImGui::IsItemHovered()) {
-                ImGui::SetTooltip("New Entity");
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
+                ImGui::SetTooltip("Create a new entity");
             }
 
             Utils::ItemRowsBackground();
@@ -309,7 +309,7 @@ void Lake::Application::loadImGuiFont() {
     io.Fonts->Clear();
     ImFontConfig c;
     c.SizePixels = 50.0f;
-    io.Fonts->AddFontDefault(&c);
+    io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Roboto-Regular.ttf", 60.0f);
 
     ImFontConfig config;
     config.MergeMode = true;
