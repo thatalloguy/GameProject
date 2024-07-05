@@ -15,6 +15,8 @@ namespace Quack {
     };
 
     struct EntityBlueprint {
+        unsigned int id = 0;
+
         Math::Vector3 position{0, 0, 0};
         Math::Vector3 size{1, 1, 1};
 

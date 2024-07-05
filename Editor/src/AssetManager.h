@@ -20,6 +20,7 @@ namespace Lake {
         void Initialize(const char* assetDataFile);
 
         void newAsset(const char* fileName, Quack::AssetType type);
+        void deleteAsset(unsigned int assetID) {};
 
         void exportAssetData();
 
@@ -27,7 +28,7 @@ namespace Lake {
 
     private:
         unsigned int _assetCount = 0;
-        unsigned int _idCount = 6;
+        unsigned int _idCount = 0;
         std::vector<Quack::AssetInfo> _assets;
         const char* _assetDataFile;
 
