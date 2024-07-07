@@ -6,6 +6,9 @@
 #include "imgui.h"
 
 #include "backends/imgui_impl_vulkan.h"
+#include "ImTween.h"
+#include "imgui_internal.h"
+#include "Input/InputManager.h"
 
 #include <IconsFontAwesome6.h>
 #include <iostream>
@@ -99,85 +102,30 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
     loadImGuiFont();
 
     glfwSetDropCallback(_window->getRawWindow(), dropCallback);
+    Quack::Input::setTargetWindow(*_window);
+
 }
 
 void Lake::Application::Run() {
 
     _renderer->uiRenderFuncs.pushFunction([=, this](){
-
         int width, height;
-
         glfwGetWindowSize(_window->getRawWindow(), &width, &height);
 
-        ImGui::SetNextWindowPos({width * 0.75f,0});
-        ImGui::SetNextWindowSize({width * 0.25f, (float) height});
-        ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
+        _editorWindowSize.x = width;
+        _editorWindowSize.y = height;
 
-        ImGui::BeginTabBar("tabs");
-        if (ImGui::BeginTabItem(ICON_FA_PERSON " Entities")) {
-
-            // search / selection stuff
-
-
-            ImGui::BeginChild("tree", ImVec2(width * 0.25f, height * 0.3f), ImGuiChildFlags_Border);
-            if (ImGui::Button(ICON_FA_USER_PLUS)) {
-
-            }
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
-                ImGui::SetTooltip("Create a new entity");
-            }
-
-            Utils::ItemRowsBackground();
-            _entityManager->renderEntityTree();
-
-            ImGui::EndChild();
-
-            // Object inspector
-            ImGui::BeginChild("inspector", ImVec2(width * 0.25f, height * 0.6f), ImGuiChildFlags_Border);
-
-            _entityManager->renderEntityInfo();
-
-            ImGui::EndChild();
-
-
-            ImGui::EndTabItem();
+        if (Quack::Input::isKeyPressed(Quack::Key::F1) && toggle) {
+            _renderEditor = !_renderEditor;
+            _renderConsole = !_renderConsole;
+            toggle = false;
+        } else if (!Quack::Input::isKeyPressed(Quack::Key::F1)) {
+            toggle = true;
         }
 
-        if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
+        renderEditorTab();
 
-            _assetManager->renderAssetUI((float) width,(float) height);
-
-            ImGui::EndTabItem();
-        }
-
-        if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
-
-            ImGui::Text("animator :)");
-
-            ImGui::EndTabItem();
-        }
-
-        ImGui::EndTabBar();
-
-        if (ImGui::BeginMainMenuBar()) {
-
-            if (ImGui::BeginMenu(ICON_FA_FOLDER " Project")) {
-
-                if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save All")) {
-                    _assetManager->exportAssetData();
-
-                    // other save.
-                }
-
-                ImGui::EndMenu();
-            }
-
-
-            ImGui::EndMainMenuBar();
-        }
-
-
-        ImGui::End();
+        renderConsoleTab();
 
 
     });
@@ -196,6 +144,118 @@ void Lake::Application::Run() {
         _renderer->Run();
         _window->update();
     }
+
+}
+
+void Lake::Application::renderEditorTab() {
+    ImTween<float>::Tween(
+            std::tuple{0.75f, 0.975f, &_editorWindowOffset})
+            .OfType(ImTween<>::PingPong)
+            .Speed(0.03f)
+            .When([&](){
+                return !_renderEditor;
+            }).Tick();
+
+    ImGui::SetNextWindowPos({_editorWindowSize.x * _editorWindowOffset,0});
+    ImGui::SetNextWindowSize({_editorWindowSize.x * 0.25f, (float) _editorWindowSize.y});
+    ImGui::Begin(ICON_FA_BARS_STAGGERED " Editor", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize);
+
+    if (ImGui::Button(_renderEditor ? ICON_FA_ARROW_RIGHT : ICON_FA_ARROW_LEFT)) {
+        _renderEditor = !_renderEditor;
+    }
+    ImGui::Separator();
+    if (_renderEditor) {
+        ImGui::BeginTabBar("tabs");
+        if (ImGui::BeginTabItem(ICON_FA_PERSON " Entities")) {
+
+            // search / selection stuff
+
+
+            ImGui::BeginChild("tree", ImVec2(_editorWindowSize.x * 0.25f, _editorWindowSize.y * 0.3f), ImGuiChildFlags_Border);
+            if (ImGui::Button(ICON_FA_USER_PLUS)) {
+
+            }
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
+                ImGui::SetTooltip("Create a new entity");
+            }
+
+            Utils::ItemRowsBackground();
+            _entityManager->renderEntityTree();
+
+            ImGui::EndChild();
+
+            // Object inspector
+            ImGui::BeginChild("inspector", ImVec2(_editorWindowSize.x * 0.25f, _editorWindowSize.y * 0.6f), ImGuiChildFlags_Border);
+
+            _entityManager->renderEntityInfo();
+
+            ImGui::EndChild();
+
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
+
+            _assetManager->renderAssetUI(_editorWindowSize.x,_editorWindowSize.y);
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
+
+            ImGui::Text("animator :)");
+
+            ImGui::EndTabItem();
+        }
+        ImGui::EndTabBar();
+
+    }
+
+
+    if (ImGui::BeginMainMenuBar()) {
+
+        if (ImGui::BeginMenu(ICON_FA_FOLDER " Project")) {
+
+            if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK" Save All")) {
+                _assetManager->exportAssetData();
+
+                // other save.
+            }
+
+            ImGui::EndMenu();
+        }
+
+
+        ImGui::EndMainMenuBar();
+    }
+    ImGui::End();
+}
+
+void Lake::Application::renderConsoleTab() {
+    ImTween<float>::Tween(
+            std::tuple{0.75f, 0.975f, &_consoleWindowOffset})
+            .OfType(ImTween<>::PingPong)
+            .Speed(0.03f)
+            .When([&](){
+                return !_renderConsole;
+            }).Tick();
+
+    ImGui::SetNextWindowPos({0,_editorWindowSize.y * _consoleWindowOffset});
+    ImGui::SetNextWindowSize({_editorWindowSize.x * 0.75f, (float) _editorWindowSize.y * 0.25f});
+    ImGui::Begin(ICON_FA_TERMINAL " Console", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize);
+
+    // Render cool button
+    const ImGuiWindow* window = ImGui::GetCurrentWindow();
+    const ImRect titleBarRect = window->TitleBarRect();
+    ImGui::PushClipRect( titleBarRect.Min, titleBarRect.Max, false );
+    ImGui::SetCursorPos( ImVec2( titleBarRect.Max.x - 20.0f, 0.0f ) );
+    if (ImGui::Button( _renderConsole ? ICON_FA_ARROW_DOWN : ICON_FA_ARROW_UP)) {
+        _renderConsole = !_renderConsole;
+    };
+    ImGui::PopClipRect();
+    ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_SpanAllColumns);
+    ImGui::End();
 
 }
 

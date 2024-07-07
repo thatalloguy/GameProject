@@ -31,6 +31,8 @@ namespace Lake {
 
         static void dropCallback(GLFWwindow* window, int count, const char** paths);
 
+        void renderEditorTab();
+        void renderConsoleTab();
 
         Quack::Window* _window;
 
@@ -40,7 +42,14 @@ namespace Lake {
         VulkanEngine* _renderer;
         ImFont* icon;
 
-        bool showLevelPopUp = false;
+        Quack::Math::Vector2 _editorWindowSize;
+        float _editorWindowOffset = 0.75f; // goes from 0.75f to 1.0f;
+        float _consoleWindowOffset = 0.75f; // goes from 0.75f to 1.0f;
+
+        bool _renderEditor = true;
+        bool _renderConsole = true;
+
+        bool toggle = false;
     };
 
 }// Lake
