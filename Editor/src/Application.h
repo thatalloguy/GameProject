@@ -39,6 +39,7 @@ namespace Lake {
         Lake::ProjectManager* _projectMang;
         Lake::AssetManager* _assetManager;
         Lake::EntityManager* _entityManager;
+        spdlog::logger* _logger;
         VulkanEngine* _renderer;
         ImFont* icon;
 
@@ -50,6 +51,8 @@ namespace Lake {
         bool _renderConsole = true;
 
         bool toggle = false;
+
+        ImGuiTextBuffer consoleBuffer;
     };
 
 }// Lake

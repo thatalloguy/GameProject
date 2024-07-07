@@ -13,6 +13,8 @@
 #include <IconsFontAwesome6.h>
 #include <iostream>
 
+#include <spdlog/sinks/callback_sink.h>
+
 
 namespace Utils {
 
@@ -104,6 +106,17 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
     glfwSetDropCallback(_window->getRawWindow(), dropCallback);
     Quack::Input::setTargetWindow(*_window);
 
+    auto callback = std::make_shared<spdlog::sinks::callback_sink_mt>([&](const spdlog::details::log_msg &msg) {
+        consoleBuffer.append(to_short_c_str(msg.level));
+        consoleBuffer.append(" | ");
+        consoleBuffer.append(msg.payload.data()); // lets hope this works :)
+        consoleBuffer.append("\n"); // lets hope this works :)
+    });
+
+    _logger = new spdlog::logger("console", callback);
+
+    _logger->info("Hello world :)");
+
 }
 
 void Lake::Application::Run() {
@@ -116,8 +129,8 @@ void Lake::Application::Run() {
         _editorWindowSize.y = height;
 
         if (Quack::Input::isKeyPressed(Quack::Key::F1) && toggle) {
-            _renderEditor = !_renderEditor;
-            _renderConsole = !_renderConsole;
+            _renderEditor = !_renderConsole;
+            _renderConsole = !_renderConsole; // set it to the same value so that you want swap them when the button is pressed
             toggle = false;
         } else if (!Quack::Input::isKeyPressed(Quack::Key::F1)) {
             toggle = true;
@@ -255,6 +268,15 @@ void Lake::Application::renderConsoleTab() {
     };
     ImGui::PopClipRect();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_SpanAllColumns);
+
+
+    //render the actuall console
+    ImGui::BeginChild("Logs");
+
+    ImGui::TextUnformatted(consoleBuffer.begin());
+
+
+    ImGui::EndChild();
     ImGui::End();
 
 }
@@ -262,6 +284,7 @@ void Lake::Application::renderConsoleTab() {
 void Lake::Application::Destroy() {
 
     delete _window;
+    delete _logger;
 
     _renderer->CleanUp();
     delete _renderer;
