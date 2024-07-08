@@ -49,6 +49,7 @@ namespace Lake {
 
         bool _renderEditor = true;
         bool _renderConsole = true;
+        bool _renderAnimator = false;
 
         bool toggle = false;
 

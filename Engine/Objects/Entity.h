@@ -19,6 +19,7 @@ namespace Quack {
 
     struct EntityBlueprint {
         unsigned int id = 0;
+        char name[50] = "Entity";
 
         Math::Vector3 position{0, 0, 0};
         Math::Vector3 size{1, 1, 1};
@@ -27,7 +28,7 @@ namespace Quack {
         bool isDynamic = false;
         bool isPhysical = false;
         // Physicscreation
-        Math::Vector4 rotation; // quaternion, but im too lazy to actually make a quaternion class
+        Math::Vector4 rotation{0, 0, 0, 1}; // quaternion, but im too lazy to actually make a quaternion class
         ShapeType shapeType = ShapeType::Box;
         bool shouldActivate = false;
         unsigned int objectLayer = 0;

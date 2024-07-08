@@ -26,7 +26,7 @@ namespace Lake {
         void loadData();
         void exportData();
 
-        unsigned int newEntity();
+        void newEntity();
         void deleteEntity(unsigned int ID);
         void selectEntity(unsigned int ID);
 
@@ -36,6 +36,9 @@ namespace Lake {
 
     private:
         ProjectManager* _projectManager;
+        std::vector<Quack::EntityBlueprint> _entities;
+        Quack::EntityBlueprint* _currentEntity = nullptr;
+
     };
 
 }

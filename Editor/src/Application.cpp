@@ -146,9 +146,9 @@ void Lake::Application::renderEditorTab() {
             // search / selection stuff
 
 
-            ImGui::BeginChild("tree", ImVec2(_editorWindowSize.x * 0.25f, _editorWindowSize.y * 0.3f), ImGuiChildFlags_Border);
+            ImGui::BeginChild("tree", ImVec2(_editorWindowSize.x * 0.25f, _editorWindowSize.y * 0.3f));
             if (ImGui::Button(ICON_FA_USER_PLUS)) {
-
+                _entityManager->newEntity();
             }
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
                 ImGui::SetTooltip("Create a new entity");
@@ -203,9 +203,17 @@ void Lake::Application::renderConsoleTab() {
     ImTween<float>::Tween(
             std::tuple{0.75f, 0.975f, &_consoleWindowOffset})
             .OfType(ImTween<>::PingPong)
-            .Speed(0.03f)
+            .Speed(0.05f)
             .When([&](){
                 return !_renderConsole;
+            }).Tick();
+
+    ImTween<float>::Tween(
+            std::tuple{0.65f, 0.75f, &_consoleWindowOffset})
+            .OfType(ImTween<>::PingPong)
+            .Speed(0.02f)
+            .When([&](){
+                return !_renderAnimator;
             }).Tick();
 
     ImGui::SetNextWindowPos({0,_editorWindowSize.y * _consoleWindowOffset});
@@ -227,7 +235,7 @@ void Lake::Application::renderConsoleTab() {
         //render the actuall console
         ImGui::BeginTabBar("tabs");
         if (ImGui::BeginTabItem(ICON_FA_TERMINAL " Console")) {
-
+            _renderAnimator = false;
 
             ImGui::BeginChild("Logs");
             ImGui::BeginDisabled();
@@ -237,13 +245,11 @@ void Lake::Application::renderConsoleTab() {
             ImGui::EndChild();
 
             ImGui::EndTabItem();
-
-            _consoleWindowOffset = 0.75f;
         }
 
         if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
+            _renderAnimator = true;
             ImGui::Text("animator :)");
-            _consoleWindowOffset = 0.65f;
             ImGui::EndTabItem();
         }
 
@@ -251,7 +257,7 @@ void Lake::Application::renderConsoleTab() {
     }
 
     ImGui::End();
-
+    spdlog::info("TEST {} {} ", _renderAnimator, _consoleWindowOffset);
 }
 
 void Lake::Application::Destroy() {
