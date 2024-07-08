@@ -23,15 +23,18 @@ void Lake::EntityManager::loadData() {
 }
 
 void Lake::EntityManager::newEntity() {
-    Quack::EntityBlueprint newEntity{};
 
-    _entities.push_back(newEntity);
+    _idCounter++;
+
+    Quack::EntityBlueprint newEntity{.id = _idCounter };
+
+    _entities.emplace(_idCounter, newEntity);
 }
 void Lake::EntityManager::deleteEntity(unsigned int ID) {
-    _entities.erase(_entities.begin() + ID);
+    _entities.erase(ID);
 }
 void Lake::EntityManager::selectEntity(unsigned int ID) {
-    _currentEntity = &_entities.at(ID);
+    _currentEntityID = ID;
 }
 
 
@@ -46,14 +49,20 @@ void Lake::EntityManager::renderEntityTree() {
 
 
         ImGui::Separator();
-        if (_currentEntity) {
-            if (_currentEntity->id == entity.id) {
-                style.Colors[ImGuiCol_Text] = ImVec4(0.5, 0.5, 1, 1);
-            }
+        if (_currentEntityID == entity.id) {
+            style.Colors[ImGuiCol_Text] = ImVec4(0.5, 0.5, 1, 1);
         }
 
 
+
         ImGui::BulletText(ICON_FA_USER "    %s", _entities[i].name);
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+            if (_currentEntityID == entity.id) {
+                _currentEntityID = -1;
+            } else {
+                _currentEntityID = (int) entity.id;
+            }
+        }
 
         style.Colors[ImGuiCol_Text] = ImVec4(1, 1, 1, 1);
 
@@ -62,6 +71,15 @@ void Lake::EntityManager::renderEntityTree() {
     ImGui::EndChild();
 }
 void Lake::EntityManager::renderEntityInfo() {
+    if (_currentEntityID >= 0) {
 
+        auto entity = _entities.at(_currentEntityID);
+
+        ImGui::Text("ID: %i", entity.id);
+
+
+        ImGui::Text("Name: "); ImGui::SameLine(); ImGui::InputText(" n", *&entity.name, 50);
+        // :)
+    }
 }
 

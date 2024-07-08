@@ -257,7 +257,6 @@ void Lake::Application::renderConsoleTab() {
     }
 
     ImGui::End();
-    spdlog::info("TEST {} {} ", _renderAnimator, _consoleWindowOffset);
 }
 
 void Lake::Application::Destroy() {

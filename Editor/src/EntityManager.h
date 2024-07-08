@@ -36,8 +36,10 @@ namespace Lake {
 
     private:
         ProjectManager* _projectManager;
-        std::vector<Quack::EntityBlueprint> _entities;
-        Quack::EntityBlueprint* _currentEntity = nullptr;
+        std::unordered_map<unsigned int, Quack::EntityBlueprint> _entities;
+        int _currentEntityID = -1;
+
+        unsigned int _idCounter = 0;
 
     };
 
