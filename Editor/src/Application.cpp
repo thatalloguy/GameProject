@@ -22,45 +22,6 @@ namespace Utils {
     std::string fileName = "-1";
     bool hasDroppedFile = false;
 
-    void ItemRowsBackground(float lineHeight = -1.0f, const ImColor& color = ImColor(20, 20, 20, 64)) {
-        auto* drawList = ImGui::GetWindowDrawList();
-        const auto& style = ImGui::GetStyle();
-
-        if (lineHeight < 0) {
-            lineHeight = ImGui::GetTextLineHeight();
-        }
-        lineHeight += style.ItemSpacing.y;
-
-        float scrollOffsetH = ImGui::GetScrollX();
-        float scrollOffsetV = ImGui::GetScrollY();
-        float scrolledOutLines = floorf(scrollOffsetV / lineHeight);
-        scrollOffsetV -= lineHeight * scrolledOutLines;
-
-        ImVec2 clipRectMin(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
-        ImVec2 clipRectMax(clipRectMin.x + ImGui::GetWindowWidth(), clipRectMin.y + ImGui::GetWindowHeight());
-
-        if (ImGui::GetScrollMaxX() > 0){
-            clipRectMax.y -= style.ScrollbarSize;
-        }
-
-        drawList->PushClipRect(clipRectMin, clipRectMax);
-
-        bool isOdd = (static_cast<int>(scrolledOutLines) % 2) == 0;
-
-        float yMin = clipRectMin.y - scrollOffsetV + ImGui::GetCursorPosY();
-        float yMax = clipRectMax.y - scrollOffsetV + lineHeight;
-        float xMin = clipRectMin.x + scrollOffsetH + ImGui::GetWindowContentRegionMin().x;
-        float xMax = clipRectMin.x + scrollOffsetH + ImGui::GetWindowContentRegionMax().x;
-
-        for (float y = yMin; y < yMax; y += lineHeight, isOdd = !isOdd)
-        {
-            if (isOdd) {
-                drawList->AddRectFilled({ xMin, y - style.ItemSpacing.y }, { xMax, y + lineHeight }, color);
-            }
-        }
-
-        drawList->PopClipRect();
-    }
 }
 
 
@@ -107,10 +68,11 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
     Quack::Input::setTargetWindow(*_window);
 
     auto callback = std::make_shared<spdlog::sinks::callback_sink_mt>([&](const spdlog::details::log_msg &msg) {
+        //Awful looking code but hey, who cares :)
         consoleBuffer.append(to_short_c_str(msg.level));
         consoleBuffer.append(" | ");
-        consoleBuffer.append(msg.payload.data()); // lets hope this works :)
-        consoleBuffer.append("\n"); // lets hope this works :)
+        consoleBuffer.append(msg.payload.data());
+        consoleBuffer.append("\n");
     });
 
     _logger = new spdlog::logger("console", callback);
@@ -192,7 +154,6 @@ void Lake::Application::renderEditorTab() {
                 ImGui::SetTooltip("Create a new entity");
             }
 
-            Utils::ItemRowsBackground();
             _entityManager->renderEntityTree();
 
             ImGui::EndChild();
@@ -211,13 +172,6 @@ void Lake::Application::renderEditorTab() {
         if (ImGui::BeginTabItem(ICON_FA_FOLDER_TREE " Assets")) {
 
             _assetManager->renderAssetUI(_editorWindowSize.x,_editorWindowSize.y);
-
-            ImGui::EndTabItem();
-        }
-
-        if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
-
-            ImGui::Text("animator :)");
 
             ImGui::EndTabItem();
         }
@@ -255,8 +209,8 @@ void Lake::Application::renderConsoleTab() {
             }).Tick();
 
     ImGui::SetNextWindowPos({0,_editorWindowSize.y * _consoleWindowOffset});
-    ImGui::SetNextWindowSize({_editorWindowSize.x * 0.75f, (float) _editorWindowSize.y * 0.25f});
-    ImGui::Begin(ICON_FA_TERMINAL " Console", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize);
+    ImGui::SetNextWindowSize({_editorWindowSize.x * 0.75f, (float) _editorWindowSize.y * 1 - _consoleWindowOffset});
+    ImGui::Begin(ICON_FA_GEARS " Utilities", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize);
 
     // Render cool button
     const ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -269,14 +223,33 @@ void Lake::Application::renderConsoleTab() {
     ImGui::PopClipRect();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_SpanAllColumns);
 
+    if (_renderConsole) {
+        //render the actuall console
+        ImGui::BeginTabBar("tabs");
+        if (ImGui::BeginTabItem(ICON_FA_TERMINAL " Console")) {
 
-    //render the actuall console
-    ImGui::BeginChild("Logs");
 
-    ImGui::TextUnformatted(consoleBuffer.begin());
+            ImGui::BeginChild("Logs");
+            ImGui::BeginDisabled();
+            ImGui::TextUnformatted(consoleBuffer.begin());
+            ImGui::EndDisabled();
 
+            ImGui::EndChild();
 
-    ImGui::EndChild();
+            ImGui::EndTabItem();
+
+            _consoleWindowOffset = 0.75f;
+        }
+
+        if (ImGui::BeginTabItem(ICON_FA_CLOCK " Animator")) {
+            ImGui::Text("animator :)");
+            _consoleWindowOffset = 0.65f;
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+
     ImGui::End();
 
 }
