@@ -161,7 +161,7 @@ void Lake::Application::renderEditorTab() {
             // Object inspector
             ImGui::BeginChild("inspector", ImVec2(_editorWindowSize.x * 0.25f, _editorWindowSize.y * 0.6f), ImGuiChildFlags_Border);
 
-            _entityManager->renderEntityInfo();
+            _entityManager->renderEntityInfo(_editorWindowSize.x);
 
             ImGui::EndChild();
 

@@ -35,6 +35,7 @@ void Lake::EntityManager::deleteEntity(unsigned int ID) {
 }
 void Lake::EntityManager::selectEntity(unsigned int ID) {
     _currentEntityID = ID;
+    _tempName = _entities[ID].name;
 }
 
 
@@ -60,7 +61,7 @@ void Lake::EntityManager::renderEntityTree() {
             if (_currentEntityID == entity.id) {
                 _currentEntityID = -1;
             } else {
-                _currentEntityID = (int) entity.id;
+                selectEntity(entity.id);
             }
         }
 
@@ -70,16 +71,86 @@ void Lake::EntityManager::renderEntityTree() {
     ImGui::Separator();
     ImGui::EndChild();
 }
-void Lake::EntityManager::renderEntityInfo() {
+void Lake::EntityManager::renderEntityInfo(float winWidth) {
     if (_currentEntityID >= 0) {
 
         auto entity = _entities.at(_currentEntityID);
 
-        ImGui::Text("ID: %i", entity.id);
+        ImGui::BeginDisabled();
+        ImGui::Text(ICON_FA_INFO " ID: %i", entity.id);
+        ImGui::EndDisabled();
 
 
-        ImGui::Text("Name: "); ImGui::SameLine(); ImGui::InputText(" n", *&entity.name, 50);
-        // :)
+        ImGui::Text(ICON_FA_ID_BADGE" Name: "); ImGui::SameLine(); ImGui::PushID(103); ImGui::InputText(" ", _tempName, 50); ImGui::PopID();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::SetNextItemWidth(winWidth * 0.25f);
+        if (ImGui::TreeNodeEx(ICON_FA_STREET_VIEW " Transform", ImGuiTreeNodeFlags_Framed)) {
+            ImGui::Spacing();
+            ImGui::Text(ICON_FA_LOCATION_DOT " Position: ");
+            ImGui::SameLine();
+
+            renderVector3(entity.position, winWidth);
+
+            ImGui::Spacing();
+            ImGui::Text(ICON_FA_UP_RIGHT_AND_DOWN_LEFT_FROM_CENTER " Size: ");
+            ImGui::SameLine();
+
+            renderVector3(entity.size, winWidth);
+
+            ImGui::TreePop();
+        }
+        ImGui::Separator();
+
+
+
+
     }
+}
+
+void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float windowWidth) {
+
+    //x
+
+
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.1f, 0.1f, 1.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+
+    ImGui::PushID(104);
+    ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
+    ImGui::DragFloat(" ", &vector.x,  0.1f);
+    ImGui::PopID();
+
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+
+    //y
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.1f, 0.5f, 0.1f, 1.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+
+    ImGui::PushID(105);
+    ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
+    ImGui::DragFloat(" ", &vector.y,  0.1f);
+    ImGui::PopID();
+
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+
+    //y
+    ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.1f, 0.1f, 0.7f, 1.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+
+    ImGui::PushID(106);
+    ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
+    ImGui::DragFloat(" ", &vector.z,  0.1f);
+    ImGui::PopID();
+
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor();
 }
 

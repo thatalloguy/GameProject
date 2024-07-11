@@ -31,7 +31,7 @@ namespace Lake {
         void selectEntity(unsigned int ID);
 
         void renderEntityTree();
-        void renderEntityInfo();
+        void renderEntityInfo(float winWidth);
 
 
     private:
@@ -40,6 +40,10 @@ namespace Lake {
         int _currentEntityID = -1;
 
         unsigned int _idCounter = 0;
+
+        char* _tempName = nullptr;
+
+        void renderVector3(Quack::Math::Vector3& vector, float windowWidth);
 
     };
 
