@@ -74,14 +74,14 @@ void Lake::EntityManager::renderEntityTree() {
 void Lake::EntityManager::renderEntityInfo(float winWidth) {
     if (_currentEntityID >= 0) {
 
-        auto entity = _entities.at(_currentEntityID);
+        auto& entity = _entities.at(_currentEntityID);
 
         ImGui::BeginDisabled();
         ImGui::Text(ICON_FA_INFO " ID: %i", entity.id);
         ImGui::EndDisabled();
 
 
-        ImGui::Text(ICON_FA_ID_BADGE" Name: "); ImGui::SameLine(); ImGui::PushID(103); ImGui::InputText(" ", _tempName, 50); ImGui::PopID();
+        ImGui::Text(ICON_FA_ID_BADGE" Name: "); ImGui::SameLine(); ImGui::PushID(103); ImGui::InputText(" ", entity.name, 50); ImGui::PopID();
         ImGui::Separator();
         ImGui::Spacing();
 
@@ -91,25 +91,47 @@ void Lake::EntityManager::renderEntityInfo(float winWidth) {
             ImGui::Text(ICON_FA_LOCATION_DOT " Position: ");
             ImGui::SameLine();
 
-            renderVector3(entity.position, winWidth);
+            renderVector3(entity.position, winWidth, 1);
 
             ImGui::Spacing();
             ImGui::Text(ICON_FA_UP_RIGHT_AND_DOWN_LEFT_FROM_CENTER " Size: ");
             ImGui::SameLine();
 
-            renderVector3(entity.size, winWidth);
+            renderVector3(entity.size, winWidth, 2);
 
             ImGui::TreePop();
         }
         ImGui::Separator();
 
+        ImGui::Spacing();
 
+        ImGui::Text(ICON_FA_PERSON_WALKING);
+        ImGui::SameLine();
+        ImGui::Checkbox(" Is Dynamic", &entity.isDynamic);
 
+        ImGui::Spacing();
 
+        ImGui::Separator();
+
+        ImGui::Spacing();
+
+        ImGui::Text(ICON_FA_WEIGHT_SCALE);
+        ImGui::SameLine();
+        ImGui::Checkbox(" Is Physical", &entity.isPhysical);
+
+        if (entity.isPhysical) {
+            if (ImGui::TreeNodeEx(ICON_FA_WEIGHT_HANGING " Physics info", ImGuiTreeNodeFlags_Framed)) {
+
+                ImGui::Combo(ICON_FA_BOX" ShapeType", reinterpret_cast<int *>(&entity.shapeType), "Box\0Sphere\0Capsule\0");
+
+                ImGui::TreePop();
+            }
+
+        }
     }
 }
 
-void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float windowWidth) {
+void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float windowWidth, int id) {
 
     //x
 
@@ -117,7 +139,7 @@ void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float wind
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.5f, 0.1f, 0.1f, 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
 
-    ImGui::PushID(104);
+    ImGui::PushID(4 * id);
     ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
     ImGui::DragFloat(" ", &vector.x,  0.1f);
     ImGui::PopID();
@@ -131,7 +153,7 @@ void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float wind
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.1f, 0.5f, 0.1f, 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
 
-    ImGui::PushID(105);
+    ImGui::PushID(5 * id);
     ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
     ImGui::DragFloat(" ", &vector.y,  0.1f);
     ImGui::PopID();
@@ -145,7 +167,7 @@ void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float wind
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.1f, 0.1f, 0.7f, 1.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
 
-    ImGui::PushID(106);
+    ImGui::PushID(6 * id);
     ImGui::SetNextItemWidth((windowWidth * 0.25f) * 0.15f);
     ImGui::DragFloat(" ", &vector.z,  0.1f);
     ImGui::PopID();

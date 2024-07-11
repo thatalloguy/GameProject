@@ -43,7 +43,7 @@ namespace Lake {
 
         char* _tempName = nullptr;
 
-        void renderVector3(Quack::Math::Vector3& vector, float windowWidth);
+        void renderVector3(Quack::Math::Vector3& vector, float windowWidth, int id);
 
     };
 
