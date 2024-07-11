@@ -49,7 +49,7 @@
 - Map Editor
 - - [x] Project Management
 - - [x] Importing Assets.
-- - [ ] Creating new entities
+- - [x] Creating new entities
 - - [ ] Changing entities attributes
 - - [ ] Saving Maps
 - - [ ] Loading maps
