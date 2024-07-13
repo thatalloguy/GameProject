@@ -25,11 +25,12 @@ namespace Quack {
         Math::Vector3 size{1, 1, 1};
 
         unsigned int model = 0;
-        bool isDynamic = false;
         bool isPhysical = false;
         // Physicscreation
         Math::Vector4 rotation{0, 0, 0, 1}; // quaternion, but im too lazy to actually make a quaternion class
+        Math::Vector3 shapeVolume{1, 1, 1}; // for cube its the half extents. for the sphere x = radius, for capsule x = radius y = height.
         ShapeType shapeType = ShapeType::Box;
+        int physicsType = 0; // static = 0. dynamic = 2. kinematic = 1
         bool shouldActivate = false;
         unsigned int objectLayer = 0;
         // motion = isDynamic :)

@@ -8,6 +8,9 @@
 
 #include <filesystem>
 
+void itemDescription(const char* description) {
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) { ImGui::SetTooltip(description); }
+}
 
 void Lake::EntityManager::Initialize(Lake::ProjectManager *projectManager) {
 
@@ -85,6 +88,11 @@ void Lake::EntityManager::renderEntityInfo(float winWidth) {
         ImGui::Separator();
         ImGui::Spacing();
 
+        ImGui::Text(ICON_FA_CUBE " Model: "); ImGui::SameLine(); ImGui::PushID(145); ImGui::Combo(" ", reinterpret_cast<int *>(&entity.model), "box\0box2\0"); ImGui::PopID();
+
+        ImGui::Separator();
+        ImGui::Spacing();
+
         ImGui::SetNextItemWidth(winWidth * 0.25f);
         if (ImGui::TreeNodeEx(ICON_FA_STREET_VIEW " Transform", ImGuiTreeNodeFlags_Framed)) {
             ImGui::Spacing();
@@ -105,11 +113,6 @@ void Lake::EntityManager::renderEntityInfo(float winWidth) {
 
         ImGui::Spacing();
 
-        ImGui::Text(ICON_FA_PERSON_WALKING);
-        ImGui::SameLine();
-        ImGui::Checkbox(" Is Dynamic", &entity.isDynamic);
-
-        ImGui::Spacing();
 
         ImGui::Separator();
 
@@ -120,9 +123,41 @@ void Lake::EntityManager::renderEntityInfo(float winWidth) {
         ImGui::Checkbox(" Is Physical", &entity.isPhysical);
 
         if (entity.isPhysical) {
+
+            ImGui::SetNextItemWidth(winWidth * 0.25f);
             if (ImGui::TreeNodeEx(ICON_FA_WEIGHT_HANGING " Physics info", ImGuiTreeNodeFlags_Framed)) {
 
+                ImGui::Text(ICON_FA_FLAG_CHECKERED " Start Active");
+                itemDescription("Tell the physics engine that the body should be active on start\n handy for stuff like dynamic objects that move without the player touching them");
+                ImGui::SameLine();
+                ImGui::Checkbox(" _", &entity.shouldActivate);
+
+
+                ImGui::Text(ICON_FA_PERSON_WALKING " Physics Type: "); ImGui::SameLine(); ImGui::PushID(148);
+                ImGui::SetNextItemWidth(winWidth * 0.075f);
+                ImGui::Combo(" ", reinterpret_cast<int *>(&entity.physicsType), "Static\0Kinematic\0Dynamic\0"); ImGui::PopID();
+
+
+                ImGui::Spacing();
                 ImGui::Combo(ICON_FA_BOX" ShapeType", reinterpret_cast<int *>(&entity.shapeType), "Box\0Sphere\0Capsule\0");
+
+                switch (entity.shapeType) {
+                    case Quack::ShapeType::Capsule:
+                        ImGui::Text("Radius: "); ImGui::SameLine(); ImGui::PushID(95); ImGui::DragFloat(" ", &entity.shapeVolume.x, 0.1f); ImGui::PopID();
+                        ImGui::Text("Height: "); ImGui::SameLine(); ImGui::PushID(96); ImGui::DragFloat(" ", &entity.shapeVolume.y, 0.1f); ImGui::PopID();
+                        break;
+
+                    case Quack::ShapeType::Box:
+                        renderVector3(entity.shapeVolume, winWidth * 0.95f, 9);
+                        break;
+
+                    case Quack::ShapeType::Sphere:
+                        ImGui::Text("Radius: "); ImGui::SameLine(); ImGui::PushID(95); ImGui::DragFloat(" ", &entity.shapeVolume.x, 0.1f); ImGui::PopID();
+                        break;
+
+                    default:
+                        break;
+                }
 
                 ImGui::TreePop();
             }
