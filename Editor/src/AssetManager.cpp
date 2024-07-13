@@ -32,6 +32,8 @@ void Lake::AssetManager::newAsset(const char* fileName, Quack::AssetType type) {
 
     _assets.push_back(newAsset);
 
+    refreshAssetList();
+
 }
 
 void Lake::AssetManager::exportAssetData() {
@@ -102,4 +104,19 @@ void Lake::AssetManager::renderAssetUI(float width, float height) {
 
     ImGui::EndTable();
     ImGui::EndChild();
+}
+
+void Lake::AssetManager::renderAssetSelectionUI(Quack::EntityBlueprint &entity) {
+    ImGui::Text(ICON_FA_CUBE " Model: "); ImGui::SameLine(); ImGui::PushID(149 );ImGui::Combo(" ", reinterpret_cast<int *>(&entity.model), _assetList.c_str()); ImGui::PopID();
+}
+
+void Lake::AssetManager::refreshAssetList() {
+    _assetList = " ";
+    _assetList.append("None");
+    _assetList.append("\0");
+
+    for (auto asset : _assets) {
+       _assetList.append(asset.fileName);
+       _assetList.append("\0");
+    }
 }

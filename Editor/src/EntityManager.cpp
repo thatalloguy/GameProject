@@ -12,10 +12,10 @@ void itemDescription(const char* description) {
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) { ImGui::SetTooltip(description); }
 }
 
-void Lake::EntityManager::Initialize(Lake::ProjectManager *projectManager) {
+void Lake::EntityManager::Initialize(Lake::ProjectManager *projectManager, Lake::AssetManager* assetManager) {
 
     _projectManager = projectManager;
-
+    _assetManager = assetManager;
 }
 
 void Lake::EntityManager::exportData() {
@@ -88,7 +88,8 @@ void Lake::EntityManager::renderEntityInfo(float winWidth) {
         ImGui::Separator();
         ImGui::Spacing();
 
-        ImGui::Text(ICON_FA_CUBE " Model: "); ImGui::SameLine(); ImGui::PushID(145); ImGui::Combo(" ", reinterpret_cast<int *>(&entity.model), "box\0box2\0"); ImGui::PopID();
+        _assetManager->renderAssetSelectionUI(entity);
+        ImGui::Spacing();
 
         ImGui::Separator();
         ImGui::Spacing();

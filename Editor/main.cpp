@@ -48,7 +48,7 @@ int main() {
 
     assetManager.Initialize("../../Projects/TestLevel/Assets/assetData.lake");
 
-    entityManager.Initialize(&projectManager);
+    entityManager.Initialize(&projectManager, &assetManager);
 
 
     Lake::Application app;

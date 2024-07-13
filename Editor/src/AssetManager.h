@@ -26,13 +26,17 @@ namespace Lake {
 
         void renderAssetUI(float width, float height);
 
+        void renderAssetSelectionUI(Quack::EntityBlueprint& entity);
+
     private:
         unsigned int _assetCount = 0;
         unsigned int _idCount = 0;
         std::vector<Quack::AssetInfo> _assets;
         const char* _assetDataFile;
+        std::string _assetList = "None\0";
 
         void loadAssetDataFromFile(const char* assetDataFile);
+        void refreshAssetList();
     };
 }
 

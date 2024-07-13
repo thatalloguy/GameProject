@@ -8,6 +8,7 @@
 #include <vector>
 #include "ProjectManager.h"
 #include "Objects/Entity.h"
+#include "AssetManager.h"
 
 namespace Lake {
 
@@ -21,7 +22,7 @@ namespace Lake {
 
     public:
 
-        void Initialize(ProjectManager* projectManager);
+        void Initialize(ProjectManager* projectManager, Lake::AssetManager* assetManager);
 
         void loadData();
         void exportData();
@@ -36,6 +37,7 @@ namespace Lake {
 
     private:
         ProjectManager* _projectManager;
+        AssetManager* _assetManager;
         std::unordered_map<unsigned int, Quack::EntityBlueprint> _entities;
         int _currentEntityID = -1;
 
