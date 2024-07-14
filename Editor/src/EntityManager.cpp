@@ -27,18 +27,29 @@ void Lake::EntityManager::loadData() {
 
 void Lake::EntityManager::newEntity() {
 
+
+    Quack::EntityBlueprint newEntity{};
+    newEntity.id = _idCounter;
+
+    _entities.push_back(newEntity);
+
     _idCounter++;
-
-    Quack::EntityBlueprint newEntity{.id = _idCounter };
-
-    _entities.emplace(_idCounter, newEntity);
 }
 void Lake::EntityManager::deleteEntity(unsigned int ID) {
-    _entities.erase(ID);
+    for (int i=0; i<_entities.size(); i++) {
+        if (ID == _entities[i].id) {
+            _entities.erase(_entities.begin() + i);
+        }
+    }
 }
 void Lake::EntityManager::selectEntity(unsigned int ID) {
-    _currentEntityID = ID;
-    _tempName = _entities[ID].name;
+    for (int i=0; i<_entities.size(); i++) {
+        if (ID == _entities[i].id) {
+            _currentEntityID = ID;
+            _currentEntity = &_entities[i];
+        }
+    }
+
 }
 
 
@@ -59,7 +70,7 @@ void Lake::EntityManager::renderEntityTree() {
 
 
 
-        ImGui::BulletText(ICON_FA_USER "    %s", _entities[i].name);
+        ImGui::BulletText(ICON_FA_USER "    %s", entity.name);
         if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
             if (_currentEntityID == entity.id) {
                 _currentEntityID = -1;
@@ -67,6 +78,11 @@ void Lake::EntityManager::renderEntityTree() {
                 selectEntity(entity.id);
             }
         }
+
+        ImGui::SameLine();
+        ImGui::BeginDisabled();
+        ImGui::Text("  ID: %i", entity.id);
+        ImGui::EndDisabled();
 
         style.Colors[ImGuiCol_Text] = ImVec4(1, 1, 1, 1);
 
@@ -77,12 +93,17 @@ void Lake::EntityManager::renderEntityTree() {
 void Lake::EntityManager::renderEntityInfo(float winWidth) {
     if (_currentEntityID >= 0) {
 
-        auto& entity = _entities.at(_currentEntityID);
+        auto& entity = *_currentEntity;
 
         ImGui::BeginDisabled();
         ImGui::Text(ICON_FA_INFO " ID: %i", entity.id);
         ImGui::EndDisabled();
 
+        ImGui::SameLine(); ImGui::Text("   "); ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_TRASH)) {
+            deleteEntity(entity.id);
+            _currentEntityID = -1;
+        }
 
         ImGui::Text(ICON_FA_ID_BADGE" Name: "); ImGui::SameLine(); ImGui::PushID(103); ImGui::InputText(" ", entity.name, 50); ImGui::PopID();
         ImGui::Separator();

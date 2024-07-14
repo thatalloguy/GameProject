@@ -12,6 +12,10 @@
 
 namespace Lake {
 
+    typedef unsigned int EntityIndex;
+    typedef unsigned int EntityVersion;
+    typedef unsigned long long EntityID;
+
     /*
      * NOTE: The EntityManager actually never creates a "real" entity but only uses the
      * Entity blueprint struct, since that is dynamic and editable.
@@ -38,14 +42,15 @@ namespace Lake {
     private:
         ProjectManager* _projectManager;
         AssetManager* _assetManager;
-        std::unordered_map<unsigned int, Quack::EntityBlueprint> _entities;
+        std::vector<Quack::EntityBlueprint> _entities;
         int _currentEntityID = -1;
+        Quack::EntityBlueprint* _currentEntity;
 
         unsigned int _idCounter = 0;
 
-        char* _tempName = nullptr;
 
         void renderVector3(Quack::Math::Vector3& vector, float windowWidth, int id);
+
 
     };
 
