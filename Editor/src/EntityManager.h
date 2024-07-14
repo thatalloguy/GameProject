@@ -38,6 +38,8 @@ namespace Lake {
         void renderEntityTree();
         void renderEntityInfo(float winWidth);
 
+        void renderEntitiesToScreen(VulkanEngine& engine);
+
 
     private:
         ProjectManager* _projectManager;

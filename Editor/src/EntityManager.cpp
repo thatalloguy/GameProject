@@ -12,6 +12,16 @@ void itemDescription(const char* description) {
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) { ImGui::SetTooltip(description); }
 }
 
+glm::mat4 getTransformMatrix(Quack::EntityBlueprint& entity)  {
+    glm::mat4 model{1.f};
+
+    model =  glm::translate(model, glm::vec3{entity.position.x, entity.position.y, entity.position.z});
+    model =  glm::scale(model, glm::vec3{entity.size.x, entity.size.y, entity.size.z});
+
+    return model;
+}
+
+
 void Lake::EntityManager::Initialize(Lake::ProjectManager *projectManager, Lake::AssetManager* assetManager) {
 
     _projectManager = projectManager;
@@ -231,5 +241,15 @@ void Lake::EntityManager::renderVector3(Quack::Math::Vector3 &vector, float wind
 
     ImGui::PopStyleVar();
     ImGui::PopStyleColor();
+}
+
+void Lake::EntityManager::renderEntitiesToScreen(VulkanEngine &engine) {
+
+    for (auto entity : _entities) {
+        if (entity.model > 0) {
+            engine.loadedScenes[entity.model]->Draw(getTransformMatrix(entity), engine.mainDrawContext);
+        }
+    }
+
 }
 

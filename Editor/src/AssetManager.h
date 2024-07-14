@@ -30,7 +30,7 @@ namespace Lake {
 
     private:
         unsigned int _assetCount = 0;
-        unsigned int _idCount = 0;
+        unsigned int _idCount = 1;
         std::vector<Quack::AssetInfo> _assets;
         const char* _assetDataFile;
 
