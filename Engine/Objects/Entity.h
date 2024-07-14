@@ -34,6 +34,8 @@ namespace Quack {
         bool shouldActivate = false;
         unsigned int objectLayer = 0;
         // motion = isDynamic :)
+
+        char fileName[54] = "None";
     };
 
 

@@ -33,10 +33,8 @@ namespace Lake {
         unsigned int _idCount = 0;
         std::vector<Quack::AssetInfo> _assets;
         const char* _assetDataFile;
-        std::string _assetList = "None\0";
 
         void loadAssetDataFromFile(const char* assetDataFile);
-        void refreshAssetList();
     };
 }
 
