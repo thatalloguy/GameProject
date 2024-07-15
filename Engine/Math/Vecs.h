@@ -69,6 +69,7 @@
 
 
 
+
 #ifdef USING_JOLT
             Vector3& operator=(JPH::Vec3 b) {
                 this->x = b.GetX();

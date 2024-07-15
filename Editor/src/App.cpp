@@ -5,6 +5,7 @@
 #include "App.h"
 #include "spdlog/spdlog.h"
 #include "Video/Window.h"
+#include "Objects/Entity.h"
 #include <simdjson.h>
 
 namespace  {
@@ -14,6 +15,8 @@ namespace  {
 
     Quack::Window* window;
     VulkanEngine renderer;
+
+    std::vector<Quack::EntityBlueprint> _blueprints;
 
 
     void loadAssetsFromJson() {
@@ -27,6 +30,35 @@ namespace  {
             renderer.loadedScenes[ID] = *VkLoader::loadGltf(&renderer, path);
         }
 
+    }
+
+    void loadBlueprints() {
+        _blueprints.clear();
+
+        for (auto entity : doc["blueprints"]) {
+
+            Quack::EntityBlueprint blueprint;
+
+            blueprint.name = entity["name"];
+            blueprint.model = (uint64_t) entity["model"];
+            blueprint.isPhysical = entity["isPhysical"];
+
+            // It means the entity blueprints has physics data so we should look for it.
+            if (blueprint.isPhysical) {
+                auto bodyInfo = entity["Body"];
+
+
+                //NOTE: shapetype, 0 = box, 1 = sphere, 2 = capsule
+
+
+            }
+
+
+
+            spdlog::info("loaded entity: {}", blueprint.name);
+
+
+        }
     }
 }
 
@@ -48,6 +80,8 @@ void Lake::App::Init() {
 
 
     loadAssetsFromJson();
+
+    loadBlueprints();
 }
 
 void Lake::App::Run() {
