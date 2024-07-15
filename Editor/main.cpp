@@ -7,55 +7,20 @@
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
 
 
-#include <Users/allos/source/Game/Editor/src/AssetManager.h>
-#include <Users/allos/source/Game/Editor/src/EntityManager.h>
-#include "src/ProjectManager.h"
-
 #include "spdlog/spdlog.h"
-#include "src/Application.h"
+#include "src/App.h"
 
 int main() {
 
+    Lake::App::Init();
 
-    //little test
-    Lake::ProjectManagerCreateInfo projectManagerCreateInfo{};
 
-    Lake::ProjectManager projectManager;
-    Lake::AssetManager assetManager;
-    Lake::EntityManager entityManager;
+    Lake::App::Run();
 
 
 
-    projectManager.init(&projectManagerCreateInfo);
+    Lake::App::CleanUp();
 
-
-    if (!projectManager.doesProjectExist("TestLevel")) {
-
-        spdlog::info("Folder does not exist!");
-
-        if (projectManager.createProject("TestLevel") == Lake::ProjectManagerError::Success) {
-            spdlog::info("Yippie");
-        };
-
-        // do the rest
-
-    } else {
-        spdlog::info("Folder does exist!");
-
-        projectManager.openProject("../../Projects/TestLevel");
-
-    }
-
-    assetManager.Initialize("../../Projects/TestLevel/Assets/assetData.lake");
-
-    entityManager.Initialize(&projectManager, &assetManager);
-
-
-    Lake::Application app;
-
-    app.Init(&projectManager, &assetManager, &entityManager);
-    app.Run();
-    app.Destroy();
 
 
     return 0;

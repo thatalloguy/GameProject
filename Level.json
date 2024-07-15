@@ -1,0 +1,32 @@
+{
+
+  "assets": [
+    {"id": 0, "path": "../../Assets/basicmesh.glb"},
+    {"id": 1, "path": "../../Assets/bobber.glb"},
+    {"id": 2, "path": "../../Assets/Chest.glb"}
+  ],
+
+
+  "templates": [
+    {
+      "name": "tree",
+      "model": "0",
+      "isPhysical": false,
+
+      "Body": {
+        "shapeType": "Box",
+        "shapeVolume": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    }
+  ]
+
+}
+
+

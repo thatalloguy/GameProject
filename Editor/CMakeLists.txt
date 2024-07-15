@@ -3,17 +3,8 @@ find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE EDITOR_SRC
 
-        src/LakeUtils.h
-        src/ProjectManager.h
-        src/ProjectManager.cpp
-        src/AssetManager.h
-        src/AssetManager.cpp
-        src/EntityManager.h
-        src/EntityManager.cpp
-
-        src/Application.h
-        src/Application.cpp
-
+        src/App.h
+        src/App.cpp
 
 )
 
