@@ -32,6 +32,12 @@ void Lake::AssetManager::newAsset(const char* fileName, Quack::AssetType type) {
 
     _assets.push_back(newAsset);
 
+    std::string path = _assetDataFile;
+    path = path.substr(0, path.length() - 14);
+    path += fileName;
+
+    //load the asset
+    _renderer->loadedScenes[newAsset.Id] = *VkLoader::loadGltf(_renderer, path);
 
 }
 

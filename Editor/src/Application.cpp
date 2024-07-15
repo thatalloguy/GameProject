@@ -61,6 +61,8 @@ void Lake::Application::Init(ProjectManager* projectManager, AssetManager* asset
 
     _renderer->Init(_window->getRawWindow());
 
+    _assetManager->_renderer = _renderer;
+
     loadImGuiStyle();
     loadImGuiFont();
 
@@ -114,8 +116,9 @@ void Lake::Application::Run() {
             _projectMang->copyFileToProjectAssetFolder(Utils::filePath.c_str(), Utils::fileName.c_str());
             _assetManager->newAsset(Utils::fileName.c_str(), Quack::AssetType::Model);
         }
+        _renderer->updateScene();
 
-
+        _entityManager->renderEntitiesToScreen(*_renderer);
         _renderer->Run();
         _window->update();
     }

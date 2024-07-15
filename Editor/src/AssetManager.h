@@ -28,7 +28,9 @@ namespace Lake {
 
         void renderAssetSelectionUI(Quack::EntityBlueprint& entity);
 
+        VulkanEngine* _renderer;
     private:
+
         unsigned int _assetCount = 0;
         unsigned int _idCount = 1;
         std::vector<Quack::AssetInfo> _assets;
