@@ -18,7 +18,7 @@ namespace Quack {
     };
 
     struct EntityBlueprint {
-        std::string_view name = "name";
+        std::string name = "name";
         unsigned int model = 0;
         bool isPhysical = false;
 

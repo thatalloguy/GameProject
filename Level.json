@@ -11,7 +11,7 @@
     {
       "name": "tree",
       "model": 0,
-      "isPhysical": false,
+      "isPhysical": true,
       "Body": {
         "shapeType": 0,
         "shapeVolume": {
