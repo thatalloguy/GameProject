@@ -10,6 +10,14 @@
 #include <simdjson.h>
 
 namespace  {
+
+    struct EntityInstance {
+        unsigned int ID = 0;
+        Quack::Math::Vector3 position{0, 0, 0};
+        Quack::Math::Vector3 size{1, 1, 1};
+        Quack::Math::Vector4 rotation{0, 0, 0, 1};
+    };
+
     simdjson::ondemand::document doc;
     simdjson::ondemand::parser parser;
 
@@ -18,8 +26,28 @@ namespace  {
     VulkanEngine renderer;
 
     std::vector<Quack::EntityBlueprint> _blueprints;
-    std::vector<Quack::Entity> _instances;
+    std::vector<Quack::Entity*> _instances;
     int selectedIndex = -1;
+
+    void createEntityFromBlueprint(Quack::EntityBlueprint& blueprint) {
+
+        Quack::EntityCreationInfo creationInfo{};
+
+        creationInfo.position.z = -5;
+
+        creationInfo.model = blueprint.model;
+        creationInfo.isPhysical = blueprint.isPhysical;
+        auto& body =creationInfo.bodyCreationInfo;
+
+        body.position.SetX(creationInfo.position.x);
+        body.position.SetY(creationInfo.position.y);
+        body.position.SetZ(creationInfo.position.z);
+
+        // :)
+        _instances.push_back(new Quack::Entity(creationInfo));
+
+
+    }
 
     void loadAssetsFromJson() {
 
@@ -33,7 +61,6 @@ namespace  {
         }
 
     }
-
     void loadBlueprints() {
         _blueprints.clear();
 
@@ -41,6 +68,7 @@ namespace  {
             try {
                 Quack::EntityBlueprint blueprint;
 
+                blueprint.ID = (uint64_t) entity["ID"];
                 blueprint.name = simdjson::to_json_string(entity["name"]).value();
                 blueprint.model = (uint64_t) entity["model"];
                 blueprint.isPhysical = entity["isPhysical"];
@@ -67,6 +95,32 @@ namespace  {
                 spdlog::error("Could not load Entity :(");
             }
         }
+    }
+
+    void saveInstancesToFile() {
+
+        FILE* f_out = fopen("../../Instances.lake", "w");
+
+
+
+        fclose(f_out);
+
+        for (auto instance : _instances) {
+            EntityInstance entityInstance{};
+            entityInstance.ID = instance->ID;
+            entityInstance.position = instance->position;
+            entityInstance.size = instance->size;
+
+            fwrite(&entityInstance, sizeof(EntityInstance), 1, f_out);
+
+
+        }
+
+        fclose(f_out);
+
+    }
+    void loadInstancesFromFile() {
+
     }
 }
 
@@ -104,6 +158,18 @@ void Lake::App::Run() {
             ImGui::OpenPopup("Create new Entity");
         }
 
+        if (ImGui::Button("Save")) {
+
+        } ImGui::SameLine();
+        if (ImGui::Button("Load")) {
+
+        }
+
+        if (ImGui::Button("Reload Blueprints")) {
+
+        }
+
+
         if (ImGui::BeginPopupModal("Create new Entity")) {
 
             ImGui::Text("Select Template");
@@ -124,6 +190,7 @@ void Lake::App::Run() {
 
 
             if (ImGui::Button("Done")) {
+                createEntityFromBlueprint(_blueprints[selectedIndex]);
                 ImGui::CloseCurrentPopup();
             } ImGui::SameLine();
 
@@ -140,6 +207,12 @@ void Lake::App::Run() {
 
     while (!window->shouldShutdown()) {
 
+        renderer.updateScene();
+
+        for (auto entity : _instances) {
+            entity->render(renderer);
+        }
+
         renderer.Run();
 
         window->update();
@@ -147,6 +220,10 @@ void Lake::App::Run() {
 }
 
 void Lake::App::CleanUp() {
+
+    for (auto entity : _instances) {
+        delete entity;
+    }
 
     renderer.CleanUp();
 

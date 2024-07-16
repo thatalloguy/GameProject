@@ -2,16 +2,17 @@
 {
 
   "assets": [
-    {"id": 0, "path": "../../Assets/basicmesh.glb"},
-    {"id": 1, "path": "../../Assets/bobber.glb"},
-    {"id": 2, "path": "../../Assets/Chest.glb"}
+    {"id": 1, "path": "../../Assets/basicmesh.glb"},
+    {"id": 2, "path": "../../Assets/bobber.glb"},
+    {"id": 3, "path": "../../Assets/Chest.glb"}
   ],
 
   "blueprints": [
     {
+      "ID": 0,
       "name": "tree",
-      "model": 0,
-      "isPhysical": true,
+      "model": 1,
+      "isPhysical": false,
       "Body": {
         "shapeType": 0,
         "shapeVolume": {

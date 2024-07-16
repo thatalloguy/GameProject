@@ -18,6 +18,7 @@ namespace Quack {
     };
 
     struct EntityBlueprint {
+        unsigned int ID = 0;
         std::string name = "name";
         unsigned int model = 0;
         bool isPhysical = false;
@@ -68,6 +69,7 @@ namespace Quack {
     class Entity {
 
     public:
+        unsigned int ID = 0;
         explicit Entity(EntityCreationInfo &creationInfo);
         ~Entity();
 
