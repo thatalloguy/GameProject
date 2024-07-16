@@ -6,6 +6,8 @@ file(GLOB_RECURSE EDITOR_SRC
         src/App.h
         src/App.cpp
 
+        src/LakeUtils.h
+
 )
 
 add_executable(Lake-Editor main.cpp ${EDITOR_SRC})
