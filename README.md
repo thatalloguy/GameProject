@@ -47,15 +47,18 @@
 
 ----
 - Map Editor
-- - [x] Project Management
-- - [x] Importing Assets.
-- - [x] Creating new entities
-- - [ ] Changing entities attributes
-- - [ ] Saving Maps
-- - [ ] Loading maps
-- - [x] Exporting maps to special format ?
+- - [x] Loading assets from json
+- - [x] Loading blueprints (entity templates) from json
+- - [x] Creating instances of blueprints.
+- - [x] Saving instances to a file.
+- - [x] Loading instances from a file.
+- - [x] Hot reloading Assets and blueprints.
+- - [x] Moving entities (via debug window)
+- - [ ] Free fly camera.
+- - [ ] Gizmo's.
+- - [ ] Runtime map loading.
 - - Animator:
-
+- - - [ ] Keyframes.
 ---
 - Gameplay
 - - [x] Player controller?
