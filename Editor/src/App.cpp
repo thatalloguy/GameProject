@@ -27,7 +27,8 @@ namespace  {
 
     std::vector<Quack::EntityBlueprint> _blueprints;
     std::vector<Quack::Entity*> _instances;
-    int selectedIndex = -1;
+    int selectedIndex = -1; // this one is for selecting blueprints in the popup
+    int selectedEntityIndex = -1;
 
     void createEntityFromBlueprint(Quack::EntityBlueprint& blueprint) {
 
@@ -46,6 +47,7 @@ namespace  {
         // :)
         _instances.push_back(new Quack::Entity(creationInfo));
 
+        _instances.back()->ID = blueprint.ID;
 
     }
 
@@ -82,7 +84,7 @@ namespace  {
                     blueprint.shapeVolume.y = (float) (double) bodyInfo["shapeVolume"]["y"];
                     blueprint.shapeVolume.z = (float) (double) bodyInfo["shapeVolume"]["z"];
 
-                    blueprint.physicsType = (int64_t) bodyInfo["physicsType"];
+                    blueprint.physicsType = (int) (int64_t) bodyInfo["physicsType"];
                     blueprint.shouldActivate = bodyInfo["shouldActivate"];
                     blueprint.objectLayer = (uint64_t) bodyInfo["objectLayer"];
                 }
@@ -152,7 +154,7 @@ void Lake::App::Run() {
     renderer.uiRenderFuncs.pushFunction([=](){
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::Begin("Editor", NULL, ImGuiWindowFlags_NoMove);
+        ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove);
 
         if (ImGui::Button("New Entity")) {
             ImGui::OpenPopup("Create new Entity");
@@ -169,18 +171,36 @@ void Lake::App::Run() {
 
         }
 
+        ImGui::SeparatorText("Entities");
+
+        ImGui::BeginChild("Treeview");
+        int i = 0;
+        for (auto entity : _instances) {
+            if (ImGui::Selectable("Entity ")) {
+                if (selectedEntityIndex == i) {
+                    //if where already selected, unselect the entity
+                    selectedEntityIndex = -1;
+                } else {
+                    selectedEntityIndex = i;
+                }
+            } ImGui::SameLine(); ImGui::Text(" : %i", entity->ID);
+            i++;
+        }
+
+        ImGui::EndChild();
+
 
         if (ImGui::BeginPopupModal("Create new Entity")) {
 
             ImGui::Text("Select Template");
 
             if (ImGui::BeginCombo(" s", "Choose...")) {
-                int i = 0;
-                for (auto blueprint : _blueprints) {
+                int index = 0;
+                for (auto& blueprint : _blueprints) {
                     if (ImGui::Selectable(blueprint.name.c_str())) {
-                        selectedIndex = i;
+                        selectedIndex = index;
                     }
-                    i++;
+                    index++;
                 }
 
                 ImGui::EndCombo();
@@ -202,6 +222,26 @@ void Lake::App::Run() {
         }
 
         ImGui::End();
+
+        if (selectedEntityIndex > -1) {
+
+            ImGui::Begin("Entity Info");
+
+            auto entity = _instances[selectedEntityIndex];
+
+            ImGui::SeparatorText("Position");
+            ImGui::DragFloat("PX", &entity->position.x, 0.1f); ImGui::SameLine();
+            ImGui::DragFloat("PY", &entity->position.y, 0.1f); ImGui::SameLine();
+            ImGui::DragFloat("PZ", &entity->position.z, 0.1f);
+            ImGui::SeparatorText("Scale");
+            ImGui::DragFloat("SX", &entity->size.x, 0.1f); ImGui::SameLine();
+            ImGui::DragFloat("SY", &entity->size.y, 0.1f); ImGui::SameLine();
+            ImGui::DragFloat("SZ", &entity->size.z, 0.1f);
+
+
+            ImGui::End();
+
+        }
 
     });
 
