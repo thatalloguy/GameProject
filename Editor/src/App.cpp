@@ -155,6 +155,23 @@ namespace  {
     }
     void loadInstancesFromFile() {
 
+        FILE* f_in = fopen("../../Instances.lake", "r");
+
+        EntityInstance temp{};
+
+        while (fread(&temp, sizeof(EntityInstance), 1, f_in) == 1) {
+
+            // lets hope everything works :)
+            createEntityFromInstance(temp, *getBlueprintFromID(temp.ID));
+
+            spdlog::debug("loaded instance: {}", temp.ID);
+        }
+
+        spdlog::info("loaded instances from file");
+
+        fclose(f_in);
+
+
     }
 }
 
@@ -202,7 +219,7 @@ void Lake::App::Run() {
             spdlog::info("Saved Instances to file");
         } ImGui::SameLine();
         if (ImGui::Button("Load")) {
-
+            loadInstancesFromFile();
         }
 
         if (ImGui::Button("Reload Blueprints")) {
