@@ -83,7 +83,12 @@ namespace  {
 
     void loadAssetsFromJson() {
 
-        renderer.loadedScenes.clear();
+        ///renderer.loadedScenes.clear();
+
+        auto json = simdjson::padded_string::load("../../Level.json");
+
+
+        doc = parser.iterate(json);
 
         for (auto asset : doc["assets"]) {
 
@@ -91,7 +96,11 @@ namespace  {
             auto path = std::string_view(asset["path"]);
 
 
-            renderer.loadedScenes[ID] = *VkLoader::loadGltf(&renderer, path);
+            if (!renderer.loadedScenes.contains(ID)) {
+                renderer.loadedScenes[ID] = *VkLoader::loadGltf(&renderer, path);
+            } else {
+                spdlog::warn("CANNOT OVERWRITE ALREADY LOADED ASSETS PLEASE RESTART TO OVERWRITE. ID: {}", ID);
+            }
         }
 
     }
