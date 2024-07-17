@@ -778,6 +778,7 @@ void VulkanEngine::initImGui() {
     // Initialize Imgui.
 
     ImGui::CreateContext();
+    ImGui::GetIO().IniFilename = nullptr;
 
     ///NOTE i have no idea if this should be true or false ;-;
     ImGui_ImplGlfw_InitForVulkan(_window, true);

@@ -50,6 +50,36 @@ namespace  {
         _instances.back()->ID = blueprint.ID;
 
     }
+    void createEntityFromInstance(EntityInstance& instance, Quack::EntityBlueprint& blueprint) {
+        Quack::EntityCreationInfo creationInfo{};
+
+        creationInfo.position = instance.position;
+        creationInfo.size = instance.size;
+
+        creationInfo.model = blueprint.model;
+        creationInfo.isPhysical = blueprint.isPhysical;
+        auto& body =creationInfo.bodyCreationInfo;
+
+        body.position.SetX(creationInfo.position.x);
+        body.position.SetY(creationInfo.position.y);
+        body.position.SetZ(creationInfo.position.z);
+
+        // :)
+        _instances.push_back(new Quack::Entity(creationInfo));
+
+        _instances.back()->ID = blueprint.ID;
+    }
+
+    Quack::EntityBlueprint* getBlueprintFromID(unsigned int ID) {
+        // Yes i really do a loop to look for the id, boohoo
+        for (auto &blueprint : _blueprints) {
+            if (blueprint.ID == ID) {
+                return &blueprint;
+            }
+        }
+        spdlog::error("Could not find blueprint with ID: {}", ID);
+        return nullptr;
+    }
 
     void loadAssetsFromJson() {
 
@@ -104,10 +134,11 @@ namespace  {
         FILE* f_out = fopen("../../Instances.lake", "w");
 
 
+        // I hate my past self :(
+        //fclose(f_out);
 
-        fclose(f_out);
+        for (auto& instance : _instances) {
 
-        for (auto instance : _instances) {
             EntityInstance entityInstance{};
             entityInstance.ID = instance->ID;
             entityInstance.position = instance->position;
@@ -116,6 +147,7 @@ namespace  {
             fwrite(&entityInstance, sizeof(EntityInstance), 1, f_out);
 
 
+            spdlog::debug("Wrote entity to file");
         }
 
         fclose(f_out);
@@ -143,6 +175,7 @@ void Lake::App::Init() {
     renderer.Init(window->getRawWindow());
 
 
+
     loadAssetsFromJson();
 
     loadBlueprints();
@@ -153,15 +186,20 @@ void Lake::App::Run() {
 
     renderer.uiRenderFuncs.pushFunction([=](){
 
+        int width, height;
+        glfwGetWindowSize(window->getRawWindow(), &width, &height);
+
         ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove);
+        ImGui::SetNextWindowSize(ImVec2(width * 0.2f, height));
+        ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
         if (ImGui::Button("New Entity")) {
             ImGui::OpenPopup("Create new Entity");
         }
 
         if (ImGui::Button("Save")) {
-
+            saveInstancesToFile();
+            spdlog::info("Saved Instances to file");
         } ImGui::SameLine();
         if (ImGui::Button("Load")) {
 
@@ -230,12 +268,15 @@ void Lake::App::Run() {
             auto entity = _instances[selectedEntityIndex];
 
             ImGui::SeparatorText("Position");
-            ImGui::DragFloat("PX", &entity->position.x, 0.1f); ImGui::SameLine();
-            ImGui::DragFloat("PY", &entity->position.y, 0.1f); ImGui::SameLine();
+            const float size = 50.0f;
+            ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("PX", &entity->position.x, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("PY", &entity->position.y, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
             ImGui::DragFloat("PZ", &entity->position.z, 0.1f);
             ImGui::SeparatorText("Scale");
-            ImGui::DragFloat("SX", &entity->size.x, 0.1f); ImGui::SameLine();
-            ImGui::DragFloat("SY", &entity->size.y, 0.1f); ImGui::SameLine();
+            ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("SX", &entity->size.x, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("SY", &entity->size.y, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
             ImGui::DragFloat("SZ", &entity->size.z, 0.1f);
 
 
