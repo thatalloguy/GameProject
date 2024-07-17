@@ -231,6 +231,7 @@ void Lake::App::Run() {
         ImGui::BeginChild("Treeview");
         int i = 0;
         for (auto entity : _instances) {
+            ImGui::PushID(i);
             if (ImGui::Selectable("Entity ")) {
                 if (selectedEntityIndex == i) {
                     //if where already selected, unselect the entity
@@ -238,7 +239,7 @@ void Lake::App::Run() {
                 } else {
                     selectedEntityIndex = i;
                 }
-            } ImGui::SameLine(); ImGui::Text(" : %i", entity->ID);
+            } ImGui::PopID(); ImGui::SameLine(); ImGui::Text(" : %i", entity->ID);
             i++;
         }
 
