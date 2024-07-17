@@ -24,6 +24,23 @@
         "shouldActivate": true,
         "objectLayer": 0
       }
+    },
+    {
+      "ID": 1,
+      "name": "Test",
+      "model": 1,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
     }
   ]
 

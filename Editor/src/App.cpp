@@ -98,6 +98,11 @@ namespace  {
     void loadBlueprints() {
         _blueprints.clear();
 
+        auto json = simdjson::padded_string::load("../../Level.json");
+
+
+        doc = parser.iterate(json);
+
         for (auto entity : doc["blueprints"]) {
             try {
                 Quack::EntityBlueprint blueprint;
@@ -126,7 +131,7 @@ namespace  {
                 spdlog::info("loaded entity: {}", blueprint.name);
                 _blueprints.push_back(blueprint);
             } catch (...) {
-                spdlog::error("Could not load Entity :(");
+                spdlog::error("Could not load Entity :( ");
             }
         }
     }
