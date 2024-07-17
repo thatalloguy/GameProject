@@ -47,8 +47,8 @@ namespace Quack {
 
 
     struct BodyCreationInfo {
-        RVec3 position;
-        Quat rotation;
+        RVec3 position{};
+        Quat rotation{};
         Shape *shape = nullptr;
         EActivation shouldActivate = EActivation::DontActivate;
         EMotionType motionType = EMotionType::Static;

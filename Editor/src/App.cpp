@@ -83,6 +83,8 @@ namespace  {
 
     void loadAssetsFromJson() {
 
+        renderer.loadedScenes.clear();
+
         for (auto asset : doc["assets"]) {
 
             unsigned int ID =  uint64_t(asset["id"]);
@@ -207,7 +209,7 @@ void Lake::App::Run() {
         glfwGetWindowSize(window->getRawWindow(), &width, &height);
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(width * 0.2f, height));
+        ImGui::SetNextWindowSize(ImVec2((float) width * 0.2f,(float) height));
         ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
         if (ImGui::Button("New Entity")) {
@@ -223,8 +225,12 @@ void Lake::App::Run() {
         }
 
         if (ImGui::Button("Reload Blueprints")) {
-
+            loadBlueprints();
         }
+        if (ImGui::Button("Reload Assets")) {
+            loadAssetsFromJson();
+        }
+
 
         ImGui::SeparatorText("Entities");
 
