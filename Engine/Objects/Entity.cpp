@@ -37,6 +37,7 @@ void Quack::Entity::parseInfo(Quack::EntityCreationInfo &info)  {
 
     this->modelID = info.model;
     this->position = info.position;
+    this->rotation = info.rotation;
     size = info.size;
 
     if (info.isPhysical && info.bodyCreationInfo.physicsEngine != nullptr) {
@@ -55,6 +56,9 @@ glm::mat4 Quack::Entity::getTransformMatrix() const  {
 
     model =  glm::translate(model, glm::vec3{position.x, position.y, position.z});
     model =  glm::scale(model, glm::vec3{size.x, size.y, size.z});
+    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 
     return model;
 }

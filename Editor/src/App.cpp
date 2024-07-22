@@ -7,6 +7,8 @@
 #include "Video/Window.h"
 #include "Objects/Entity.h"
 #include <Input/InputManager.h>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
 #include <simdjson.h>
@@ -17,7 +19,8 @@ namespace  {
         unsigned int ID = 0;
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
-        Quack::Math::Vector4 rotation{0, 0, 0, 1};
+        // in degrees
+        Quack::Math::Vector3 rotation{0, 0, 0};
     };
 
     simdjson::ondemand::document doc;
@@ -62,6 +65,7 @@ namespace  {
 
         creationInfo.position = instance.position;
         creationInfo.size = instance.size;
+        creationInfo.rotation = instance.rotation;
 
         creationInfo.model = blueprint.model;
         creationInfo.isPhysical = blueprint.isPhysical;
@@ -166,6 +170,7 @@ namespace  {
             entityInstance.ID = instance->ID;
             entityInstance.position = instance->position;
             entityInstance.size = instance->size;
+            entityInstance.rotation = instance->rotation;
 
             fwrite(&entityInstance, sizeof(EntityInstance), 1, f_out);
 
@@ -229,12 +234,14 @@ void Lake::App::Run() {
 
     renderer.uiRenderFuncs.pushFunction([=](){
 
+
         int width, height;
         glfwGetWindowSize(window->getRawWindow(), &width, &height);
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2((float) width * 0.2f,(float) height));
         ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
 
         if (ImGui::Button("New Entity")) {
             ImGui::OpenPopup("Create new Entity");
@@ -245,7 +252,11 @@ void Lake::App::Run() {
             spdlog::info("Saved Instances to file");
         } ImGui::SameLine();
         if (ImGui::Button("Load")) {
-            loadInstancesFromFile();
+            try {
+                loadInstancesFromFile();
+            } catch (...) {
+                spdlog::error("Could not load instances from file");
+            }
         }
 
         if (ImGui::Button("Reload Blueprints")) {
@@ -327,6 +338,12 @@ void Lake::App::Run() {
             ImGui::DragFloat("SY", &entity->size.y, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
             ImGui::DragFloat("SZ", &entity->size.z, 0.1f);
 
+            ImGui::SeparatorText("Rotation");
+            ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("RX", &entity->rotation.x, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("RY", &entity->rotation.y, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
+            ImGui::DragFloat("RZ", &entity->rotation.z, 0.1f);
+
 
             if (ImGui::Button("Delete Entity")) {
                 ImGui::OpenPopup("Confirmation");
@@ -355,6 +372,9 @@ void Lake::App::Run() {
 
             ImGui::End();
 
+            // Gizmo stuff :)
+
+
         }
 
     });
@@ -367,6 +387,7 @@ void Lake::App::Run() {
             entity->render(renderer);
         }
 
+        // Update camera movement.
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
 
             Quack::Input::setMouseMode(Quack::MouseMode::Disabled);

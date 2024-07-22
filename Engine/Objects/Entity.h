@@ -60,6 +60,7 @@ namespace Quack {
     struct EntityCreationInfo {
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
+        Quack::Math::Vector3 rotation{0, 0, 0};
         unsigned int model = 0;
         bool isDynamic = false;
         bool isPhysical = false;
@@ -84,6 +85,7 @@ namespace Quack {
 
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
+        Quack::Math::Vector3 rotation{0, 0, 0}; // in degrees
         BodyID physicsID{};
     private:
         unsigned int modelID = 0;
