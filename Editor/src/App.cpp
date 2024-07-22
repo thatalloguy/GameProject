@@ -318,6 +318,31 @@ void Lake::App::Run() {
             ImGui::DragFloat("SZ", &entity->size.z, 0.1f);
 
 
+            if (ImGui::Button("Delete Entity")) {
+                ImGui::OpenPopup("Confirmation");
+            }
+
+            if (ImGui::BeginPopupModal("Confirmation")) {
+
+
+                ImGui::Text("Are you sure you want to delete this entity?");
+
+                if (ImGui::Button("Close")) {
+                    ImGui::CloseCurrentPopup();
+                } ImGui::SameLine();
+                if (ImGui::Button("Confirm")) {
+
+                    _instances.erase(_instances.begin() + selectedEntityIndex);
+                    selectedEntityIndex = -1;
+
+                    spdlog::info("deleted entity");
+
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
+            }
+
             ImGui::End();
 
         }
