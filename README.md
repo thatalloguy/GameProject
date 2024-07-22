@@ -57,8 +57,11 @@
 - - [ ] Free fly camera.
 - - [ ] Gizmo's.
 - - [ ] Runtime map loading.
-- - Animator:
+- - **Animator**:
 - - - [ ] Keyframes.
+- - - [ ] Interpolating between keyframes.
+- - - [ ] Different tweening types.
+- - - [ ] Serialization. 
 ---
 - Gameplay
 - - [x] Player controller?
