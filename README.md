@@ -57,7 +57,7 @@
 - - [x] Free fly camera.
 - - [x] Runtime map loading.
 - - **Animator**:
-- - - [ ] Keyframes.
+- - - [x] Keyframes.
 - - - [ ] Interpolating between keyframes.
 - - - [ ] Different tweening types.
 - - - [ ] Serialization. 
