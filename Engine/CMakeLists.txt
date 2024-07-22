@@ -10,6 +10,10 @@ find_package(Vulkan REQUIRED)
 
 
 file(GLOB_RECURSE QUACK_ENGINE_SRC
+
+        Animations/AnimationManager.h
+        Animations/AnimationManager.cpp
+
         Video/Window.h
         Video/Window.cpp
 
