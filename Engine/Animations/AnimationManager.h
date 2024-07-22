@@ -22,7 +22,10 @@ namespace Quack {
 
     struct Animation {
         std::vector<Keyframe> frames;
-        int currentFrame = 0;
+        int currentFrameIndex = 0;
+
+        // the interpolated frame
+        Keyframe currentFrame{};
     };
 
 
@@ -30,6 +33,8 @@ namespace Quack {
 
         void initAnimation(Animation& animation);
         void updateAnimation(Animation& animation, float currentTime);
+
+        float lerp(float a, float b, float t);
 
     };
 

@@ -3,6 +3,7 @@
 //
 
 #include "AnimationManager.h"
+#include "spdlog/spdlog.h"
 
 void Quack::AnimationUtils::initAnimation(Quack::Animation &animation) {
 
@@ -14,28 +15,39 @@ void Quack::AnimationUtils::initAnimation(Quack::Animation &animation) {
 
 void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime) {
 
-    if (animation.currentFrame >= animation.frames.size()) {
-        animation.currentFrame = 0;
-        return
+    // the animation is done.
+    if (animation.currentFrameIndex >= animation.frames.size() - 1) {
+        //loop: animation.currentFrameIndex = 0;
+        return;
     }
 
-    auto currentFrame = animation.frames[animation.currentFrame];
-    auto nextFrame = animation.frames[animation.currentFrame + 1];
+    auto currentFrame = animation.frames[animation.currentFrameIndex];
+    auto nextFrame = animation.frames[animation.currentFrameIndex + 1];
 
     float begin = currentFrame.timePosition;
     float end = nextFrame.timePosition;
-
-    //check if the animation is complete
-    if (currentTime >= end) {
-        animation.currentFrame++;
-        return;
-    }
 
     float localTimeScale = 1 / (end - begin);
 
     float currentTimePos = currentTime - begin;
 
 
+    //check if the animation is complete
+    if (currentTime >= end) {
+        animation.currentFrameIndex++;
+        spdlog::info("next frame");
+        return;
+    }
 
 
+    currentTimePos = currentTimePos * localTimeScale;
+
+    // linearly interpolate the position.
+    animation.currentFrame.position.x = lerp(currentFrame.position.x, nextFrame.position.x, currentTimePos);
+    animation.currentFrame.position.y = lerp(currentFrame.position.y, nextFrame.position.y, currentTimePos);
+    animation.currentFrame.position.z = lerp(currentFrame.position.z, nextFrame.position.z, currentTimePos);
+}
+
+float Quack::AnimationUtils::lerp(float a, float b, float t) {
+    return a + t * (b - a);
 }
