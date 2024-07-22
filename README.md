@@ -54,9 +54,8 @@
 - - [x] Loading instances from a file.
 - - [x] Hot reloading Assets and blueprints.
 - - [x] Moving entities (via debug window)
-- - [ ] Free fly camera.
-- - [ ] Gizmo's.
-- - [ ] Runtime map loading.
+- - [x] Free fly camera.
+- - [x] Runtime map loading.
 - - **Animator**:
 - - - [ ] Keyframes.
 - - - [ ] Interpolating between keyframes.
