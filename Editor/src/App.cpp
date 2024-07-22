@@ -6,6 +6,8 @@
 #include "spdlog/spdlog.h"
 #include "Video/Window.h"
 #include "Objects/Entity.h"
+#include <Input/InputManager.h>
+
 #include "imgui.h"
 #include <simdjson.h>
 
@@ -29,6 +31,11 @@ namespace  {
     std::vector<Quack::Entity*> _instances;
     int selectedIndex = -1; // this one is for selecting blueprints in the popup
     int selectedEntityIndex = -1;
+
+
+    //Camera stuff
+    Camera* _camera;
+    Quack::Math::Vector2 lastMousePos;
 
     void createEntityFromBlueprint(Quack::EntityBlueprint& blueprint) {
 
@@ -216,6 +223,9 @@ void Lake::App::Init() {
 
 void Lake::App::Run() {
 
+    _camera = &renderer.getMainCamera();
+    Quack::Input::setTargetWindow(*window);
+    lastMousePos = Quack::Input::getMousePos();
 
     renderer.uiRenderFuncs.pushFunction([=](){
 
@@ -355,6 +365,34 @@ void Lake::App::Run() {
 
         for (auto entity : _instances) {
             entity->render(renderer);
+        }
+
+        if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+
+            Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
+
+            auto rel = Quack::Input::getMousePos() - lastMousePos;
+
+            rel.x *= 0.001f;
+            rel.y *= 0.001f;
+
+            _camera->yaw += rel.x;
+            _camera->pitch += rel.y;
+
+
+            lastMousePos = Quack::Input::getMousePos();
+
+
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_W) == GLFW_PRESS) { _camera->velocity.z = -1; }
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_S) == GLFW_PRESS) { _camera->velocity.z =  1; }
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_A) == GLFW_PRESS) { _camera->velocity.x = -1; }
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_D) == GLFW_PRESS) { _camera->velocity.x =  1; }
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { _camera->velocity.y =  -1; }
+            if (glfwGetKey(window->getRawWindow(), GLFW_KEY_SPACE) == GLFW_PRESS) { _camera->velocity.y =  1; }
+
+
+        } else {
+            Quack::Input::setMouseMode(Quack::MouseMode::Normal);
         }
 
         renderer.Run();
