@@ -35,8 +35,10 @@ file(GLOB_RECURSE IMGUI_SOURCE
 
         Thirdparty/imgui/ImTween.h
 
-        Thirdparty/imgui/ImGuizmo.h
-        Thirdparty/imgui/ImGuizmo.cpp
+        Thirdparty/imgui/imgui_neo_internal.h
+        Thirdparty/imgui/imgui_neo_internal.cpp
+        Thirdparty/imgui/imgui_neo_sequencer.h
+        Thirdparty/imgui/imgui_neo_sequencer.cpp
 
         Thirdparty/imgui/IconsFontAwesome6.h
 )

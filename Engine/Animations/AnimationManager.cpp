@@ -15,7 +15,7 @@ void Quack::AnimationUtils::initAnimation(Quack::Animation &animation) {
 
 void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
 
-    // the animation is done.
+    // the animation is done. or the animation is too small ( less than 2 frames)
     if (animation.currentFrameIndex >= animation.frames.size() - 1) {
         //loop: animation.currentFrameIndex = 0;
         return;

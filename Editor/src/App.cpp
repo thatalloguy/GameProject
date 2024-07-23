@@ -12,6 +12,7 @@
 
 #include "imgui.h"
 #include "Animations/AnimationManager.h"
+#include "imgui_neo_sequencer.h"
 #include <simdjson.h>
 
 namespace  {
@@ -42,9 +43,15 @@ namespace  {
     Quack::Math::Vector2 lastMousePos;
 
 
+
+    int32_t currentFrame = 0;
+    int32_t startFrame = 0;
+    int32_t endFrame = 40;
+
+
     float deltaTime = 1 / 60.0f;
     float currentTime = 0.0f;
-    bool playAnimation;
+
     Quack::Animation testAnimation{
             {
                     Quack::Keyframe{.position={1, 1, 1}, .timePosition=0.0f},
@@ -336,16 +343,25 @@ void Lake::App::Run() {
 
         ImGui::End();
 
-        ImGui::Begin("Animation Editor");
 
 
-        if (ImGui::Button("Play")) {
+        static bool transformOpen = false;
 
-            playAnimation = true;
+        if(ImGui::BeginNeoSequencer("Sequencer", &currentFrame, &startFrame, &endFrame)) {
+            if(ImGui::BeginNeoGroup("Transform",&transformOpen)) {
+                std::vector<ImGui::FrameIndexType> keys = {0, 40};
+                if(ImGui::BeginNeoTimeline("Position", keys )) {
 
+                    Quack::AnimationUtils::updateAnimation(testAnimation,(float) currentFrame / 40.0f, *_instances[0]);
+
+                    ImGui::EndNeoTimeLine();
+                }
+                ImGui::EndNeoGroup();
+            }
+
+            ImGui::EndNeoSequencer();
         }
 
-        ImGui::End();
 
         if (selectedEntityIndex > -1) {
 
@@ -450,11 +466,7 @@ void Lake::App::Run() {
         auto now = std::chrono::steady_clock::now();
         deltaTime = (float) std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
         last = now;
-        if (playAnimation && currentTime <= 1.0f) {
-            currentTime += 1.0f * deltaTime;
-            spdlog::info("tick, {}", currentTime);
-            Quack::AnimationUtils::updateAnimation(testAnimation, currentTime, *_instances[0]);
-        }
+
     }
 }
 
