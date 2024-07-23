@@ -52,12 +52,7 @@ namespace  {
     float deltaTime = 1 / 60.0f;
     float currentTime = 0.0f;
 
-    Quack::Animation testAnimation{
-            {
-                    Quack::Keyframe{.position={1, 1, 1}, .timePosition=0.0f},
-                    Quack::Keyframe{.position={4, -5, 7}, .timePosition=4.0f}
-            }
-    };
+    std::vector<Quack::Animation> _animations;
 
 
 
@@ -289,6 +284,38 @@ void Lake::App::Run() {
             loadAssetsFromJson();
         }
 
+        if (ImGui::Button("Open Animation")) {
+            ImGui::OpenPopup("Select Animation");
+        }
+
+        if (ImGui::BeginPopupModal("Select Animation")) {
+
+            ImGui::Text("Select Animation");
+
+            if (ImGui::BeginCombo(" s", "Choose...")) {
+                int index = 0;
+                for (auto& animation : Quack::AnimationDataBase::_animations) {
+                    if (ImGui::Selectable(reinterpret_cast<const char *>(animation.first))) {
+                        selectedIndex = index;
+                    }
+                    index++;
+                }
+
+                ImGui::EndCombo();
+            }
+
+            ImGui::Text("Current Selected: %i", selectedIndex);
+
+
+            if (ImGui::Button("Cancel")) {
+                ImGui::CloseCurrentPopup();
+            } ImGui::SameLine(); if (ImGui::Button("Edit")) {
+
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
 
         ImGui::SeparatorText("Entities");
 
@@ -351,8 +378,6 @@ void Lake::App::Run() {
             if(ImGui::BeginNeoGroup("Transform",&transformOpen)) {
                 std::vector<ImGui::FrameIndexType> keys = {0, 40};
                 if(ImGui::BeginNeoTimeline("Position", keys )) {
-
-                    Quack::AnimationUtils::updateAnimation(testAnimation,(float) currentFrame / 40.0f, *_instances[0]);
 
                     ImGui::EndNeoTimeLine();
                 }

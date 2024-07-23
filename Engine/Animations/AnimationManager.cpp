@@ -5,13 +5,6 @@
 #include "AnimationManager.h"
 #include "spdlog/spdlog.h"
 
-void Quack::AnimationUtils::initAnimation(Quack::Animation &animation) {
-
-
-    // get the first and last time point
-
-
-}
 
 void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
 
