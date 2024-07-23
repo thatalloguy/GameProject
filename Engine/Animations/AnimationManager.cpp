@@ -13,7 +13,7 @@ void Quack::AnimationUtils::initAnimation(Quack::Animation &animation) {
 
 }
 
-void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime) {
+void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
 
     // the animation is done.
     if (animation.currentFrameIndex >= animation.frames.size() - 1) {
@@ -35,7 +35,6 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     //check if the animation is complete
     if (currentTime >= end) {
         animation.currentFrameIndex++;
-        spdlog::info("next frame");
         return;
     }
 
@@ -43,9 +42,15 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     currentTimePos = currentTimePos * localTimeScale;
 
     // linearly interpolate the position.
+    /*
     animation.currentFrame.position.x = lerp(currentFrame.position.x, nextFrame.position.x, currentTimePos);
     animation.currentFrame.position.y = lerp(currentFrame.position.y, nextFrame.position.y, currentTimePos);
     animation.currentFrame.position.z = lerp(currentFrame.position.z, nextFrame.position.z, currentTimePos);
+    */
+    entity.position.x = lerp(currentFrame.position.x, nextFrame.position.x, currentTimePos);
+    entity.position.y = lerp(currentFrame.position.y, nextFrame.position.y, currentTimePos);
+    entity.position.z = lerp(currentFrame.position.z, nextFrame.position.z, currentTimePos);
+
 }
 
 float Quack::AnimationUtils::lerp(float a, float b, float t) {

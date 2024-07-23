@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include "Math/Vecs.h"
+#include "Objects/Entity.h"
 
 namespace Quack {
 
@@ -32,7 +33,7 @@ namespace Quack {
     namespace AnimationUtils {
 
         void initAnimation(Animation& animation);
-        void updateAnimation(Animation& animation, float currentTime);
+        void updateAnimation(Animation& animation, float currentTime, Quack::Entity& entity);
 
         float lerp(float a, float b, float t);
 

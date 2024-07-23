@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
+#include "Animations/AnimationManager.h"
 #include <simdjson.h>
 
 namespace  {
@@ -39,6 +40,19 @@ namespace  {
     //Camera stuff
     Camera* _camera;
     Quack::Math::Vector2 lastMousePos;
+
+
+    float deltaTime = 1 / 60.0f;
+    float currentTime = 0.0f;
+    bool playAnimation;
+    Quack::Animation testAnimation{
+            {
+                    Quack::Keyframe{.position={1, 1, 1}, .timePosition=0.0f},
+                    Quack::Keyframe{.position={4, -5, 7}, .timePosition=4.0f}
+            }
+    };
+
+
 
     void createEntityFromBlueprint(Quack::EntityBlueprint& blueprint) {
 
@@ -228,6 +242,8 @@ void Lake::App::Init() {
 
 void Lake::App::Run() {
 
+    std::chrono::steady_clock::time_point last;
+
     _camera = &renderer.getMainCamera();
     Quack::Input::setTargetWindow(*window);
     lastMousePos = Quack::Input::getMousePos();
@@ -316,6 +332,17 @@ void Lake::App::Run() {
             }
 
             ImGui::EndPopup();
+        }
+
+        ImGui::End();
+
+        ImGui::Begin("Animation Editor");
+
+
+        if (ImGui::Button("Play")) {
+
+            playAnimation = true;
+
         }
 
         ImGui::End();
@@ -419,6 +446,15 @@ void Lake::App::Run() {
         renderer.Run();
 
         window->update();
+
+        auto now = std::chrono::steady_clock::now();
+        deltaTime = (float) std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
+        last = now;
+        if (playAnimation && currentTime <= 1.0f) {
+            currentTime += 1.0f * deltaTime;
+            spdlog::info("tick, {}", currentTime);
+            Quack::AnimationUtils::updateAnimation(testAnimation, currentTime, *_instances[0]);
+        }
     }
 }
 
