@@ -40,6 +40,9 @@ namespace Quack {
 
         bool updateAnimation(Animation& animation, float currentTime, Quack::Entity& entity);
 
+        void saveAnimation(std::ofstream& file, Animation& animation);
+        void saveKeyframe(std::ofstream& file, Keyframe& keyframe);
+
         float lerp(float a, float b, float t);
 
     };

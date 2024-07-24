@@ -2,6 +2,7 @@
 // Created by allos on 7/22/2024.
 //
 
+#include <fstream>
 #include "AnimationManager.h"
 #include "spdlog/spdlog.h"
 
@@ -57,6 +58,19 @@ bool Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
 
 float Quack::AnimationUtils::lerp(float a, float b, float t) {
     return a + t * (b - a);
+}
+
+void Quack::AnimationUtils::saveAnimation(std::ofstream& file, Quack::Animation &animation) {
+
+    file.write(reinterpret_cast<const char*>(&animation), sizeof(animation));
+    file.close();
+
+    spdlog::info("Wrote to file");
+
+}
+
+void Quack::AnimationUtils::saveKeyframe(std::ofstream &file, Quack::Keyframe &keyframe) {
+
 }
 
 Quack::AnimationID Quack::AnimationDataBase::registerAnimation(Quack::Animation *animation)  {

@@ -7,11 +7,14 @@
 #define LAKE_EDITOR_MIN_COMPATIBLE_VERSION 1
 
 
+#include <fstream>
 #include "spdlog/spdlog.h"
 #include "src/App.h"
+#include "Animations/AnimationManager.h"
 
 int main() {
 
+/*
     Lake::App::Init();
 
 
@@ -19,7 +22,7 @@ int main() {
 
 
 
-    Lake::App::CleanUp();
+    Lake::App::CleanUp();*/
 
 
 

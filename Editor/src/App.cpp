@@ -12,6 +12,7 @@
 #include "imgui.h"
 #include "imgui_neo_sequencer.h"
 #include <simdjson.h>
+#include <fstream>
 
 namespace  {
 
@@ -54,6 +55,21 @@ namespace  {
     float currentTime = 0.0f;
 
 
+    void saveAnimations(){
+        std::ofstream file("../../animations.lake", std::ios::binary);
+
+        file.write(reinterpret_cast<const char*>(&_animationDataBase), sizeof(_animationDataBase));
+        file.close();
+    }
+    void loadAnimations(){
+
+        std::ifstream inFile("../../animations.lake", std::ios::binary);
+
+        inFile.read(reinterpret_cast<char*>(&_animationDataBase),
+                    sizeof(_animationDataBase));
+
+        inFile.close();
+    }
 
     void createEntityFromBlueprint(Quack::EntityBlueprint& blueprint) {
 
@@ -267,13 +283,15 @@ void Lake::App::Run() {
 
         if (ImGui::Button("Save")) {
             saveInstancesToFile();
+            saveAnimations();
             spdlog::info("Saved Instances to file");
         } ImGui::SameLine();
         if (ImGui::Button("Load")) {
             try {
                 loadInstancesFromFile();
+                loadAnimations();
             } catch (...) {
-                spdlog::error("Could not load instances from file");
+                spdlog::error("Could not load from file");
             }
         }
 
