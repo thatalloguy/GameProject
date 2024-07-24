@@ -24,6 +24,65 @@ int main() {
 
     Lake::App::CleanUp();*/
 
+    FILE* f_out = fopen("../../animations.lake", "w");
+
+    Quack::AnimationDataBase dataBase;
+
+    Quack::Animation animation {
+            .frames ={{0, 0, 0}, {1, 5, 6}},
+            .loop = true
+    };
+
+    dataBase.registerAnimation(&animation);
+
+    int size = dataBase._animations.size();
+
+    fwrite(&size, sizeof(int), 1, f_out);
+    for (auto pair : dataBase._animations) {
+        //first write the ID to the file
+        fwrite(&pair.first, sizeof(Quack::AnimationID), 1, f_out);
+
+        //then write the animation data.
+        fwrite(&pair.second->loop, sizeof(bool), 1, f_out);
+
+        // then all the keyframes
+        for (auto frame : pair.second->frames) {
+            fwrite(&frame, sizeof(Quack::Keyframe), 1, f_out);
+        }
+    }
+
+    fclose(f_out);
+
+    FILE* f_in = fopen("../../animations.lake", "r");
+
+    int readSize = 0;
+    // get the size of the saved hashmap
+    fread(&readSize, sizeof(int), 1, f_in);
+
+    for (int i=0; i<readSize; i++) {
+
+        Quack::Animation tempAnimation{};
+        Quack::Keyframe tempKeyframe{};
+        //set it to i as a fallback.
+        Quack::AnimationID tempID = i;
+
+        fread(&tempID, sizeof(Quack::AnimationID), 1, f_in);
+        fread(&tempAnimation.loop, sizeof(bool), 1, f_in);
+
+        while (fread(&tempKeyframe, sizeof(Quack::Keyframe), 1, f_in) == 1) {
+            tempAnimation.frames.push_back(tempKeyframe);
+        }
+    }
+
+    std::vector<Quack::Keyframe> keyframes{};
+    Quack::Keyframe keyframe{};
+
+    while (fread(&keyframe, sizeof(Quack::Keyframe), 1, f_in) == 1) {
+        keyframes.push_back(keyframe);
+    }
+
+
+    spdlog::info("B {} | I {}", b, i);
 
 
     return 0;
