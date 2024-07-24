@@ -58,9 +58,8 @@
 - - [x] Runtime map loading.
 - - **Animator**:
 - - - [x] Keyframes.
-- - - [ ] Interpolating between keyframes.
-- - - [ ] Different tweening types.
-- - - [ ] Serialization. 
+- - - [x] Interpolating between keyframes.
+- - - [x] Serialization. 
 ---
 - Gameplay
 - - [x] Player controller?
