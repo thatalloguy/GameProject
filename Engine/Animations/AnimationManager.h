@@ -31,13 +31,14 @@ namespace Quack {
 
         // the interpolated frame
         Keyframe currentFrame{};
+        bool loop = false;
     };
 
     // using namespaces instead of classes here to make everything global and static no need for instances.
 
     namespace AnimationUtils {
 
-        void updateAnimation(Animation& animation, float currentTime, Quack::Entity& entity);
+        bool updateAnimation(Animation& animation, float currentTime, Quack::Entity& entity);
 
         float lerp(float a, float b, float t);
 

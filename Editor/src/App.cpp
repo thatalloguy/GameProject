@@ -380,6 +380,7 @@ void Lake::App::Run() {
 
         static bool transformOpen = true;
         static bool applyAnimationToEntity = false;
+        static bool playAnimation = false;
 
         if (selectedAnimationId > -1 && selectedEntityIndex > -1) {
 
@@ -417,6 +418,8 @@ void Lake::App::Run() {
                 animation->frames.clear();
                 animation->currentFrameIndex = 0;
             }
+            ImGui::Checkbox("Loop animation", &animation->loop);
+            ImGui::Checkbox("Play animation", &playAnimation);
 
             if(ImGui::BeginNeoSequencer("Sequencer", &currentFrame, &startFrame, &endFrame)) {
 
@@ -438,8 +441,14 @@ void Lake::App::Run() {
                 }
 
                 if (applyAnimationToEntity) {
-                    spdlog::info("animationss: {}", currentFrame / 10.0f);
                     Quack::AnimationUtils::updateAnimation(*animation, currentFrame / 10.0f, *entity);
+                }
+
+                if (playAnimation) {
+                    currentFrame += 80 * deltaTime ;
+                    if (Quack::AnimationUtils::updateAnimation(*animation, currentFrame / 10.0f, *entity)) {
+                        currentFrame = 0;
+                    }
                 }
 
 

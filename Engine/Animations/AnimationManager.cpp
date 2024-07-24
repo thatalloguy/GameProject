@@ -6,20 +6,25 @@
 #include "spdlog/spdlog.h"
 
 
-void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
+bool Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
 
     if (animation.frames.empty()) {
-        return;
+        return false;
     }
 
     // the animation is done. or the animation is too small ( less than 2 frames)
     if (animation.currentFrameIndex >= animation.frames.size() - 1) {
-        //loop: animation.currentFrameIndex = 0;
-        if (currentTime < animation.frames[animation.currentFrameIndex].timePosition) {
+        if (animation.loop) {
             spdlog::info("GO BACK");
-            animation.currentFrameIndex -= 1;
+            animation.currentFrameIndex = 0;
+            return true;
         }
-        return;
+
+        //loop: animation.currentFrameIndex = 0;
+/*        if (currentTime < animation.frames[animation.currentFrameIndex].timePosition) {
+            animation.currentFrameIndex -= 1;
+        }*/
+        return true;
     }
 
     animation.currentFrame = animation.frames[animation.currentFrameIndex];
@@ -36,7 +41,7 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     //check if the animation is complete
     if (currentTime >= end) {
         animation.currentFrameIndex++;
-        return;
+        return false;
     }
 
 
@@ -47,6 +52,7 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     entity.position.y = lerp(animation.currentFrame.position.y, nextFrame.position.y, currentTimePos);
     entity.position.z = lerp(animation.currentFrame.position.z, nextFrame.position.z, currentTimePos);
 
+    return false;
 }
 
 float Quack::AnimationUtils::lerp(float a, float b, float t) {
