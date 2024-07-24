@@ -8,16 +8,24 @@
 
 void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float currentTime, Quack::Entity& entity) {
 
-    // the animation is done. or the animation is too small ( less than 2 frames)
-    if (animation.currentFrameIndex >= animation.frames.size() - 1) {
-        //loop: animation.currentFrameIndex = 0;
+    if (animation.frames.empty()) {
         return;
     }
 
-    auto currentFrame = animation.frames[animation.currentFrameIndex];
+    // the animation is done. or the animation is too small ( less than 2 frames)
+    if (animation.currentFrameIndex >= animation.frames.size() - 1) {
+        //loop: animation.currentFrameIndex = 0;
+        if (currentTime < animation.frames[animation.currentFrameIndex].timePosition) {
+            spdlog::info("GO BACK");
+            animation.currentFrameIndex -= 1;
+        }
+        return;
+    }
+
+    animation.currentFrame = animation.frames[animation.currentFrameIndex];
     auto nextFrame = animation.frames[animation.currentFrameIndex + 1];
 
-    float begin = currentFrame.timePosition;
+    float begin = animation.currentFrame.timePosition;
     float end = nextFrame.timePosition;
 
     float localTimeScale = 1 / (end - begin);
@@ -35,14 +43,9 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     currentTimePos = currentTimePos * localTimeScale;
 
     // linearly interpolate the position.
-    /*
-    animation.currentFrame.position.x = lerp(currentFrame.position.x, nextFrame.position.x, currentTimePos);
-    animation.currentFrame.position.y = lerp(currentFrame.position.y, nextFrame.position.y, currentTimePos);
-    animation.currentFrame.position.z = lerp(currentFrame.position.z, nextFrame.position.z, currentTimePos);
-    */
-    entity.position.x = lerp(currentFrame.position.x, nextFrame.position.x, currentTimePos);
-    entity.position.y = lerp(currentFrame.position.y, nextFrame.position.y, currentTimePos);
-    entity.position.z = lerp(currentFrame.position.z, nextFrame.position.z, currentTimePos);
+    entity.position.x = lerp(animation.currentFrame.position.x, nextFrame.position.x, currentTimePos);
+    entity.position.y = lerp(animation.currentFrame.position.y, nextFrame.position.y, currentTimePos);
+    entity.position.z = lerp(animation.currentFrame.position.z, nextFrame.position.z, currentTimePos);
 
 }
 

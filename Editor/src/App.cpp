@@ -299,12 +299,10 @@ void Lake::App::Run() {
             ImGui::Text("Select Animation");
 
             if (ImGui::BeginCombo(" a", "Choose...")) {
-                int index = 0;
                 for (auto& animation : _animationDataBase._animations) {
                     if (ImGui::Selectable((std::to_string(animation.first).c_str()))) {
-                        selectedIndex = index;
+                        selectedIndex = (int) animation.first;
                     }
-                    index++;
                 }
 
                 ImGui::EndCombo();
@@ -380,29 +378,77 @@ void Lake::App::Run() {
 
 
 
-        static bool transformOpen = false;
+        static bool transformOpen = true;
+        static bool applyAnimationToEntity = false;
 
-        if (selectedAnimationId > -1) {
+        if (selectedAnimationId > -1 && selectedEntityIndex > -1) {
+
+            auto animation = _animationDataBase._animations[selectedAnimationId];
+            auto entity = _instances[selectedEntityIndex];
+
+            if (endFrame == currentFrame) {
+                endFrame++;
+            }
+
+
+            ImGui::Begin("Animation Editor");
+
+
+            if (ImGui::Button("Capture Frame")) {
+                animation->frames.push_back({.position = entity->position, .timePosition = currentFrame / 10.0f});
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Resize timeline")) {
+                if (animation->frames.size() >= 2) {
+                    endFrame = (int) animation->frames.back().timePosition * 10;
+                } else {
+                    endFrame = 40;
+                }
+                currentFrame = 0;
+            }
+            ImGui::SameLine();
+            ImGui::Checkbox(" Apply Animation to entity", &applyAnimationToEntity);
+            if (ImGui::Button("Reset Animation")) {
+                currentFrame = 0;
+                animation->currentFrameIndex = 0;
+            } ImGui::SameLine();
+            if (ImGui::Button("Clear Animation")) {
+                currentFrame = 0;
+                animation->frames.clear();
+                animation->currentFrameIndex = 0;
+            }
+
             if(ImGui::BeginNeoSequencer("Sequencer", &currentFrame, &startFrame, &endFrame)) {
+
+
+
                 if(ImGui::BeginNeoGroup("Transform",&transformOpen)) {
-                    std::vector<ImGui::FrameIndexType> keys = {0, 40};
-                    if(ImGui::BeginNeoTimeline("Position", keys )) {
+                    std::vector<ImGui::FrameIndexType> keys;
+
+                    for (auto keyFrame : animation->frames) {
+                        keys.push_back((int) keyFrame.timePosition * 10);
+                    }
+
+                    if(ImGui::BeginNeoTimeline("Transform", keys )) {
 
                         ImGui::EndNeoTimeLine();
                     }
-                    if(ImGui::BeginNeoTimeline("Scale", keys )) {
 
-                        ImGui::EndNeoTimeLine();
-                    }
-                    if(ImGui::BeginNeoTimeline("Rotation", keys )) {
-
-                        ImGui::EndNeoTimeLine();
-                    }
                     ImGui::EndNeoGroup();
                 }
 
+                if (applyAnimationToEntity) {
+                    spdlog::info("animationss: {}", currentFrame / 10.0f);
+                    Quack::AnimationUtils::updateAnimation(*animation, currentFrame / 10.0f, *entity);
+                }
+
+
+
                 ImGui::EndNeoSequencer();
             }
+
+
+            ImGui::End();
         }
 
 
