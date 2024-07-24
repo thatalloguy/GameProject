@@ -24,6 +24,7 @@ int main() {
 
     Lake::App::CleanUp();*/
 
+/*
     FILE* f_out = fopen("../../animations.lake", "w");
 
     Quack::AnimationDataBase dataBase;
@@ -52,6 +53,10 @@ int main() {
     }
 
     fclose(f_out);
+*/
+
+
+    Quack::AnimationDataBase dataBase1;
 
     FILE* f_in = fopen("../../animations.lake", "r");
 
@@ -61,29 +66,21 @@ int main() {
 
     for (int i=0; i<readSize; i++) {
 
-        Quack::Animation tempAnimation{};
+        auto tempAnimation = new Quack::Animation{{}, 0, 0.0f, {}, false};
         Quack::Keyframe tempKeyframe{};
         //set it to i as a fallback.
         Quack::AnimationID tempID = i;
 
         fread(&tempID, sizeof(Quack::AnimationID), 1, f_in);
-        fread(&tempAnimation.loop, sizeof(bool), 1, f_in);
+        fread(&tempAnimation->loop, sizeof(bool), 1, f_in);
 
         while (fread(&tempKeyframe, sizeof(Quack::Keyframe), 1, f_in) == 1) {
-            tempAnimation.frames.push_back(tempKeyframe);
+            tempAnimation->frames.push_back(tempKeyframe);
         }
+        dataBase1._animations[tempID] = tempAnimation;
     }
 
-    std::vector<Quack::Keyframe> keyframes{};
-    Quack::Keyframe keyframe{};
-
-    while (fread(&keyframe, sizeof(Quack::Keyframe), 1, f_in) == 1) {
-        keyframes.push_back(keyframe);
-    }
-
-
-    spdlog::info("B {} | I {}", b, i);
-
+    dataBase1.cleanUp();
 
     return 0;
 }
