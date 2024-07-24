@@ -49,3 +49,44 @@ void Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
 float Quack::AnimationUtils::lerp(float a, float b, float t) {
     return a + t * (b - a);
 }
+
+Quack::AnimationID Quack::AnimationDataBase::registerAnimation(Quack::Animation *animation)  {
+
+    AnimationID id = idCounter++;
+    _animations.emplace(id, animation);
+
+    return id;
+}
+
+void Quack::AnimationDataBase::cleanUp()  {
+    for (auto pair : _animations) {
+        delete pair.second;
+    }
+}
+
+Quack::Animation *Quack::AnimationDataBase::getAnimation(Quack::AnimationID id) {
+    return _animations[id];
+}
+
+void Quack::AnimationPlayer::animationTick(float dt)  {
+    globalTime += tickSpeed * dt;
+    for (auto pair : _animationQueue) {
+        pair.first->time += tickSpeed * dt;
+        AnimationUtils::updateAnimation(*pair.first, pair.first->time, *pair.second);
+    }
+}
+
+void Quack::AnimationPlayer::animationTick(int currentFrame, int end) {
+    for (auto pair : _animationQueue) {
+        AnimationUtils::updateAnimation(*pair.first, (float) currentFrame / (float) end, *pair.second);
+    }
+}
+
+void Quack::AnimationPlayer::playAnimation(Quack::Animation *animation, Quack::Entity *entity)  {
+    _animationQueue.emplace_back(animation, entity);
+}
+
+
+void Quack::AnimationPlayer::resetTime(Quack::Animation &animation) {
+    animation.time = 0.0f;
+}

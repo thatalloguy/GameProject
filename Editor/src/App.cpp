@@ -3,15 +3,13 @@
 //
 
 #include "App.h"
+#include "Animations/AnimationManager.h"
 #include "spdlog/spdlog.h"
 #include "Video/Window.h"
 #include "Objects/Entity.h"
 #include <Input/InputManager.h>
-#include <glm/gtx/matrix_decompose.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "imgui.h"
-#include "Animations/AnimationManager.h"
 #include "imgui_neo_sequencer.h"
 #include <simdjson.h>
 
@@ -43,6 +41,8 @@ namespace  {
     Quack::Math::Vector2 lastMousePos;
 
 
+    Quack::AnimationDataBase _animationDataBase;
+    Quack::AnimationPlayer _animationPlayer;
 
     int32_t currentFrame = 0;
     int32_t startFrame = 0;
@@ -51,8 +51,6 @@ namespace  {
 
     float deltaTime = 1 / 60.0f;
     float currentTime = 0.0f;
-
-    std::vector<Quack::Animation> _animations;
 
 
 
@@ -286,17 +284,23 @@ void Lake::App::Run() {
 
         if (ImGui::Button("Open Animation")) {
             ImGui::OpenPopup("Select Animation");
+        } ImGui::SameLine();
+        if (ImGui::Button("New Animation")) {
+            // We can call 'new' here since it gets deleted in the AnimationDatabase::cleanUp method.
+            _animationDataBase.registerAnimation(new Quack::Animation{});
+            spdlog::info("Created new animation");
         }
 
         if (ImGui::BeginPopupModal("Select Animation")) {
 
             ImGui::Text("Select Animation");
 
-            if (ImGui::BeginCombo(" s", "Choose...")) {
+            if (ImGui::BeginCombo(" a", "Choose...")) {
                 int index = 0;
-                for (auto& animation : Quack::AnimationDataBase::_animations) {
-                    if (ImGui::Selectable(reinterpret_cast<const char *>(animation.first))) {
-                        selectedIndex = index;
+                spdlog::info("SIZE {} ", _animationDataBase._animations.size());
+                for (auto& animation : _animationDataBase._animations) {
+                    if (ImGui::Selectable("Animation")) {
+
                     }
                     index++;
                 }
@@ -500,6 +504,8 @@ void Lake::App::CleanUp() {
     for (auto entity : _instances) {
         delete entity;
     }
+
+    _animationDataBase.cleanUp();
 
     renderer.CleanUp();
 

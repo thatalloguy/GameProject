@@ -9,7 +9,6 @@
 
 #include "spdlog/spdlog.h"
 #include "src/App.h"
-#include "Animations/AnimationManager.h"
 
 int main() {
 
