@@ -43,6 +43,7 @@ namespace  {
 
     Quack::AnimationDataBase _animationDataBase;
     Quack::AnimationPlayer _animationPlayer;
+    int selectedAnimationId = -1;
 
     int32_t currentFrame = 0;
     int32_t startFrame = 0;
@@ -261,6 +262,7 @@ void Lake::App::Run() {
 
         if (ImGui::Button("New Entity")) {
             ImGui::OpenPopup("Create new Entity");
+            selectedIndex = -1;
         }
 
         if (ImGui::Button("Save")) {
@@ -284,6 +286,7 @@ void Lake::App::Run() {
 
         if (ImGui::Button("Open Animation")) {
             ImGui::OpenPopup("Select Animation");
+            selectedIndex = -1;
         } ImGui::SameLine();
         if (ImGui::Button("New Animation")) {
             // We can call 'new' here since it gets deleted in the AnimationDatabase::cleanUp method.
@@ -297,10 +300,9 @@ void Lake::App::Run() {
 
             if (ImGui::BeginCombo(" a", "Choose...")) {
                 int index = 0;
-                spdlog::info("SIZE {} ", _animationDataBase._animations.size());
                 for (auto& animation : _animationDataBase._animations) {
-                    if (ImGui::Selectable("Animation")) {
-
+                    if (ImGui::Selectable((std::to_string(animation.first).c_str()))) {
+                        selectedIndex = index;
                     }
                     index++;
                 }
@@ -314,6 +316,8 @@ void Lake::App::Run() {
             if (ImGui::Button("Cancel")) {
                 ImGui::CloseCurrentPopup();
             } ImGui::SameLine(); if (ImGui::Button("Edit")) {
+
+                selectedAnimationId = selectedIndex;
 
                 ImGui::CloseCurrentPopup();
             }
@@ -378,18 +382,29 @@ void Lake::App::Run() {
 
         static bool transformOpen = false;
 
-        if(ImGui::BeginNeoSequencer("Sequencer", &currentFrame, &startFrame, &endFrame)) {
-            if(ImGui::BeginNeoGroup("Transform",&transformOpen)) {
-                std::vector<ImGui::FrameIndexType> keys = {0, 40};
-                if(ImGui::BeginNeoTimeline("Position", keys )) {
+        if (selectedAnimationId > -1) {
+            if(ImGui::BeginNeoSequencer("Sequencer", &currentFrame, &startFrame, &endFrame)) {
+                if(ImGui::BeginNeoGroup("Transform",&transformOpen)) {
+                    std::vector<ImGui::FrameIndexType> keys = {0, 40};
+                    if(ImGui::BeginNeoTimeline("Position", keys )) {
 
-                    ImGui::EndNeoTimeLine();
+                        ImGui::EndNeoTimeLine();
+                    }
+                    if(ImGui::BeginNeoTimeline("Scale", keys )) {
+
+                        ImGui::EndNeoTimeLine();
+                    }
+                    if(ImGui::BeginNeoTimeline("Rotation", keys )) {
+
+                        ImGui::EndNeoTimeLine();
+                    }
+                    ImGui::EndNeoGroup();
                 }
-                ImGui::EndNeoGroup();
-            }
 
-            ImGui::EndNeoSequencer();
+                ImGui::EndNeoSequencer();
+            }
         }
+
 
 
         if (selectedEntityIndex > -1) {
