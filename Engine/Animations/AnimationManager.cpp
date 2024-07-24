@@ -53,6 +53,14 @@ bool Quack::AnimationUtils::updateAnimation(Quack::Animation &animation, float c
     entity.position.y = lerp(animation.currentFrame.position.y, nextFrame.position.y, currentTimePos);
     entity.position.z = lerp(animation.currentFrame.position.z, nextFrame.position.z, currentTimePos);
 
+    entity.size.x = lerp(animation.currentFrame.scale.x, nextFrame.scale.x, currentTimePos);
+    entity.size.y = lerp(animation.currentFrame.scale.y, nextFrame.scale.y, currentTimePos);
+    entity.size.z = lerp(animation.currentFrame.scale.z, nextFrame.scale.z, currentTimePos);
+
+    entity.rotation.x = lerp(animation.currentFrame.rotation.x, nextFrame.rotation.x, currentTimePos);
+    entity.rotation.y = lerp(animation.currentFrame.rotation.y, nextFrame.rotation.y, currentTimePos);
+    entity.rotation.z = lerp(animation.currentFrame.rotation.z, nextFrame.rotation.z, currentTimePos);
+
     return false;
 }
 

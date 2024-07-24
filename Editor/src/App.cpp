@@ -443,7 +443,7 @@ void Lake::App::Run() {
 
 
             if (ImGui::Button("Capture Frame")) {
-                animation->frames.push_back({.position = entity->position, .timePosition = currentFrame / 10.0f});
+                animation->frames.push_back({.position = entity->position, .scale = entity->size, .rotation = entity->rotation, .timePosition = currentFrame / 10.0f});
             }
             ImGui::SameLine();
             if (ImGui::Button("Resize timeline")) {
