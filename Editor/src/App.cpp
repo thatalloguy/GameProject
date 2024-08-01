@@ -534,6 +534,20 @@ void Lake::App::Run() {
             ImGui::DragFloat("RY", &entity->rotation.y, 0.1f); ImGui::SameLine(); ImGui::SetNextItemWidth(size);
             ImGui::DragFloat("RZ", &entity->rotation.z, 0.1f);
 
+            if (ImGui::Button("Copy and Paste")) {
+                // Lets hope this works :)
+                createEntityFromBlueprint(*getBlueprintFromID(entity->ID));
+
+                auto pastedEntity = _instances.back();
+
+                pastedEntity->size = entity->size;
+                pastedEntity->rotation = entity->rotation;
+                pastedEntity->position = entity->position;
+
+                selectedEntityIndex = _instances.size() - 1;
+            }
+
+            ImGui::Separator();
 
             if (ImGui::Button("Delete Entity")) {
                 ImGui::OpenPopup("Confirmation");

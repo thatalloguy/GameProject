@@ -3,7 +3,10 @@
 
   "assets": [
     {"id": 1, "path": "../../Assets/Models/Tree.glb"},
-    {"id": 2, "path": "../../Assets/Models/Lake.glb"}
+    {"id": 2, "path": "../../Assets/Models/Lake.glb"},
+    {"id": 3, "path": "../../Assets/Models/Cabin.glb"},
+    {"id": 4, "path": "../../Assets/Models/DockPiece.glb"},
+    {"id": 5, "path": "../../Assets/Models/Car.glb"}
   ],
 
   "blueprints": [
