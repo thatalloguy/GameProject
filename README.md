@@ -63,13 +63,12 @@
 ---
 - Gameplay
 - - [x] Player controller?
-- - [ ] Inventory:
-- - - [ ] ~~Money Tab~~
-- - - [ ] ~~Items tab~~
-- - - [ ] ~~Fish Tab~~
-- - - [ ] ~~Journal Tab~~
 - - [x] Fishing
 - - [ ] Shop system
+- - [ ] Day and night cycle
+- - [ ] Event player.
+- - [ ] Fishing rod upgrades
+
 ---
 - Rendering part 2:
 - - [ ] Shadows
