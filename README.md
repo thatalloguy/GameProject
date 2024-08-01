@@ -1,4 +1,5 @@
 # DuckWatchers Remake
+![concept](https://github.com/user-attachments/assets/1d66660f-a70d-4f0d-8fe7-cf480b367e0e)
 
 
 ### Dependencies
