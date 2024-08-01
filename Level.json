@@ -4,7 +4,7 @@
   "assets": [
     {"id": 1, "path": "../../Assets/basicmesh.glb"},
     {"id": 2, "path": "../../Assets/bobber.glb"},
-    {"id": 3, "path": "../../Assets/Chest.glb"}
+    {"id": 3, "path": "../../Assets/Models/Lake.glb"}
   ],
 
   "blueprints": [
@@ -12,6 +12,23 @@
       "ID": 0,
       "name": "tree",
       "model": 1,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 1,
+      "name": "Lake",
+      "model": 3,
       "isPhysical": false,
       "Body": {
         "shapeType": 0,
