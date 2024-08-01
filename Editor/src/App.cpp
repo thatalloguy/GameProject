@@ -168,7 +168,8 @@ namespace  {
 
 
             if (!renderer.loadedScenes.contains(ID)) {
-                renderer.loadedScenes[ID] = *VkLoader::loadGltf(&renderer, path);
+                auto file = VkLoader::loadGltf(&renderer, path);
+                renderer.loadedScenes[ID] = *file;
             } else {
                 spdlog::warn("CANNOT OVERWRITE ALREADY LOADED ASSETS PLEASE RESTART TO OVERWRITE. ID: {}", ID);
             }

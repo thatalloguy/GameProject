@@ -2,9 +2,8 @@
 {
 
   "assets": [
-    {"id": 1, "path": "../../Assets/basicmesh.glb"},
-    {"id": 2, "path": "../../Assets/bobber.glb"},
-    {"id": 3, "path": "../../Assets/Models/Lake.glb"}
+    {"id": 1, "path": "../../Assets/Models/Tree.glb"},
+    {"id": 2, "path": "../../Assets/Models/Lake.glb"}
   ],
 
   "blueprints": [
@@ -12,13 +11,13 @@
       "ID": 0,
       "name": "tree",
       "model": 1,
-      "isPhysical": false,
+      "isPhysical": true,
       "Body": {
         "shapeType": 0,
         "shapeVolume": {
-          "x": 1,
-          "y": 1,
-          "z": 1
+          "x": 2,
+          "y": 4,
+          "z": 2
         },
         "physicsType": 0,
         "shouldActivate": true,
@@ -28,14 +27,65 @@
     {
       "ID": 1,
       "name": "Lake",
-      "model": 3,
-      "isPhysical": false,
+      "model": 2,
+      "isPhysical": true,
       "Body": {
         "shapeType": 0,
         "shapeVolume": {
-          "x": 1,
+          "x": 100,
           "y": 1,
-          "z": 1
+          "z": 100
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 2,
+      "name": "Cabin",
+      "model": 3,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 3,
+      "name": "Dock",
+      "model": 4,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 2,
+          "y": 1,
+          "z": 4
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 4,
+      "name": "Car",
+      "model": 5,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
         },
         "physicsType": 0,
         "shouldActivate": true,
