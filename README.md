@@ -62,6 +62,10 @@
 - - - [x] Interpolating between keyframes.
 - - - [x] Serialization. 
 ---
+- The Map
+- - [x] The lake
+- - [x] The beach
+---
 - Gameplay
 - - [x] Player controller?
 - - [x] Fishing
