@@ -6,7 +6,10 @@
     {"id": 2, "path": "../../Assets/Models/Lake.glb"},
     {"id": 3, "path": "../../Assets/Models/Cabin.glb"},
     {"id": 4, "path": "../../Assets/Models/DockPiece.glb"},
-    {"id": 5, "path": "../../Assets/Models/Car.glb"}
+    {"id": 5, "path": "../../Assets/Models/Car.glb"},
+    {"id": 6, "path": "../../Assets/Models/Beach.glb"},
+    {"id": 7, "path": "../../Assets/Models/FishingShop.glb"},
+    {"id": 8, "path": "../../Assets/Models/FisherM.glb"}
   ],
 
   "blueprints": [
@@ -92,6 +95,57 @@
         },
         "physicsType": 0,
         "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 5,
+      "name": "Beach",
+      "model": 6,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 100,
+          "y": 1,
+          "z": 100
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 6,
+      "name": "FishingShop",
+      "model": 7,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 7,
+      "name": "Fisher Man",
+      "model": 8,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
         "objectLayer": 0
       }
     }
