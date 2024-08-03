@@ -240,6 +240,10 @@ class VulkanEngine {
         FunctionQueue debugRenderFuncs;
         FunctionQueue uiRenderFuncs;
 
+
+        std::vector<ComputeEffect> backgroundEffects;
+        int currentBackgroundEffect{0};
+
 private:
         void initVulkan();
         void initSwapchain();
@@ -263,8 +267,6 @@ private:
 
 
 
-        std::vector<ComputeEffect> backgroundEffects;
-        int currentBackgroundEffect{1};
 
         VkPipelineLayout _trianglePipelineLayout;
         VkPipeline _trianglePipeline;

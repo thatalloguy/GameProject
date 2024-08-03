@@ -683,8 +683,8 @@ void VulkanEngine::initBackgroundPipelines() {
     gradient.data = {};
 
 //default colors
-    gradient.data.data1 = glm::vec4(1, 0, 0, 1);
-    gradient.data.data2 = glm::vec4(0, 0, 1, 1);
+    gradient.data.data1 = glm::vec4(0, 0.6, 1.0, 1);
+    gradient.data.data2 = glm::vec4(0, 0.2, 1.0, 1);
 
     VK_CHECK(vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &computePipelineCreateInfo, nullptr, &gradient.pipeline));
 
