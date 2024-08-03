@@ -9,6 +9,9 @@ file(GLOB_RECURSE GAME_SRC
         Core/FishingManager.h
         Core/FishingManager.cpp
 
+        Core/MapLoader.h
+        Core/MapLoader.cpp
+
         Inventory/Inventory.h
         Inventory/Items/FishingRod.h
         Inventory/Items/FishingRod.cpp

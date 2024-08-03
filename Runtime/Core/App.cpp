@@ -14,6 +14,7 @@
 #include "../Inventory/Inventory.h"
 #include "../Inventory/UI/BookUI.h"
 #include "Audio/AudioEngine.h"
+#include "MapLoader.h"
 
 
 // Core Game Systems
@@ -23,6 +24,8 @@ namespace Game {
     Quack::PhysicsEngine* physicsEngine;
     Quack::PhysicsEngineCreationInfo* engineCreationInfo;
     Quack::AudioEngine* audioEngine;
+
+    Loader::MapLoader* mapLoader;
 
     Quack::SoundID pianoId;
 
@@ -40,12 +43,14 @@ namespace Game {
         auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
         // just a check, not necessary
         assert(structureFile.has_value());
-        Game::renderer.loadedScenes[1] = *structureFile;
-        Game::renderer.loadedScenes[2] = *testFile;
-        Game::renderer.loadedScenes[3] = *sphereFile;
-        Game::renderer.loadedScenes[4] = *bobberFile;
-        Game::renderer.loadedScenes[5] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
+        Game::renderer.loadedScenes[10] = *structureFile;
+        Game::renderer.loadedScenes[20] = *testFile;
+        Game::renderer.loadedScenes[30] = *sphereFile;
+        Game::renderer.loadedScenes[40] = *bobberFile;
+        Game::renderer.loadedScenes[50] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
 
+
+        Game::mapLoader->loadMap();
     }
     void initPhysics() {
 
@@ -78,6 +83,8 @@ void App::init() {
 
     Game::renderer.Init(window->getRawWindow(), false);
 
+    Game::mapLoader = new Loader::MapLoader(Game::renderer, *Game::physicsEngine);
+
     Game::loadAssets();
 
     Game::initPhysics();
@@ -95,7 +102,7 @@ void App::init() {
     Quack::EntityCreationInfo floor_info {
             .position = {0, -5, 0},
             .size = {100, 1.0f, 100},
-            .model = 2,
+            .model = 20,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {0, -5, 0},
@@ -111,7 +118,7 @@ void App::init() {
     Quack::EntityCreationInfo cube_info {
             .position = {-10, -1.5f, 20},
             .size = {4, 1.0f, 4},
-            .model = 2,
+            .model = 20,
             .isPhysical = false,
 
     };
@@ -119,7 +126,7 @@ void App::init() {
     Quack::EntityCreationInfo Chest_info {
             .position = {20, -2, 20},
             .size = {1, 1.0f, 1},
-            .model = 5,
+            .model = 50,
             .isPhysical = false,
 
     };
@@ -176,6 +183,7 @@ void App::run() {
 
         Level::floor->render(Game::renderer);
         Level::chest->render(Game::renderer);
+        Game::mapLoader->renderMap();
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
@@ -227,18 +235,20 @@ void App::run() {
 
 void App::cleanup() {
     Game::audioEngine->CleanUp();
+
     delete Level::player;
     delete Level::chest;
     delete Level::floor;
+
+
     delete Game::fishingManager;
+    delete Game::mapLoader;
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
     delete Game::bookUI;
     delete Game::audioEngine;
 
-
-
-
     Game::renderer.CleanUp();
+
     delete window;
 }
