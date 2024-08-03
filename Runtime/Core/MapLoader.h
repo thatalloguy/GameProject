@@ -43,6 +43,7 @@ namespace Loader {
         std::vector<Quack::EntityBlueprint> _blueprints;
         std::vector<Quack::Entity*> _instances;
 
+        unsigned int DebugModelId = 0;
 
         simdjson::ondemand::document doc;
         simdjson::ondemand::parser parser;

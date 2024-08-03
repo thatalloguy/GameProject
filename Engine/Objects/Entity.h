@@ -87,8 +87,8 @@ namespace Quack {
         Quack::Math::Vector3 size{1, 1, 1};
         Quack::Math::Vector3 rotation{0, 0, 0}; // in degrees
         BodyID physicsID{};
-    private:
         unsigned int modelID = 0;
+    private:
         BodyInterface *body_interface = nullptr;
 
         void parseInfo(EntityCreationInfo &info);

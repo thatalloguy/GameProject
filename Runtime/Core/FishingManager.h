@@ -46,6 +46,8 @@ public:
         _character->AddToPhysicsSystem(EActivation::Activate);
 
         lastMousePos = Quack::Input::getMousePos();
+
+        _character->SetPosition(RVec3(position.x, position.y, position.z));
     }
 
     ~Player() {
@@ -80,10 +82,10 @@ public:
     float speed = 10.0f;
     const float sensitivity = 0.02f;
     const float mouseSensitivity = 0.1f;
-    float playerHeight = 3.0f;
+    float playerHeight = 6.0f;
     float jumpForce = 3.0f;
 
-    Quack::Math::Vector3 position{0, 40, 0};
+    Quack::Math::Vector3 position{3, 1, 33};
     PlayerState state = PlayerState::Moving;
 
 private:
@@ -145,9 +147,9 @@ private:
                 _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
             }
 
-            if (_character->GetGroundNormal().GetY() > 0 && Quack::Input::isButtonPressed(0, 0)) {
+/*            if (_character->GetGroundNormal().GetY() > 0 && Quack::Input::isButtonPressed(0, 0)) {
                 out.y += jumpForce;
-            }
+            }*/
             if (Quack::Input::isButtonPressed(0, 2)) {
                 speed = 17.5f;
                 _camera.fov = 94.0f;
@@ -187,9 +189,11 @@ private:
             _camera.fov = 90.0f;
         }
 
+        /* Jumping is not nessicairy and causes too many bugs
         if (_character->GetGroundNormal().GetY() > 0 && Quack::Input::isKeyPressed(Quack::Key::SPACE)) {
             out.y += jumpForce;
         }
+*/
 
 
         // Rotate the move direction based on where the camera is looking.

@@ -1,5 +1,6 @@
 
 {
+  "DebugModelID": 10,
 
   "assets": [
     {"id": 1, "path": "../../Assets/Models/Tree.glb"},
@@ -10,7 +11,8 @@
     {"id": 6, "path": "../../Assets/Models/Beach.glb"},
     {"id": 7, "path": "../../Assets/Models/FishingShop.glb"},
     {"id": 8, "path": "../../Assets/Models/FisherM.glb"},
-    {"id": 9, "path": "../../Assets/Models/reaper.glb"}
+    {"id": 9, "path": "../../Assets/Models/reaper.glb"},
+    {"id": 10, "path": "../../Assets/Models/cube.glb"}
   ],
 
   "blueprints": [
@@ -164,6 +166,23 @@
         },
         "physicsType": 0,
         "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 9,
+      "name": "Barrier",
+      "model": 10,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": true,
         "objectLayer": 0
       }
     }

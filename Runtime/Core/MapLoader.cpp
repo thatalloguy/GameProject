@@ -26,7 +26,9 @@ void Loader::MapLoader::loadMap() {
 
 void Loader::MapLoader::renderMap() {
     for (auto entity : _instances) {
-        entity->render(_renderer);
+        if (entity->modelID != DebugModelId) {
+            entity->render(_renderer);
+        }
         entity->updatePhysics(_physicsEngine);
     }
 }
@@ -40,11 +42,12 @@ void Loader::MapLoader::loadAssets() {
 
     doc = parser.iterate(json);
 
+
+    DebugModelId = (uint64_t) doc["DebugModelID"];
     for (auto asset : doc["assets"]) {
 
         unsigned int ID =  uint64_t(asset["id"]);
         auto path = std::string_view(asset["path"]);
-
 
         if (!_renderer.loadedScenes.contains(ID)) {
             auto file = VkLoader::loadGltf(&_renderer, path);
@@ -62,6 +65,8 @@ void Loader::MapLoader::loadBlueprints() {
 
 
     doc = parser.iterate(json);
+
+
 
     for (auto entity : doc["blueprints"]) {
         try {
@@ -127,6 +132,14 @@ Quack::EntityBlueprint* Loader::MapLoader::getBlueprintFromID(unsigned int ID) {
 }
 
 void Loader::MapLoader::createEntityFromInstance(Loader::EntityInstance &instance, Quack::EntityBlueprint &blueprint)  {
+
+    auto size = blueprint.shapeVolume;
+
+    if (blueprint.model == DebugModelId) {
+        size = instance.size;
+        size = size * 1.2f;
+    }
+
     Quack::EntityCreationInfo creationInfo{
             .position = instance.position,
             .size = instance.size,
@@ -136,7 +149,7 @@ void Loader::MapLoader::createEntityFromInstance(Loader::EntityInstance &instanc
             .bodyCreationInfo = {
                     .position={instance.position.x, instance.position.y, instance.position.z},
                     .rotation = Quat::sIdentity(),
-                    .shape = new BoxShape(RVec3 (blueprint.shapeVolume.x, blueprint.shapeVolume.y, blueprint.shapeVolume.z)),
+                    .shape = new BoxShape(RVec3 (size.x, size.y, size.z)),
                     .shouldActivate = EActivation::DontActivate,
                     .motionType = EMotionType::Static,
                     .layer = Quack::Layers::NON_MOVING,

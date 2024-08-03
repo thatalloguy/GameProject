@@ -24,6 +24,9 @@ namespace  {
         Quack::Math::Vector3 rotation{0, 0, 0};
     };
 
+    unsigned int DebugModelId = 0;
+    bool renderCollision = true;
+
     simdjson::ondemand::document doc;
     simdjson::ondemand::parser parser;
 
@@ -182,7 +185,10 @@ namespace  {
         auto json = simdjson::padded_string::load("../../Level.json");
 
 
+
         doc = parser.iterate(json);
+
+        DebugModelId = (uint64_t) doc["DebugModelID"];
 
         for (auto entity : doc["blueprints"]) {
             try {
@@ -324,6 +330,7 @@ void Lake::App::Run() {
                 spdlog::error("Could not load from file");
             }
         }
+        ImGui::Checkbox("Render Barriers", &renderCollision);
 
         if (ImGui::Button("Reload Blueprints")) {
             loadBlueprints();
@@ -588,7 +595,11 @@ void Lake::App::Run() {
         renderer.updateScene();
 
         for (auto entity : _instances) {
-            entity->render(renderer);
+            if (entity->modelID == DebugModelId && renderCollision) {
+                entity->render(renderer);
+            } else if (entity->modelID != DebugModelId) {
+                entity->render(renderer);
+            }
         }
 
         // Update camera movement.

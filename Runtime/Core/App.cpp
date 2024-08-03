@@ -43,7 +43,7 @@ namespace Game {
         auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
         // just a check, not necessary
         assert(structureFile.has_value());
-        Game::renderer.loadedScenes[10] = *structureFile;
+        Game::renderer.loadedScenes[11] = *structureFile;
         Game::renderer.loadedScenes[20] = *testFile;
         Game::renderer.loadedScenes[30] = *sphereFile;
         Game::renderer.loadedScenes[40] = *bobberFile;

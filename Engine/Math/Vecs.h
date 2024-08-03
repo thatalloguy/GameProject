@@ -67,6 +67,14 @@
                 this->z += b.z;
             }
 
+            Vector3& operator*(float b) {
+                this->x *= b;
+                this->y *= b;
+                this->z *= b;
+
+                return *this;
+            }
+
 
 
 
