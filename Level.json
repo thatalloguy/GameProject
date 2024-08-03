@@ -9,7 +9,8 @@
     {"id": 5, "path": "../../Assets/Models/Car.glb"},
     {"id": 6, "path": "../../Assets/Models/Beach.glb"},
     {"id": 7, "path": "../../Assets/Models/FishingShop.glb"},
-    {"id": 8, "path": "../../Assets/Models/FisherM.glb"}
+    {"id": 8, "path": "../../Assets/Models/FisherM.glb"},
+    {"id": 9, "path": "../../Assets/Models/reaper.glb"}
   ],
 
   "blueprints": [
@@ -136,6 +137,23 @@
       "ID": 7,
       "name": "Fisher Man",
       "model": 8,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 8,
+      "name": "Reaper",
+      "model": 9,
       "isPhysical": false,
       "Body": {
         "shapeType": 0,
