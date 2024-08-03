@@ -27,6 +27,7 @@ void Loader::MapLoader::loadMap() {
 void Loader::MapLoader::renderMap() {
     for (auto entity : _instances) {
         entity->render(_renderer);
+        entity->updatePhysics(_physicsEngine);
     }
 }
 
@@ -126,19 +127,23 @@ Quack::EntityBlueprint* Loader::MapLoader::getBlueprintFromID(unsigned int ID) {
 }
 
 void Loader::MapLoader::createEntityFromInstance(Loader::EntityInstance &instance, Quack::EntityBlueprint &blueprint)  {
-    Quack::EntityCreationInfo creationInfo{};
+    Quack::EntityCreationInfo creationInfo{
+            .position = instance.position,
+            .size = instance.size,
+            .rotation = instance.rotation,
+            .model = blueprint.model,
+            .isPhysical = blueprint.isPhysical,
+            .bodyCreationInfo = {
+                    .position={instance.position.x, instance.position.y, instance.position.z},
+                    .rotation = Quat::sIdentity(),
+                    .shape = new BoxShape(RVec3 (blueprint.shapeVolume.x, blueprint.shapeVolume.y, blueprint.shapeVolume.z)),
+                    .shouldActivate = EActivation::DontActivate,
+                    .motionType = EMotionType::Static,
+                    .layer = Quack::Layers::NON_MOVING,
+                    .physicsEngine = &_physicsEngine
+            }
+    };
 
-    creationInfo.position = instance.position;
-    creationInfo.size = instance.size;
-    creationInfo.rotation = instance.rotation;
-
-    creationInfo.model = blueprint.model;
-    creationInfo.isPhysical = blueprint.isPhysical;
-    auto& body =creationInfo.bodyCreationInfo;
-
-    body.position.SetX(creationInfo.position.x);
-    body.position.SetY(creationInfo.position.y);
-    body.position.SetZ(creationInfo.position.z);
 
     // :)
     _instances.push_back(new Quack::Entity(creationInfo));

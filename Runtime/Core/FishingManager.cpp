@@ -11,7 +11,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
     Quack::EntityCreationInfo cube_info {
             .position = {-10, -1.5f, 20},
             .size = {4, 1.0f, 4},
-            .model = 2,
+            .model = 20,
             .isPhysical = false,
 
     };
@@ -19,7 +19,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
     Quack::EntityCreationInfo lake_info {
             .position = {-10, -1.0f, 40},
             .size = {10, 1.0f, 10},
-            .model = 2,
+            .model = 20,
             .isPhysical = true,
             .bodyCreationInfo = {
                     .position = {-10, -1, 40},
@@ -36,21 +36,21 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
     Quack::EntityCreationInfo debugPoint_info {
             .position = {-10, 4, 40},
             .size = {0.2f, 0.2f, 0.2f},
-            .model = 3,
+            .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo debugE_info {
             .position = {-10, 4, 40},
             .size = {0.3f, 0.1f, 0.3f},
-            .model = 3,
+            .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo bobber_info {
             .position = {-10, 4, 40},
             .size = {0.3f, 0.3f, 0.3f},
-            .model = 4,
+            .model = 40,
             .isPhysical = false,
     };
 

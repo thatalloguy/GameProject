@@ -22,9 +22,9 @@
       "Body": {
         "shapeType": 0,
         "shapeVolume": {
-          "x": 2,
-          "y": 4,
-          "z": 2
+          "x": 5,
+          "y": 20,
+          "z": 5
         },
         "physicsType": 0,
         "shouldActivate": true,
@@ -40,7 +40,7 @@
         "shapeType": 0,
         "shapeVolume": {
           "x": 100,
-          "y": 1,
+          "y": 7,
           "z": 100
         },
         "physicsType": 0,

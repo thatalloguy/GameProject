@@ -83,7 +83,7 @@ public:
     float playerHeight = 3.0f;
     float jumpForce = 3.0f;
 
-    Quack::Math::Vector3 position{0, 0, 0};
+    Quack::Math::Vector3 position{0, 40, 0};
     PlayerState state = PlayerState::Moving;
 
 private:

@@ -83,11 +83,13 @@ void App::init() {
 
     Game::renderer.Init(window->getRawWindow(), false);
 
+    Game::initPhysics();
+
+
     Game::mapLoader = new Loader::MapLoader(Game::renderer, *Game::physicsEngine);
 
-    Game::loadAssets();
 
-    Game::initPhysics();
+    Game::loadAssets();
 
 
     /////// Load the Test Scene
@@ -103,7 +105,7 @@ void App::init() {
             .position = {0, -5, 0},
             .size = {100, 1.0f, 100},
             .model = 20,
-            .isPhysical = true,
+            .isPhysical = false,
             .bodyCreationInfo = {
                     .position = {0, -5, 0},
                     .rotation = Quat::sIdentity(),
