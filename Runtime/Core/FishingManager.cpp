@@ -9,20 +9,20 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     Quack::EntityCreationInfo cube_info {
-            .position = {-10, -1.5f, 20},
-            .size = {4, 1.0f, 4},
+            .position = {6, 1.0f, -4},
+            .size = {4, 3.0f, 4},
             .model = 20,
             .isPhysical = false,
 
     };
 
     Quack::EntityCreationInfo lake_info {
-            .position = {-10, -1.0f, 40},
+            .position = {5, -2.5f, -18},
             .size = {10, 1.0f, 10},
             .model = 20,
             .isPhysical = true,
             .bodyCreationInfo = {
-                    .position = {-10, -1, 40},
+                    .position = {5, -2.5f, -18},
                     .rotation = Quat::sIdentity(),
                     .shape = new BoxShape(RVec3(10.f, 10.0f, 10.f)),
                     .shouldActivate = EActivation::DontActivate,
@@ -34,21 +34,21 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     Quack::EntityCreationInfo debugPoint_info {
-            .position = {-10, 4, 40},
+            .position = {0, 4, 15},
             .size = {0.2f, 0.2f, 0.2f},
             .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo debugE_info {
-            .position = {-10, 4, 40},
+            .position = {0, 4, 15},
             .size = {0.3f, 0.1f, 0.3f},
             .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo bobber_info {
-            .position = {-10, 4, 40},
+            .position = {0, 4, 15},
             .size = {0.3f, 0.3f, 0.3f},
             .model = 40,
             .isPhysical = false,
@@ -63,7 +63,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     // UI UI UI UI UI AHGHHHHDAHIKWDHwaiudyAWDIAWUDAYUIduaiwdyawuid. i hate UI programming >:(
-    renderer.debugRenderFuncs.pushFunction([&](){
+    renderer.uiRenderFuncs.pushFunction([&](){
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
         ImGui::Begin("Fish Manager");
@@ -79,12 +79,20 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
         if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Moving) {
             ImGui::SetWindowFontScale(2.5f);
-            drawList->AddText(ImVec2(500, 500),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press RIGHT to fish");
+            if (Quack::Input::isControllerPresent(0)) {
+                drawList->AddText(ImVec2(500, 500),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press RIGHT to fish");
+            } else {
+                drawList->AddText(ImVec2(500, 500),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press E to fish");
+            }
             ImGui::SetWindowFontScale(1.0f);
         }
         else if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing) {
             ImGui::SetWindowFontScale(2.5f);
-            drawList->AddText(ImVec2(500, 650),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press UP to cancel");
+            if (Quack::Input::isControllerPresent(0)) {
+                drawList->AddText(ImVec2(500, 500),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press Up to Cancel");
+            } else {
+            drawList->AddText(ImVec2(500, 500),  ImColor(50.0f,45.0f,255.0f,255.0f), "Press Q to Cancel");
+            }
             ImGui::SetWindowFontScale(1.0f);
         }
 
@@ -122,7 +130,7 @@ FishingManager::~FishingManager() {
 
 void FishingManager::Update(float dt) {
 
-    fishCollider->render(_renderer);
+    //fishCollider->render(_renderer);
     lake->render(_renderer);
     debugPoint->render(_renderer);
     debugE->render(_renderer);
@@ -178,13 +186,13 @@ void FishingManager::checkUserCanFish(float deltaTime) {
             _player.state = PlayerState::Fishing;
 
             //setup animation
-            vec3Tween = tweeny::from(_player.position.x, _player.position.y + _player.playerHeight, _player.position.z, _player._camera.pitch, _player._camera.yaw).to(-10, 10, 30, 0.9f, 3.15f).during(1000).via(tweeny::easing::sinusoidalOut);
+            vec3Tween = tweeny::from(_player.position.x, _player.position.y + _player.playerHeight, _player.position.z, _player._camera.pitch, _player._camera.yaw).to(lake->position.x, lake->position.y + 15, lake->position.z + 8, 1.1f, 3.45f).during(1000).via(tweeny::easing::sinusoidalOut);
             vec3Tween.onStep([=, this](float x, float y, float z, float pitch, float yaw) {
                 this->_player._camera.position.x = x;
                 this->_player._camera.position.y = y;
                 this->_player._camera.position.z = z;
                 this->_player._camera.pitch = pitch;
-                this->_player._camera.yaw = yaw;
+                //this->_player._camera.yaw = yaw;
                 return false;
             });
             pause = true;
@@ -199,13 +207,13 @@ void FishingManager::checkUserCanFish(float deltaTime) {
         _player.state = PlayerState::Fishing;
 
         //setup animation
-        vec3Tween = tweeny::from(_player.position.x, _player.position.y + _player.playerHeight, _player.position.z, _player._camera.pitch, _player._camera.yaw).to(-10, 10, 30, 0.9f, 3.15f).during(1000).via(tweeny::easing::sinusoidalOut);
+        vec3Tween = tweeny::from(_player.position.x, _player.position.y + _player.playerHeight, _player.position.z, _player._camera.pitch, _player._camera.yaw).to(lake->position.x, lake->position.y + 15, lake->position.z + 8, 1.1f, 3.45f).during(1000).via(tweeny::easing::sinusoidalOut);
         vec3Tween.onStep([=, this](float x, float y, float z, float pitch, float yaw) {
             this->_player._camera.position.x = x;
             this->_player._camera.position.y = y;
             this->_player._camera.position.z = z;
             this->_player._camera.pitch = pitch;
-            this->_player._camera.yaw = yaw;
+            //this->_player._camera.yaw = yaw;
             return false;
         });
         pause = true;
@@ -249,7 +257,7 @@ void FishingManager::updateBobberMovement(float deltaTime) {
             }
 
             if (Quack::Input::isButtonPressed(0, 0)) {
-                cursor.y -= 2 * (deltaTime * 2.5f);
+                cursor.y += 2 * (deltaTime * 2.5f);
                 if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
                     cleanUpFishing();
                 }
@@ -285,7 +293,7 @@ void FishingManager::updateBobberMovement(float deltaTime) {
             }
 
             if (Quack::Input::isKeyPressed(Quack::Key::E)) {
-                cursor.y -= 2 * (deltaTime * 2.5f);
+                cursor.y += 2 * (deltaTime * 2.5f);
                 if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
                     cleanUpFishing();
                 }
