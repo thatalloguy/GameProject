@@ -59,14 +59,27 @@ public:
         // Only update the movement while in the moving state
         if (state == PlayerState::Moving) {
 
-            //getMovement relies on 'updateCamera' so it must be called first.
-            updateCamera(deltaTime);
-            auto vec = getMovement();
+            //temp
+            if (Quack::Input::isKeyPressed(Quack::Key::C)) {
+                updateCamera(deltaTime);
+                auto vec = getMovement();
 
-            // Set the linear velocity and update the position of the player.
-            _character->SetLinearVelocity({vec.x, vec.y, vec.z});
+                // gross.
+                position.x += vec.x * 0.1f;
+                position.y += vec.y * 0.1f;
+                position.z += vec.z * 0.1f;
+            } else {
+                //getMovement relies on 'updateCamera' so it must be called first.
+                updateCamera(deltaTime);
+                auto vec = getMovement();
 
-            position = _character->GetPosition();
+                // Set the linear velocity and update the position of the player.
+                _character->SetLinearVelocity({vec.x, vec.y, vec.z});
+
+                position = _character->GetPosition();
+            }
+
+
 
         } else {
             // stop movement
@@ -93,9 +106,9 @@ private:
 
         auto character_position = _character->GetPosition();
 
-        _camera.position.x = character_position.GetX();
-        _camera.position.y = character_position.GetY() + playerHeight;
-        _camera.position.z = character_position.GetZ();
+        _camera.position.x = position.x;
+        _camera.position.y = position.y + playerHeight;
+        _camera.position.z = position.z;
 
         auto rel = Quack::Input::getMousePos() - lastMousePos;
 
