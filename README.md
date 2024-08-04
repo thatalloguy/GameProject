@@ -69,8 +69,8 @@
 - Gameplay
 - - [x] Player controller?
 - - [x] Fishing
-- - [ ] Shop system
 - - [ ] Day and night cycle
+- - [ ] Shop system
 - - [ ] Event player.
 - - [ ] Fishing rod upgrades
 
