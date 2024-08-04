@@ -14,8 +14,35 @@ enum class Day : unsigned int {
     Thu = 4,
     Fri = 5,
     Sat = 6,
-    Sun = 7
+    Sun = 7,
+    End = 8
+
+
 };
+
+static const char* toCstr(Day day) {
+        switch (day) {
+
+            case Day::Mon:
+                return "Monday";
+            case Day::Tue:
+                return "Tuesday";
+            case Day::Wen:
+                return "Wednesday";
+            case Day::Thu:
+                return "Thursday";
+            case Day::Fri:
+                return "Friday";
+            case Day::Sat:
+                return "Saturday";
+            case Day::Sun:
+                return "Sunday";
+            default:
+                return "?End?";
+
+        }
+    }
+
 
 class TimeManager {
 

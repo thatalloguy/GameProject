@@ -99,5 +99,11 @@ namespace Quack {
         return raw_window;
     }
 
+    Quack::Math::Vector2 Window::getSize() {
+        int w, h;
+        glfwGetWindowSize(raw_window, &w, &h);
+        return Math::Vector2(w, h);
+    }
+
 
 } // Quack

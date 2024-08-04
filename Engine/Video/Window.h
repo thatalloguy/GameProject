@@ -43,6 +43,8 @@ namespace Quack {
 
         GLFWwindow* getRawWindow();
 
+        Quack::Math::Vector2 getSize();
+
     private:
 
         WindowCreationData* window_info;

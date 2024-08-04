@@ -35,14 +35,15 @@ void TimeManager::tick() {
 
         _curHour++;
 
-        if (_curHour >= 24) {
-            _curDay = static_cast<Day>(static_cast<unsigned int>(_curDay) + 1);
-            _curHour = 0;
-        }
-
         _start = now;
+    }
+
+    if (_curHour >= 24) {
+        _curDay = static_cast<Day>(static_cast<unsigned int>(_curDay) + 1);
+        _curHour = 0;
     }
 
 
 }
+
 

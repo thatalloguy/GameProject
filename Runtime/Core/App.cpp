@@ -139,7 +139,6 @@ void App::init() {
 
     };
 
-
     Level::player = new Player(Game::renderer.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
     Level::chest = new Quack::Entity(Chest_info);
@@ -165,14 +164,43 @@ void App::run() {
 
     Game::renderer.debugRenderFuncs.pushFunction([=](){
 
-        ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
+
+       ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
        ImGui::Begin("Duck Watcher Debug");
 
        ImGui::SliderFloat("player speed", &Level::player->speed, 0.1f, 30.0f);
        ImGui::Text("PlayerPos: %f | %f | %f", Level::player->position.x, Level::player->position.y, Level::player->position.z);
        ImGui::Text("PlayerState: %i", static_cast<unsigned int>(Level::player->state));
 
+
+       ImGui::Separator();
+       if (ImGui::Button("Skip an hour")) {
+           Game::timeManager.setHour(Game::timeManager.getHour() + 1);
+       }
+
        ImGui::End();
+
+
+    });
+
+    Game::renderer.uiRenderFuncs.pushFunction([=](){
+
+        // dont blame me, blame imgui
+        ImGui::SetNextWindowPos(ImVec2(-10000,-10000));
+        ImGui::Begin("C");
+
+        Quack::Math::Vector2 windowSize = window->getSize();
+
+        auto drawList = ImGui::GetForegroundDrawList();
+
+        std::string date = toCstr(Game::timeManager.getCurrentDay()); date += " | ";
+        date += std::to_string(Game::timeManager.getHour()); date += ":00";
+
+        ImGui::SetWindowFontScale(4.0f);
+        drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255), date.c_str());
+        ImGui::SetWindowFontScale(1.0f);
+
+        ImGui::End();
     });
 
     bool toggle = false;
