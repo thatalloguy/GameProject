@@ -161,6 +161,7 @@ void App::init() {
 
 void App::run() {
     std::chrono::steady_clock::time_point last;
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Game::renderer.debugRenderFuncs.pushFunction([=](){
 
@@ -208,6 +209,8 @@ void App::run() {
 
     Game::audioEngine->playSound(1);
     Game::audioEngine->setSoundPosition(Game::pianoId, Level::chest->position);
+
+    auto& sky = Game::renderer.backgroundEffects[0].data;
 
 
 
@@ -267,8 +270,9 @@ void App::run() {
         Game::deltaTime = (float) std::chrono::duration_cast<std::chrono::microseconds>(now - last).count() / 1000000.0f;
         last = now;
 
-
-
+        sky.data1.x = Game::timeManager.skyCol.x;
+        sky.data1.y = Game::timeManager.skyCol.y;
+        sky.data1.z = Game::timeManager.skyCol.z;
 
 
     }

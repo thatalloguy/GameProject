@@ -117,14 +117,12 @@ private:
 
         _camera.yaw += rel.x;
         // prevent a bug from happening when the player moves their mouse too quickly.
-        _camera.yaw = max(-50.0f, min(50.0f, _camera.yaw));
+        _camera.yaw = max(-1000.0f, min(1000.0f, _camera.yaw));
 
-        //todo fix ground camera clip
         _camera.pitch += rel.y;
         _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));
 
         lastMousePos = Quack::Input::getMousePos();
-        spdlog::info("Rel {} {}", rel.x, rel.y);
 
     };
 

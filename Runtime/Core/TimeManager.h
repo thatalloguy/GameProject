@@ -6,6 +6,8 @@
 #define DUCKWATCHERS_TIMEMANAGER_H
 
 #include <chrono>
+#include <tweeny.h>
+#include "Math/Vecs.h"
 
 enum class Day : unsigned int {
     Mon = 1,
@@ -59,12 +61,20 @@ public:
     void setDay(Day day);
     void setHour(int hour);
 
+    Quack::Math::Vector3 skyCol{0, 0, 0};
+
 private:
 
     Day _curDay = Day::Mon;
     int _curHour = 12; // The game starts at monday 12 pm
 
+    tweeny::tween<float, float, float> morning_to_noon = tweeny::from(0.0f, 0.3f, 0.7f).to(0.0f, 0.9f, 1.0f).during(360);
+    tweeny::tween<float, float, float> noon_to_evening = tweeny::from(0.0f, 0.9f, 1.0f).to(0.2f, 0.1f, 0.4f).during(360);
+    tweeny::tween<float, float, float> evening_to_night = tweeny::from(0.2f, 0.1f, 0.4f).to(0.0f, 0.1f, 0.2f).during(360);
+    tweeny::tween<float, float, float> night_to_morning = tweeny::from(0.0f, 0.1f, 0.2f).to(0.0f, 0.3f, 0.7f).during(360);
+
     std::chrono::time_point<std::chrono::steady_clock> _start;
+    std::chrono::time_point<std::chrono::steady_clock> _starts;
 };
 
 
