@@ -12,6 +12,9 @@ file(GLOB_RECURSE GAME_SRC
         Core/MapLoader.h
         Core/MapLoader.cpp
 
+        Core/TimeManager.h
+        Core/TimeManager.cpp
+
         Inventory/Inventory.h
         Inventory/Items/FishingRod.h
         Inventory/Items/FishingRod.cpp

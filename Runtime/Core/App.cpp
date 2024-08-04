@@ -15,6 +15,7 @@
 #include "../Inventory/UI/BookUI.h"
 #include "Audio/AudioEngine.h"
 #include "MapLoader.h"
+#include "TimeManager.h"
 
 
 // Core Game Systems
@@ -26,6 +27,7 @@ namespace Game {
     Quack::AudioEngine* audioEngine;
 
     Loader::MapLoader* mapLoader;
+    TimeManager timeManager{};
 
     Quack::SoundID pianoId;
 
@@ -93,6 +95,8 @@ void App::init() {
 
     //
 
+    std::chrono::seconds(1);
+
 
     /////// Load the Test Scene
 
@@ -151,7 +155,7 @@ void App::init() {
     Game::pianoId = Game::audioEngine->registerSound({"../../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
 
 
-
+    Game::timeManager.start();
 
 
 }
@@ -217,7 +221,18 @@ void App::run() {
 
         Game::renderer.Run();
 
+        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::chest->position.x - Level::player->position.x  , Level::player->position.y - Level::chest->position.y, Level::player->position.z - Level::chest->position.z, 0)));
+        Quack::Math::Vector3 soundDir{0, 0, 0};
+        soundDir.x = dir.x;
+        soundDir.y = dir.y;
+        soundDir.z = dir.z;
+        Game::audioEngine->updateSound(Game::pianoId, Level::player->position, soundDir);
+
+        Game::timeManager.tick();
+
         window->update();
+
+
 
         //Update the delta time
         auto now = std::chrono::steady_clock::now();
@@ -225,13 +240,8 @@ void App::run() {
         last = now;
 
 
-        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::chest->position.x - Level::player->position.x  , Level::player->position.y - Level::chest->position.y, Level::player->position.z - Level::chest->position.z, 0)));
-        Quack::Math::Vector3 soundDir{0, 0, 0};
-        soundDir.x = dir.x;
-        soundDir.y = dir.y;
-        soundDir.z = dir.z;
 
-        Game::audioEngine->updateSound(Game::pianoId, Level::player->position, soundDir);
+
 
     }
 
