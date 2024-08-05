@@ -68,6 +68,39 @@ namespace Level {
     Quack::Entity* floor;
     Player* player;
     Quack::Entity* chest;
+    Quack::Entity* car_trigger;
+
+    ImVec2 upBarPos{0, 0};
+    ImVec2 downBarPos{0, 720};
+
+    tweeny::tween<float, float> barTween = tweeny::from(0.0f, 720.0f - 50.0f).to(720.0f / 2.0f, 720.0f / 2.0f).during(100).onStep([](float x, float b) {
+        Level::upBarPos.y = x;
+        Level::downBarPos.y = b;
+        return false;
+    });;
+    bool isTraveling = false;
+
+    void goToBeach() {
+        if (!isTraveling) {
+            isTraveling = true;
+            spdlog::info("Going to the beach");
+
+            Level::car_trigger->position = Quack::Math::Vector3{-16, -8, 194};
+        }
+    };
+    void goToForest() {
+        if (!isTraveling) {
+            isTraveling = true;
+            spdlog::info("Going to the forest");
+            Level::car_trigger->position = Quack::Math::Vector3{8, 0, 28};
+            Level::barTween = Level::barTween.forward();
+        }
+    };
+    void goToBed();
+
+    static void resizeCall(GLFWwindow* window, int w, int h) {
+        downBarPos.y = h;
+    }
 }
 
 
@@ -139,9 +172,18 @@ void App::init() {
 
     };
 
+    Quack::EntityCreationInfo ctriggerI {
+            .position = {8, 0, 28},
+            .size = {2, 1.0f, 2},
+            .model = 20,
+            .isPhysical = false,
+
+    };
+
     Level::player = new Player(Game::renderer.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
     Level::chest = new Quack::Entity(Chest_info);
+    Level::car_trigger = new Quack::Entity(ctriggerI);
 
 
     Game::fishingManager = new FishingManager(Game::renderer, *Level::player, *Game::physicsEngine);
@@ -158,6 +200,7 @@ void App::init() {
 
 
 }
+
 
 void App::run() {
     std::chrono::steady_clock::time_point last;
@@ -201,6 +244,52 @@ void App::run() {
         drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255), date.c_str());
         ImGui::SetWindowFontScale(1.0f);
 
+
+        // car logic
+        if (Level::car_trigger->hasHit(Level::player->position)) {
+            if (Quack::Input::isControllerPresent(0)) {
+                ImGui::SetWindowFontScale(4.0f);
+                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press DOWN to travel");
+                ImGui::SetWindowFontScale(1.0f);
+
+                if (Quack::Input::isButtonPressed(0, 0)) {
+                    // check if we are in the forest and we are allowed to travel to the beach
+                    if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
+                        Level::goToBeach();
+                        Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f, windowSize.y / 2.0f).during(100).onStep([=, this](float x, float b) {
+                            Level::upBarPos.y = x;
+                            Level::downBarPos.y = b;
+                            return false;
+                        });
+                    } else {
+                        Level::goToForest();
+                    }
+                }
+            } else {
+                ImGui::SetWindowFontScale(4.0f);
+                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press E to travel");
+                ImGui::SetWindowFontScale(1.0f);
+
+                if (Quack::Input::isKeyPressed(Quack::Key::E)) {
+                    // check if we are in the forest and we are allowed to travel to the beach
+                    if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
+                        Level::goToBeach();
+                        Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f, windowSize.y / 2.0f).during(100).onStep([=, this](float x, float b) {
+                            Level::upBarPos.y = x;
+                            Level::downBarPos.y = b;
+                            return false;
+                        });
+                    } else {
+                        Level::goToForest();
+                    }
+                }
+            }
+        }
+
+        // The cinematic bars
+        drawList->AddRectFilled(ImVec2{0, 0}, ImVec2{windowSize.x, Level::upBarPos.y + 50}, ImColor(1, 1, 1));
+        drawList->AddRectFilled(ImVec2{0, windowSize.y}, ImVec2{windowSize.x, Level::downBarPos.y - 50}, ImColor(1, 1, 1));
+
         ImGui::End();
     });
 
@@ -211,6 +300,8 @@ void App::run() {
     Game::audioEngine->setSoundPosition(Game::pianoId, Level::chest->position);
 
     auto& sky = Game::renderer.backgroundEffects[0].data;
+
+
 
 
 
@@ -226,6 +317,11 @@ void App::run() {
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
+
+
+
+        //Car Logic;
+
 
         //via f3 you can toggle debug menu
         if (Quack::Input::isKeyPressed(Quack::Key::F3) && toggle) {
@@ -263,7 +359,33 @@ void App::run() {
 
         window->update();
 
+        if (Level::isTraveling) {
+            Level::barTween.step(1);
 
+            if (Level::barTween.direction() == -1 && Level::barTween.progress() <= 0.02f) {
+                spdlog::info("ADWDaD");
+                Level::isTraveling = false;
+            }
+
+            if (Level::barTween.progress() >= 1.0f) {
+                if (Level::isTraveling) {
+
+
+                    if (Level::player->position.z < 100) {
+                        Level::player->_character->SetPosition({-14, -8, 194});
+                    } else {
+                        Level::player->_character->SetPosition({9, 0, 28});
+                    }
+                    Level::barTween = Level::barTween.backward();
+                }
+
+
+
+            }
+
+        }
+
+        glfwSetWindowSizeCallback(window->getRawWindow(), Level::resizeCall);
 
         //Update the delta time
         auto now = std::chrono::steady_clock::now();
@@ -287,6 +409,7 @@ void App::cleanup() {
     delete Level::player;
     delete Level::chest;
     delete Level::floor;
+    delete Level::car_trigger;
 
 
     delete Game::fishingManager;

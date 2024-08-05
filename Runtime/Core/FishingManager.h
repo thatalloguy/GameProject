@@ -101,6 +101,8 @@ public:
     Quack::Math::Vector3 position{3, 1, 33};
     PlayerState state = PlayerState::Moving;
 
+    Ref<Character> _character;
+
 private:
     void updateCamera(float deltaTime) {
 
@@ -218,7 +220,6 @@ private:
         return out;
     }
 
-    Ref<Character> _character;
     RefConst<Shape> _standingShape;
     RefConst<Shape> _crouchingShape;
 
