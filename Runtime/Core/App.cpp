@@ -274,6 +274,8 @@ void App::run() {
         sky.data1.y = Game::timeManager.skyCol.y;
         sky.data1.z = Game::timeManager.skyCol.z;
 
+        Game::renderer.sceneData.sunLightDirection.y = Game::timeManager.skyCol.w;
+
 
     }
 

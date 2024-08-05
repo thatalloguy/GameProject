@@ -52,33 +52,39 @@ void TimeManager::tick() {
 
         if (_curHour >= 0 && _curHour < 6) {
             auto v = night_to_morning.step(1);
+            float sunD = sun_n_m.step(1);
             skyCol.x = v[0];
             skyCol.y = v[1];
             skyCol.z = v[2];
+            skyCol.w = sunD;
         }
 
         if (_curHour >= 6 && _curHour < 12) {
             auto v = morning_to_noon.step(1);
+            float sunD = sun_m_n.step(1);
             skyCol.x = v[0];
             skyCol.y = v[1];
             skyCol.z = v[2];
+            skyCol.w = sunD;
         }
 
         if (_curHour >= 12 && _curHour < 18) {
             auto v = noon_to_evening.step(1);
+            float sunD = sun_n_e.step(1);
             skyCol.x = v[0];
             skyCol.y = v[1];
             skyCol.z = v[2];
+            skyCol.w = sunD;
         }
 
         if (_curHour >= 18 && _curHour < 24) {
             auto v = evening_to_night.step(1);
+            float sunD = sun_e_n.step(1);
             skyCol.x = v[0];
             skyCol.y = v[1];
             skyCol.z = v[2];
+            skyCol.w = sunD;
         }
-
-        spdlog::info("Tich");
     }
 
 
