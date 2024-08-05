@@ -118,8 +118,10 @@ private:
         rel.y *= deltaTime * mouseSensitivity;
 
         _camera.yaw += rel.x;
+
+
         // prevent a bug from happening when the player moves their mouse too quickly.
-        _camera.yaw = max(-1000.0f, min(1000.0f, _camera.yaw));
+        _camera.yaw = max(-5000.0f, min(5000.0f, _camera.yaw));
 
         _camera.pitch += rel.y;
         _camera.pitch = max(-0.7f, min(0.7f, _camera.pitch));

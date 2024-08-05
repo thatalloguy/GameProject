@@ -302,6 +302,7 @@ void App::run() {
     auto& sky = Game::renderer.backgroundEffects[0].data;
 
 
+    glfwSetWindowSizeCallback(window->getRawWindow(), Level::resizeCall);
 
 
 
@@ -385,7 +386,6 @@ void App::run() {
 
         }
 
-        glfwSetWindowSizeCallback(window->getRawWindow(), Level::resizeCall);
 
         //Update the delta time
         auto now = std::chrono::steady_clock::now();
