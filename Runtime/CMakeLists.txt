@@ -23,6 +23,9 @@ file(GLOB_RECURSE GAME_SRC
         Inventory/UI/BookUI.cpp
         Inventory/UI/Pages/Testpage.h
 
+        Character/DialogSystem.h
+        Character/DialogSystem.cpp
+
 )
 
 add_executable(Game main.cpp ${GAME_SRC})
