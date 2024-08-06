@@ -69,7 +69,7 @@ namespace Level {
     Player* player;
     Quack::Entity* chest;
     Quack::Entity* car_trigger;
-
+    Quack::Entity* house_trigger;
     ImVec2 upBarPos{0, 0};
     ImVec2 downBarPos{0, 720};
 
@@ -103,6 +103,81 @@ namespace Level {
     }
 }
 
+
+namespace UI {
+
+    bool isToBed = false;
+
+
+    ImVec2 sideBar{0, 0};
+
+    ImVec2 textPos{512, -100};
+
+    tweeny::tween<float> bedBarTween;
+    tweeny::tween<float> bedTextTween;
+
+    void startSleepAnimation(float windowW, float windowH) {
+        bedBarTween = tweeny::from(0.0f).to(windowW).during(74).onStep([=](float a){
+            sideBar.x = a;
+            return false;
+        });
+
+        bedTextTween = tweeny::from(0.0f).to(windowH / 2).during(74).onStep([=](float a){
+            textPos.y = a;
+            return false;
+        });
+
+        isToBed = true;
+    };
+
+    void render(Quack::Math::Vector2 windowSize) {
+
+
+        if (isToBed) {
+
+            bedBarTween.step(1);
+
+            if (bedBarTween.direction() != -1 && bedBarTween.progress() >= 1.0f) {
+                bedTextTween.step(1);
+
+                if (bedTextTween.progress() >= 1.0f) {
+
+                }
+            }
+
+            /*
+                Game::timeManager.setHour(6);
+                Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
+             */
+
+
+        }
+
+        auto drawList = ImGui::GetForegroundDrawList();
+
+        std::string date = toCstr(Game::timeManager.getCurrentDay()); date += " | ";
+        date += std::to_string(Game::timeManager.getHour()); date += ":00";
+
+
+
+        drawList->AddRectFilled(ImVec2(0, 0), sideBar, ImColor(1, 1, 1));
+
+        ImGui::SetWindowFontScale(4.0f);
+        drawList->AddText(textPos, ImColor(255, 255, 255), date.c_str());
+        ImGui::SetWindowFontScale(1.0f);
+    };
+
+    void update(Quack::Math::Vector2 windowSize) {
+
+    };
+
+    static void resizeCall(GLFWwindow* window, int w, int h) {
+        sideBar.y = h;
+        Level::downBarPos.y = h;
+        textPos.x = w * 0.4f;
+    }
+
+}
 
 void App::init() {
 
@@ -180,10 +255,19 @@ void App::init() {
 
     };
 
+    Quack::EntityCreationInfo htriggerI {
+            .position = {0, 0, 19},
+            .size = {3, 1.0f, 3},
+            .model = 20,
+            .isPhysical = false,
+
+    };
+
     Level::player = new Player(Game::renderer.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
     Level::chest = new Quack::Entity(Chest_info);
     Level::car_trigger = new Quack::Entity(ctriggerI);
+    Level::house_trigger = new Quack::Entity(htriggerI);
 
 
     Game::fishingManager = new FishingManager(Game::renderer, *Level::player, *Game::physicsEngine);
@@ -286,9 +370,35 @@ void App::run() {
             }
         }
 
+        // house logic
+        if (Level::house_trigger->hasHit(Level::player->position) && Game::timeManager.getHour() >= 19) {
+            if (Quack::Input::isControllerPresent(0)) {
+                ImGui::SetWindowFontScale(4.0f);
+                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press DOWN to sleep");
+                ImGui::SetWindowFontScale(1.0f);
+
+                if (Quack::Input::isButtonPressed(0, 0)) {
+                    UI::startSleepAnimation(windowSize.x, windowSize.y);
+                }
+            } else {
+                ImGui::SetWindowFontScale(4.0f);
+                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press E to Sleep");
+                ImGui::SetWindowFontScale(1.0f);
+
+                if (Quack::Input::isKeyPressed(Quack::Key::E)) {
+                    UI::startSleepAnimation(windowSize.x, windowSize.y);
+                }
+            }
+        }
+
+
+
         // The cinematic bars
         drawList->AddRectFilled(ImVec2{0, 0}, ImVec2{windowSize.x, Level::upBarPos.y + 50}, ImColor(1, 1, 1));
         drawList->AddRectFilled(ImVec2{0, windowSize.y}, ImVec2{windowSize.x, Level::downBarPos.y - 50}, ImColor(1, 1, 1));
+
+        UI::render(windowSize);
+
 
         ImGui::End();
     });
@@ -302,7 +412,7 @@ void App::run() {
     auto& sky = Game::renderer.backgroundEffects[0].data;
 
 
-    glfwSetWindowSizeCallback(window->getRawWindow(), Level::resizeCall);
+    glfwSetWindowSizeCallback(window->getRawWindow(), UI::resizeCall);
 
 
 
@@ -360,11 +470,12 @@ void App::run() {
 
         window->update();
 
+        UI::update(window->getSize());
+
         if (Level::isTraveling) {
             Level::barTween.step(1);
 
             if (Level::barTween.direction() == -1 && Level::barTween.progress() <= 0.02f) {
-                spdlog::info("ADWDaD");
                 Level::isTraveling = false;
             }
 
@@ -410,6 +521,7 @@ void App::cleanup() {
     delete Level::chest;
     delete Level::floor;
     delete Level::car_trigger;
+    delete Level::house_trigger;
 
 
     delete Game::fishingManager;
