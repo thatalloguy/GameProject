@@ -70,6 +70,8 @@
 - - [x] Player controller?
 - - [x] Fishing
 - - [x] Day and night cycle
+- - [x] Sleeping
+- - [ ] Dialog System
 - - [ ] Shop system
 - - [ ] Event player.
 - - [ ] Fishing rod upgrades
