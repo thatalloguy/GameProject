@@ -18,7 +18,8 @@
 enum class PlayerState : unsigned int {
     Moving = 0,
     Fishing = 1,
-    Idle = 2
+    Idle = 2,
+    Cutscene = 3
 };
 
 class Player  {

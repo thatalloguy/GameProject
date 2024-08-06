@@ -109,23 +109,16 @@ namespace UI {
     bool isToBed = false;
 
 
-    ImVec2 sideBar{0, 0};
-
-    ImVec2 textPos{512, -100};
+    ImVec2 sideBar{0, 720};
 
     tweeny::tween<float> bedBarTween;
-    tweeny::tween<float> bedTextTween;
 
     void startSleepAnimation(float windowW, float windowH) {
-        bedBarTween = tweeny::from(0.0f).to(windowW).during(74).onStep([=](float a){
+        bedBarTween = tweeny::from(0.0f).to(windowW).during(120).onStep([=](float a){
             sideBar.x = a;
             return false;
-        });
+        }).via(tweeny::easing::cubicIn);
 
-        bedTextTween = tweeny::from(0.0f).to(windowH / 2).during(74).onStep([=](float a){
-            textPos.y = a;
-            return false;
-        });
 
         isToBed = true;
     };
@@ -138,19 +131,14 @@ namespace UI {
             bedBarTween.step(1);
 
             if (bedBarTween.direction() != -1 && bedBarTween.progress() >= 1.0f) {
-                bedTextTween.step(1);
-
-                if (bedTextTween.progress() >= 1.0f) {
-
-                }
-            }
-
-            /*
+                bedBarTween = bedBarTween.backward().via(tweeny::easing::exponentialOut).during(200);
                 Game::timeManager.setHour(6);
                 Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
-             */
+                Game::timeManager.forcedUpdate();
 
-
+            } else if (bedBarTween.direction() <= -1 && bedBarTween.progress() <= 0.0f) {
+                isToBed = false;
+            }
         }
 
         auto drawList = ImGui::GetForegroundDrawList();
@@ -161,10 +149,6 @@ namespace UI {
 
 
         drawList->AddRectFilled(ImVec2(0, 0), sideBar, ImColor(1, 1, 1));
-
-        ImGui::SetWindowFontScale(4.0f);
-        drawList->AddText(textPos, ImColor(255, 255, 255), date.c_str());
-        ImGui::SetWindowFontScale(1.0f);
     };
 
     void update(Quack::Math::Vector2 windowSize) {
@@ -174,7 +158,6 @@ namespace UI {
     static void resizeCall(GLFWwindow* window, int w, int h) {
         sideBar.y = h;
         Level::downBarPos.y = h;
-        textPos.x = w * 0.4f;
     }
 
 }

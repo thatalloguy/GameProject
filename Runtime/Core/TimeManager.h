@@ -61,6 +61,8 @@ public:
     void setDay(Day day);
     void setHour(int hour);
 
+    void forcedUpdate();
+
     //w = sunDirection
     Quack::Math::Vector4 skyCol{0, 0, 0, 1.0f};
 
