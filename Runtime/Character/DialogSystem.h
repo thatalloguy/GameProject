@@ -6,26 +6,25 @@
 
 
 #include <string>
+#include <vector>
+#include "imgui.h"
+
 
 struct DialogBox {
     const char* author = " ";
-    std::string dialog = " ";
+    std::vector<std::string> dialogs;
     DialogBox* next = nullptr;
 };
 
-template<auto S>
-struct Conversation {
-    DialogBox dialogs[S];
-};
+namespace DialogRenderer {
 
-class DialogRenderer {
+    static float speakingSpeed = 0.2f;
 
-public:
-
-    void render();
+    void render(ImVec2& windowSize);
 
     void skip(bool bypassToggleLock=false);
 
-    void setCurrentDialog(DialogBox* dialogBox);
+    //void setCurrentDialog(DialogBox* dialogBox);
+    void setCurrentConversation(DialogBox* dialogBox);
 
 };

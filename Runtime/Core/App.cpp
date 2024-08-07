@@ -5,6 +5,7 @@
 #define USING_JOLT
 #pragma once
 
+#include "../Character/DialogSystem.h"
 #include "App.h"
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
@@ -70,6 +71,16 @@ namespace Level {
     Quack::Entity* chest;
     Quack::Entity* car_trigger;
     Quack::Entity* house_trigger;
+
+
+    DialogBox test{
+        .author = "Allo",
+        .dialogs = {"Hello world, Its me Allo!\n",  "These typing animations are quite nice!", "Bye bye now!"},
+        .next = nullptr
+    };
+
+
+
     ImVec2 upBarPos{0, 0};
     ImVec2 downBarPos{0, 720};
 
@@ -265,6 +276,7 @@ void App::init() {
 
     Game::timeManager.start();
 
+    DialogRenderer::setCurrentConversation(&Level::test);
 
 }
 
@@ -374,6 +386,9 @@ void App::run() {
             }
         }
 
+        ImVec2 size{windowSize.x, windowSize.y};
+
+        DialogRenderer::render(size);
 
 
         // The cinematic bars
