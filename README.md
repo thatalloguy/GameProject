@@ -71,7 +71,7 @@
 - - [x] Fishing
 - - [x] Day and night cycle
 - - [x] Sleeping
-- - [ ] Dialog System
+- - [x] Dialog System
 - - [ ] Shop system
 - - [ ] Event player.
 - - [ ] Fishing rod upgrades
