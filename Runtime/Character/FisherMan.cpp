@@ -51,21 +51,92 @@ void Characters::FisherMan::drawUI(ImVec2 windowSize, Player& player) {
         ImGui::Begin("Bob the FisherMan", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
         ImGui::SetWindowFontScale(sqrt((windowSize.x * windowSize.x) + (windowSize.y * windowSize.y)) / 850);
-        ImGui::Text("What would ya like?");
 
-        ImGui::Text(" ");
-        ImGui::Text(" ");
-        ImGui::Text(" ");
-        ImGui::Text(" ");
-        ImGui::Button("Sell Fish");
-        ImGui::SameLine();
-        ImGui::Button("Upgrade Fishing Rod");
-        ImGui::SameLine();
+        switch (_currentTab) {
 
-        ImGui::Button("Bye");
+            case ShopTab::Selection:
+                drawSelectionTab(windowSize, player);
+                break;
+
+            case ShopTab::Dialog:
+                //drawSelectionTab(windowSize, player);
+                break;
+
+            case ShopTab::Selling:
+                drawSellingTab(windowSize, player);
+                break;
+
+            case ShopTab::Upgrading:
+                drawUpgradingTab(windowSize, player);
+                break;
+
+            default:
+                drawSelectionTab(windowSize, player);
+                break;
+        }
+
         ImGui::SetWindowFontScale(1.0f);
 
         ImGui::End();
+    }
+}
+
+void Characters::FisherMan::drawSellingTab(ImVec2 windowSize, Player &player) {
+    ImGui::Text("Ya wanna Sell?");
+    ImGui::Text("Il pay 10 for each");
+
+
+    ImGui::Text(" ");
+    ImGui::Text(" ");
+
+    if (ImGui::Button("Nevermind")) {
+        _currentTab = ShopTab::Selection;
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Sell")) {
+        _currentTab = ShopTab::Selection;
+        // do selling stuff :)
+    }
+}
+
+void Characters::FisherMan::drawUpgradingTab(ImVec2 windowSize, Player &player) {
+    ImGui::Text("Ya wanna Upgrade?");
+    ImGui::Text("cost ye a 50");
+
+
+    ImGui::Text(" ");
+    ImGui::Text(" ");
+
+    if (ImGui::Button("Nevermind")) {
+        _currentTab = ShopTab::Selection;
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Upgrade")) {
+        _currentTab = ShopTab::Selection;
+        // do upgrade stuff :)
+    }
+}
+
+void Characters::FisherMan::drawSelectionTab(ImVec2 windowSize, Player &player) {
+    ImGui::Text("What would ya like?");
+
+    ImGui::Text(" ");
+    ImGui::Text(" ");
+    ImGui::Text(" ");
+    ImGui::Text(" ");
+    if (ImGui::Button("Sell Fish")) {
+        _currentTab = ShopTab::Selling;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Upgrade Fishing Rod")) {
+        _currentTab = ShopTab::Upgrading;
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Bye")) {
+        shopEnd(player);
     }
 }
 
@@ -81,5 +152,7 @@ void Characters::FisherMan::shopStart(Player& player) {
 
 void Characters::FisherMan::shopEnd(Player& player) {
     player.state = PlayerState::Moving;
+    //unneeded?
+    _currentTab = ShopTab::Selection;
     Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
 }

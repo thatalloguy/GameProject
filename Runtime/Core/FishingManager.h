@@ -23,6 +23,12 @@ enum class PlayerState : unsigned int {
     Shopping = 4
 };
 
+struct BackPack {
+    unsigned int fish = 0;
+    int money = 0; // broke lmao
+    unsigned int fishingRodLevel = 1;
+};
+
 class Player  {
 
 public:
@@ -104,7 +110,7 @@ public:
     PlayerState state = PlayerState::Moving;
 
     Ref<Character> _character;
-
+    BackPack inventory;
     Camera& _camera;
 private:
     void updateCamera(float deltaTime) {
@@ -284,7 +290,7 @@ struct Fish {
     Quack::Math::Vector3 position{0, 0, 0};
     Quack::Math::Vector3 desiredPos{0, 0, 0};
 
-    void initFish(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax, Quack::Math::Vector3 newPos) {
+    void initFish(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax, Quack::Math::Vector3 newPos, Player& player) {
 
         //put it here since it only really needs to be calc per lake, not every ai tick.
         //first calculate the rects of each corner

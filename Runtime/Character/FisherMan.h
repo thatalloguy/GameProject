@@ -11,6 +11,13 @@
 
 namespace Characters {
 
+    enum class ShopTab : int {
+        Dialog = 0,
+        Selection = 1,
+        Selling = 2,
+        Upgrading = 3
+    };
+
     class FisherMan {
 
     public:
@@ -31,8 +38,16 @@ namespace Characters {
 
         void setupTrigger();
 
+        ShopTab _currentTab = ShopTab::Selection;
+
         void shopStart(Player& player);
         void shopEnd(Player& player);
+
+
+        void drawSellingTab(ImVec2 windowSize, Player& player);
+        void drawUpgradingTab(ImVec2 windowSize, Player& player);
+        void drawSelectionTab(ImVec2 windowSize, Player& player);
+        //todo dialog
 
 
     };
