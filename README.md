@@ -72,9 +72,11 @@
 - - [x] Day and night cycle
 - - [x] Sleeping
 - - [x] Dialog System
-- - [ ] Shop system
+- - [x] Shop system
+- - [x] Inventory
+- - [x] Fishing rod upgrades
 - - [ ] Event player.
-- - [ ] Fishing rod upgrades
+- - [ ] Daily Events
 
 ---
 - Rendering part 2:
