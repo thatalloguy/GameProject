@@ -229,7 +229,7 @@ void FishingManager::updateBobberMovement(float deltaTime) {
 
 
     if (updateFishing) {
-        dummy.update(deltaTime, bobber->position);
+        dummy.update(deltaTime, bobber->position, _player);
         debugPoint->position = dummy.position;
         bobber->position.x = cursor.x;
         bobber->position.z = cursor.y;

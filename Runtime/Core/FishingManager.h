@@ -290,7 +290,7 @@ struct Fish {
     Quack::Math::Vector3 position{0, 0, 0};
     Quack::Math::Vector3 desiredPos{0, 0, 0};
 
-    void initFish(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax, Quack::Math::Vector3 newPos, Player& player) {
+    void initFish(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax, Quack::Math::Vector3 newPos) {
 
         //put it here since it only really needs to be calc per lake, not every ai tick.
         //first calculate the rects of each corner
@@ -321,7 +321,7 @@ struct Fish {
         moveSpeed = 0.0f + ((std::rand() % 3 + 1.5f) / 10.0f);
     }
 
-    void update(float deltaTime, Quack::Math::Vector3& bobberPosition) {
+    void update(float deltaTime, Quack::Math::Vector3& bobberPosition, Player& player) {
         switch (_state) {
             case FishState::wandering:
                 // before updating anymovement stuff check if the fish is curious enough
