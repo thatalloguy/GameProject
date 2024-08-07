@@ -25,7 +25,7 @@ namespace Loader {
         MapLoader(VulkanEngine& renderer, Quack::PhysicsEngine& physicsEngine);
         ~MapLoader();
 
-        void loadMap();
+        void loadMap(std::function<void(int, Quack::Entity*)> callback);
 
         void renderMap();
     private:
@@ -33,7 +33,7 @@ namespace Loader {
 
         void loadAssets();
         void loadBlueprints();
-        void loadInstances();
+        void loadInstances(std::function<void(int, Quack::Entity*)>& callback);
 
         Quack::EntityBlueprint* getBlueprintFromID(unsigned int ID);
 

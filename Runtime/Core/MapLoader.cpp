@@ -16,11 +16,11 @@ Loader::MapLoader::~MapLoader() {
     }
 }
 
-void Loader::MapLoader::loadMap() {
+void Loader::MapLoader::loadMap(std::function<void(int, Quack::Entity*)> callback) {
 
     loadAssets();
     loadBlueprints();
-    loadInstances();
+    loadInstances(callback);
 
 }
 
@@ -101,7 +101,7 @@ void Loader::MapLoader::loadBlueprints() {
     }
 }
 
-void Loader::MapLoader::loadInstances() {
+void Loader::MapLoader::loadInstances(std::function<void(int, Quack::Entity*)>& callback) {
 
     FILE* f_in = fopen("../../instances.lake", "r");
 
@@ -111,6 +111,8 @@ void Loader::MapLoader::loadInstances() {
 
         // lets hope everything works :)
         createEntityFromInstance(temp, *getBlueprintFromID(temp.ID));
+
+        callback((int) _instances.back()->ID, _instances.back());
 
         spdlog::debug("loaded instance: {}", temp.ID);
     }

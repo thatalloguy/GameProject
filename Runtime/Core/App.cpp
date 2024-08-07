@@ -18,7 +18,6 @@
 #include "MapLoader.h"
 #include "TimeManager.h"
 
-
 // Core Game Systems
 namespace Game {
     VulkanEngine renderer;
@@ -37,6 +36,7 @@ namespace Game {
 
     float deltaTime = 0.0f;
 
+
     void loadAssets() {
         // Temp model
         std::string structurePath = {"../../Assets/basicmesh.glb"};
@@ -53,7 +53,13 @@ namespace Game {
         Game::renderer.loadedScenes[50] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
 
 
-        Game::mapLoader->loadMap();
+        Game::mapLoader->loadMap([&](int entityID, Quack::Entity* entity) {
+
+            //FisherMan
+            if (entityID == 7) {
+                spdlog::warn("FisherMan Detected!");
+            }
+        });
     }
     void initPhysics() {
 
@@ -276,7 +282,7 @@ void App::init() {
 
     Game::timeManager.start();
 
-    DialogRenderer::setCurrentConversation(&Level::test);
+    //DialogRenderer::setCurrentConversation(&Level::test);
 
 }
 
