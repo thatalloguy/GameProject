@@ -5,8 +5,9 @@
 #define USING_JOLT
 #pragma once
 
-#include "../Character/DialogSystem.h"
 #include "App.h"
+#include "../Character/FisherMan.h"
+#include "../Character/DialogSystem.h"
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
 #include "Objects/Entity.h"
@@ -17,6 +18,59 @@
 #include "Audio/AudioEngine.h"
 #include "MapLoader.h"
 #include "TimeManager.h"
+
+
+
+namespace Level {
+    Quack::Entity* floor;
+    Player* player;
+    Quack::Entity* chest;
+    Quack::Entity* car_trigger;
+    Quack::Entity* house_trigger;
+    Characters::FisherMan fisherMan;
+
+
+    DialogBox test{
+            .author = "Allo",
+            .dialogs = {"Hello world, Its me Allo!\n",  "These typing animations are quite nice!", "Bye bye now!"},
+            .next = nullptr
+    };
+
+
+
+    ImVec2 upBarPos{0, 0};
+    ImVec2 downBarPos{0, 720};
+
+    tweeny::tween<float, float> barTween = tweeny::from(0.0f, 720.0f - 50.0f).to(720.0f / 2.0f, 720.0f / 2.0f).during(100).onStep([](float x, float b) {
+        Level::upBarPos.y = x;
+        Level::downBarPos.y = b;
+        return false;
+    });;
+    bool isTraveling = false;
+
+    void goToBeach() {
+        if (!isTraveling) {
+            isTraveling = true;
+            spdlog::info("Going to the beach");
+
+            Level::car_trigger->position = Quack::Math::Vector3{-16, -8, 194};
+        }
+    };
+    void goToForest() {
+        if (!isTraveling) {
+            isTraveling = true;
+            spdlog::info("Going to the forest");
+            Level::car_trigger->position = Quack::Math::Vector3{8, 0, 28};
+            Level::barTween = Level::barTween.forward();
+        }
+    };
+    void goToBed();
+
+    static void resizeCall(GLFWwindow* window, int w, int h) {
+        downBarPos.y = h;
+    }
+}
+
 
 // Core Game Systems
 namespace Game {
@@ -57,8 +111,9 @@ namespace Game {
 
             //FisherMan
             if (entityID == 7) {
-                spdlog::warn("FisherMan Detected!");
+                Level::fisherMan.initialize(*entity);
             }
+
         });
     }
     void initPhysics() {
@@ -70,55 +125,6 @@ namespace Game {
     }
 }
 
-
-namespace Level {
-    Quack::Entity* floor;
-    Player* player;
-    Quack::Entity* chest;
-    Quack::Entity* car_trigger;
-    Quack::Entity* house_trigger;
-
-
-    DialogBox test{
-        .author = "Allo",
-        .dialogs = {"Hello world, Its me Allo!\n",  "These typing animations are quite nice!", "Bye bye now!"},
-        .next = nullptr
-    };
-
-
-
-    ImVec2 upBarPos{0, 0};
-    ImVec2 downBarPos{0, 720};
-
-    tweeny::tween<float, float> barTween = tweeny::from(0.0f, 720.0f - 50.0f).to(720.0f / 2.0f, 720.0f / 2.0f).during(100).onStep([](float x, float b) {
-        Level::upBarPos.y = x;
-        Level::downBarPos.y = b;
-        return false;
-    });;
-    bool isTraveling = false;
-
-    void goToBeach() {
-        if (!isTraveling) {
-            isTraveling = true;
-            spdlog::info("Going to the beach");
-
-            Level::car_trigger->position = Quack::Math::Vector3{-16, -8, 194};
-        }
-    };
-    void goToForest() {
-        if (!isTraveling) {
-            isTraveling = true;
-            spdlog::info("Going to the forest");
-            Level::car_trigger->position = Quack::Math::Vector3{8, 0, 28};
-            Level::barTween = Level::barTween.forward();
-        }
-    };
-    void goToBed();
-
-    static void resizeCall(GLFWwindow* window, int w, int h) {
-        downBarPos.y = h;
-    }
-}
 
 
 namespace UI {
@@ -394,6 +400,7 @@ void App::run() {
 
         ImVec2 size{windowSize.x, windowSize.y};
 
+        Level::fisherMan.drawUI(size, *Level::player);
         DialogRenderer::render(size);
 
 
@@ -432,6 +439,7 @@ void App::run() {
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
+        Level::fisherMan.update(*Level::player);
 
 
 

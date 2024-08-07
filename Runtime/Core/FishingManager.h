@@ -19,7 +19,8 @@ enum class PlayerState : unsigned int {
     Moving = 0,
     Fishing = 1,
     Idle = 2,
-    Cutscene = 3
+    Cutscene = 3,
+    Shopping = 4
 };
 
 class Player  {
@@ -104,6 +105,7 @@ public:
 
     Ref<Character> _character;
 
+    Camera& _camera;
 private:
     void updateCamera(float deltaTime) {
 
@@ -231,7 +233,6 @@ private:
     RefConst<Shape> _standingShape;
     RefConst<Shape> _crouchingShape;
 
-    Camera& _camera;
     Quack::Math::Vector2 lastMousePos{0, 0};
 
     friend class FishingManager;

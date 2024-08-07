@@ -7,6 +7,7 @@
 
 #include "Objects/Entity.h"
 #include "../Core/FishingManager.h"
+#include "imgui.h"
 
 namespace Characters {
 
@@ -14,12 +15,25 @@ namespace Characters {
 
     public:
 
-        FisherMan(Quack::Entity& fisherManBaseEntity, Player& player);
+        FisherMan() = default;
         ~FisherMan();
 
-        void update();
+        void initialize(Quack::Entity& fisherManBaseEntity);
+
+        void update(Player& player);
+
+        void drawUI(ImVec2 windowSize, Player& player);
 
     private:
+        Quack::Entity* _entity;
+        Quack::Entity* _trigger;
+
+
+        void setupTrigger();
+
+        void shopStart(Player& player);
+        void shopEnd(Player& player);
+
 
     };
 
