@@ -46,7 +46,26 @@ void Characters::FisherMan::drawUI(ImVec2 windowSize, Player& player) {
     auto drawList = ImGui::GetForegroundDrawList();
 
     if (player.state == PlayerState::Shopping) {
-        drawList->AddText(ImVec2{500, 500}, ImColor(255, 255, 255), "Shopping");
+        ImGui::SetNextWindowPos(ImVec2(windowSize.x * 0.3f, windowSize.y * 0.6f));
+        ImGui::SetNextWindowSize(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.3f));
+        ImGui::Begin("Bob the FisherMan", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+        ImGui::SetWindowFontScale(sqrt((windowSize.x * windowSize.x) + (windowSize.y * windowSize.y)) / 850);
+        ImGui::Text("What would ya like?");
+
+        ImGui::Text(" ");
+        ImGui::Text(" ");
+        ImGui::Text(" ");
+        ImGui::Text(" ");
+        ImGui::Button("Sell Fish");
+        ImGui::SameLine();
+        ImGui::Button("Upgrade Fishing Rod");
+        ImGui::SameLine();
+
+        ImGui::Button("Bye");
+        ImGui::SetWindowFontScale(1.0f);
+
+        ImGui::End();
     }
 }
 
@@ -55,10 +74,12 @@ void Characters::FisherMan::shopStart(Player& player) {
     player._camera.yaw = -3.2f;
     player._camera.pitch = 0.3f;
 
-    player.position.x = -18;
+    player.position.x = -16;
     player.position.z = 204;
+    Quack::Input::setMouseMode(Quack::MouseMode::Normal);
 }
 
 void Characters::FisherMan::shopEnd(Player& player) {
     player.state = PlayerState::Moving;
+    Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
 }

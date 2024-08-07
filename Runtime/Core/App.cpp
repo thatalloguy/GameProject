@@ -320,11 +320,17 @@ void App::run() {
 
     Game::renderer.uiRenderFuncs.pushFunction([=](){
 
+        Quack::Math::Vector2 windowSize = window->getSize();
+
+
+        ImVec2 size{windowSize.x, windowSize.y};
+
+        Level::fisherMan.drawUI(size, *Level::player);
+
         // dont blame me, blame imgui
         ImGui::SetNextWindowPos(ImVec2(-10000,-10000));
         ImGui::Begin("C");
 
-        Quack::Math::Vector2 windowSize = window->getSize();
 
         auto drawList = ImGui::GetForegroundDrawList();
 
@@ -398,9 +404,7 @@ void App::run() {
             }
         }
 
-        ImVec2 size{windowSize.x, windowSize.y};
 
-        Level::fisherMan.drawUI(size, *Level::player);
         DialogRenderer::render(size);
 
 
@@ -426,6 +430,7 @@ void App::run() {
     glfwSetWindowSizeCallback(window->getRawWindow(), UI::resizeCall);
 
 
+    Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
 
     while (!window->shouldShutdown()) {
         Game::renderer.updateScene();
@@ -449,6 +454,12 @@ void App::run() {
         //via f3 you can toggle debug menu
         if (Quack::Input::isKeyPressed(Quack::Key::F3) && toggle) {
             Game::renderer.displayDebugMenu = !Game::renderer.displayDebugMenu;
+            if (Game::renderer.displayDebugMenu) {
+                Quack::Input::setMouseMode(Quack::MouseMode::Normal);
+            } else {
+                Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
+            }
+
             toggle = false;
         } else if (!Quack::Input::isKeyPressed(Quack::Key::F3)) {
             toggle = true;
@@ -463,11 +474,6 @@ void App::run() {
 
         Game::fishingManager->Update(Game::deltaTime);
 
-        if (Game::renderer.displayDebugMenu) {
-            Quack::Input::setMouseMode(Quack::MouseMode::Normal);
-        } else {
-            Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
-        }
 
         Game::renderer.Run();
 
