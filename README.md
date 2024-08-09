@@ -89,6 +89,10 @@
 - - - [ ] Ending 1
 - - - [ ] Ending 2
 - - - [ ] Ending 3
-
+---
+- Sound
+- - [ ] todo
 ---
 - Polish phase
+- - [ ] Fix bugs
+- - [ ] Water?
