@@ -89,8 +89,4 @@
 - - - [ ] Ending 3
 
 ---
-- Rendering part 2:
-- - [ ] Shadows
-- - [ ] Physics debug renderer (optional)
----
 - Polish phase
