@@ -79,6 +79,11 @@ namespace Level {
         return false;
     });
 
+    tweeny::tween<float> handAnimation = tweeny::from(1.4f).to(-4.0f).during(100).onStep([](float y){
+        Level::Hand->position.y = y;
+        return false;
+    });
+
 
 
     DialogBox test{
@@ -526,46 +531,42 @@ void App::run() {
                     //current night
                     Level::SunDownAnimation.step(1);
                     Level::EvilMoonUpAnimation.step(1);
-                    Level::SunUpAnimation.jump(0.0f);
                 }
                 break;
             case Day::Tue:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 12) {
                     // day
                     Level::EvilMoonDownAnimation.step(1);
-                    Level::SunUpAnimation.step(1);
-
                     Level::ReaperWalkingAnimation.step(1);
 
                 } else if (Game::timeManager.getHour() <= 4) {
                     // prev night
-                } else {
+                } else if (Game::timeManager.getHour() >= 20) {
                     //current night
                     Level::Reaper->position = Quack::Math::Vector3{-13.4f, 9.5f, -47.2f};
                     Level::Reaper->rotation.y = -147.9f;
+                    Level::SunDownAnimation.step(1.0f);
                 }
+
                 break;
             case Day::Wen:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
-                    // day
-                } else if (Game::timeManager.getHour() <= 4) {
-                    // prev night
-                } else {
-                    //current night
+                    Level::Reaper->position = Quack::Math::Vector3{-13.4f, -20.5f, -47.2f};
                 }
                 break;
             case Day::Thu:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
                     // day
-                } else if (Game::timeManager.getHour() <= 4) {
-                    // prev night
-                } else {
+                    Level::Clock->position.y = 4;
+                } else if (Game::timeManager.getHour() >= 20) {
                     //current night
+                    Level::handAnimation.step(1);
                 }
                 break;
             case Day::Fri:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
                     // day
+                    Level::Stone->position.y = 0.2f;
                 } else if (Game::timeManager.getHour() <= 4) {
                     // prev night
                 } else {
@@ -579,25 +580,16 @@ void App::run() {
                     // prev night
                 } else {
                     //current night
+                    Level::Candel->position.y = 3.9f;
                 }
                 break;
             case Day::Sun:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
                     // day
-                } else if (Game::timeManager.getHour() <= 4) {
-                    // prev night
-                } else {
-                    //current night
+                    Level::Candel->position.y = -13.9f;
                 }
                 break;
             case Day::End:
-                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
-                    // day
-                } else if (Game::timeManager.getHour() <= 4) {
-                    // prev night
-                } else {
-                    //current night
-                }
                 break;
         }
 
