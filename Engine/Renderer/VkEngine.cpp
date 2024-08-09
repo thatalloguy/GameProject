@@ -153,8 +153,9 @@ void VulkanEngine::CleanUp()
 
         for (auto obj : loadedScenes) {
             obj.second->clearAll();
+
         }
-        loadedScenes.clear();
+        //loadedScenes.clear();
 
         for (int i=0; i < FRAME_OVERLAP; i++) {
             vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);

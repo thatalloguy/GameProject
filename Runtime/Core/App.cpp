@@ -24,7 +24,6 @@
 namespace Level {
     Quack::Entity* floor;
     Player* player;
-    Quack::Entity* chest;
     Quack::Entity* car_trigger;
     Quack::Entity* house_trigger;
     Characters::FisherMan fisherMan;
@@ -93,18 +92,18 @@ namespace Game {
 
     void loadAssets() {
         // Temp model
-        std::string structurePath = {"../../Assets/basicmesh.glb"};
-        auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
+        //std::string structurePath = {"../../Assets/basicmesh.glb"};
+        //auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
         auto testFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/cube.glb");
         auto sphereFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/sphere.glb");
         auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
         // just a check, not necessary
-        assert(structureFile.has_value());
-        Game::renderer.loadedScenes[11] = *structureFile;
+        //assert(structureFile.has_value());
+        //Game::renderer.loadedScenes[55] = *structureFile;
         Game::renderer.loadedScenes[20] = *testFile;
         Game::renderer.loadedScenes[30] = *sphereFile;
         Game::renderer.loadedScenes[40] = *bobberFile;
-        Game::renderer.loadedScenes[50] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
+        //Game::renderer.loadedScenes[50] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
 
 
         Game::mapLoader->loadMap([&](int entityID, Quack::Entity* entity) {
@@ -245,14 +244,6 @@ void App::init() {
 
     };
 
-    Quack::EntityCreationInfo Chest_info {
-            .position = {20, -2, 20},
-            .size = {1, 1.0f, 1},
-            .model = 50,
-            .isPhysical = false,
-
-    };
-
     Quack::EntityCreationInfo ctriggerI {
             .position = {8, 0, 28},
             .size = {2, 1.0f, 2},
@@ -271,7 +262,6 @@ void App::init() {
 
     Level::player = new Player(Game::renderer.getMainCamera(), *Game::physicsEngine);
     Level::floor = new Quack::Entity(floor_info);
-    Level::chest = new Quack::Entity(Chest_info);
     Level::car_trigger = new Quack::Entity(ctriggerI);
     Level::house_trigger = new Quack::Entity(htriggerI);
 
@@ -422,7 +412,7 @@ void App::run() {
     bool booktoggle = false;
 
     Game::audioEngine->playSound(1);
-    Game::audioEngine->setSoundPosition(Game::pianoId, Level::chest->position);
+    Game::audioEngine->setSoundPosition(Game::pianoId, Level::car_trigger->position);
 
     auto& sky = Game::renderer.backgroundEffects[0].data;
 
@@ -439,10 +429,8 @@ void App::run() {
         Game::physicsEngine->update();
 
         Level::floor->render(Game::renderer);
-        Level::chest->render(Game::renderer);
         Game::mapLoader->renderMap();
         Level::floor->updatePhysics(*Game::physicsEngine);
-        Level::chest->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
         Level::fisherMan.update(*Level::player);
 
@@ -477,7 +465,7 @@ void App::run() {
 
         Game::renderer.Run();
 
-        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::chest->position.x - Level::player->position.x  , Level::player->position.y - Level::chest->position.y, Level::player->position.z - Level::chest->position.z, 0)));
+        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::car_trigger->position.x - Level::player->position.x  , Level::player->position.y - Level::car_trigger->position.y, Level::player->position.z - Level::car_trigger->position.z, 0)));
         Quack::Math::Vector3 soundDir{0, 0, 0};
         soundDir.x = dir.x;
         soundDir.y = dir.y;
@@ -536,7 +524,6 @@ void App::cleanup() {
     Game::audioEngine->CleanUp();
 
     delete Level::player;
-    delete Level::chest;
     delete Level::floor;
     delete Level::car_trigger;
     delete Level::house_trigger;

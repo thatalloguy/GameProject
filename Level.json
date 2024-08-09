@@ -12,7 +12,16 @@
     {"id": 7, "path": "../../Assets/Models/FishingShop.glb"},
     {"id": 8, "path": "../../Assets/Models/FisherM.glb"},
     {"id": 9, "path": "../../Assets/Models/reaper.glb"},
-    {"id": 10, "path": "../../Assets/Models/cube.glb"}
+    {"id": 10, "path": "../../Assets/Models/cube.glb"},
+    {"id": 11, "path": "../../Assets/Models/Clock.glb"},
+    {"id": 12, "path": "../../Assets/Models/Moon.glb"},
+    {"id": 13, "path": "../../Assets/Models/Hand.glb"},
+    {"id": 14, "path": "../../Assets/Models/Stone.glb"},
+    {"id": 15, "path": "../../Assets/Models/Shovel.glb"},
+    {"id": 16, "path": "../../Assets/Models/Moon_N.glb"},
+    {"id": 17, "path": "../../Assets/Models/Sun.glb"},
+    {"id": 18, "path": "../../Assets/Models/Candel.glb"},
+    {"id": 19, "path": "../../Assets/Models/DebtCol.glb"}
   ],
 
   "blueprints": [
@@ -183,6 +192,159 @@
         },
         "physicsType": 0,
         "shouldActivate": true,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 10,
+      "name": "Clock",
+      "model": 11,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 11,
+      "name": "Moon",
+      "model": 12,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 12,
+      "name": "Hand",
+      "model": 13,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 13,
+      "name": "Stone",
+      "model": 14,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 14,
+      "name": "Shovel",
+      "model": 15,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 15,
+      "name": "Moon_N",
+      "model": 16,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 16,
+      "name": "Sun",
+      "model": 17,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 17,
+      "name": "Candel",
+      "model": 18,
+      "isPhysical": false,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 5,
+          "y": 5,
+          "z": 5
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 18,
+      "name": "Debt",
+      "model": 19,
+      "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 1,
+          "y": 5,
+          "z": 1
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
         "objectLayer": 0
       }
     }

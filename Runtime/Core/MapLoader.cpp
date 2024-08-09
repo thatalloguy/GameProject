@@ -142,6 +142,10 @@ void Loader::MapLoader::createEntityFromInstance(Loader::EntityInstance &instanc
         size = size * 1.2f;
     }
 
+    if ( !_renderer.loadedScenes.contains(blueprint.model)) {
+        blueprint.model = DebugModelId;
+    }
+
     Quack::EntityCreationInfo creationInfo{
             .position = instance.position,
             .size = instance.size,

@@ -13,7 +13,7 @@
 class DayManager {
 public:
     DayManager(TimeManager& timeManager, VulkanEngine& renderer);
-    ~DayManager() = default;
+    ~DayManager();
 
     void update();
 
@@ -21,7 +21,11 @@ private:
     TimeManager& _timeManager;
     VulkanEngine& _renderer;
 
-    std::vector<Quack::Entity> _eventEntities;
+    std::vector<Quack::Entity*> _eventEntities;
+    /*
+     * 0 = brief case
+     * 1 = EVIL moon
+     */
 };
 
 
