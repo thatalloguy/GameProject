@@ -37,6 +37,11 @@ namespace Level {
     Quack::Entity* Candel;
     Quack::Entity* Reaper;
 
+    Characters::FisherMan fisherMan;
+
+
+
+    //Animations.
 
     tweeny::tween<float> ReaperWalkingAnimation = tweeny::from(-41.0f).to(36.0f).during(700).onStep([](float  pos){
         Level::Reaper->position = Quack::Math::Vector3{pos, 11.7f, -54.0f};
@@ -44,8 +49,36 @@ namespace Level {
         return false;
     });
 
+    tweeny::tween<float> MoonUpAnimation = tweeny::from(-40.0f).to(128.0f).during(100).onStep([](float y){
+        Level::Moon->position.y = y;
+        return false;
+    });
 
-    Characters::FisherMan fisherMan;
+    tweeny::tween<float> MoonDownAnimation = tweeny::from(128.0f).to(-41.0f).during(100).onStep([](float y){
+        Level::Moon->position.y = y;
+        return false;
+    });
+
+    tweeny::tween<float> SunUpAnimation = tweeny::from(-40.0f).to(128.0f).during(100).onStep([](float y){
+        Level::Sun->position.y = y;
+        return false;
+    });
+
+    tweeny::tween<float> SunDownAnimation = tweeny::from(128.0f).to(-41.0f).during(100).onStep([](float y){
+        Level::Sun->position.y = y;
+        return false;
+    });
+
+    tweeny::tween<float> EvilMoonUpAnimation = tweeny::from(-40.0f).to(128.0f).during(100).onStep([](float y){
+        Level::EvilMoon->position.y = y;
+        return false;
+    });
+
+    tweeny::tween<float> EvilMoonDownAnimation = tweeny::from(128.0f).to(-41.0f).during(100).onStep([](float y){
+        Level::EvilMoon->position.y = y;
+        return false;
+    });
+
 
 
     DialogBox test{
@@ -486,23 +519,26 @@ void App::run() {
             case Day::Mon:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
                     // day
+                    Level::SunUpAnimation.step(1);
                 } else if (Game::timeManager.getHour() <= 4) {
                     // prev night
                 } else {
                     //current night
-                    Level::EvilMoon->position.y = 128;
+                    Level::SunDownAnimation.step(1);
+                    Level::EvilMoonUpAnimation.step(1);
+                    Level::SunUpAnimation.jump(0.0f);
                 }
                 break;
             case Day::Tue:
                 if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 12) {
                     // day
-                    Level::EvilMoon->position.y = -40;
+                    Level::EvilMoonDownAnimation.step(1);
+                    Level::SunUpAnimation.step(1);
 
                     Level::ReaperWalkingAnimation.step(1);
 
                 } else if (Game::timeManager.getHour() <= 4) {
                     // prev night
-                    Level::EvilMoon->position.y = 128;
                 } else {
                     //current night
                     Level::Reaper->position = Quack::Math::Vector3{-13.4f, 9.5f, -47.2f};
