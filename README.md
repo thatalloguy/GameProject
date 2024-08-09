@@ -76,13 +76,15 @@
 - - [x] Inventory
 - - [x] Fishing rod upgrades
 - - [ ] Daily Events
-- - - [ ] Monday
-- - - [ ] Tuesday
-- - - [ ] Wednesday
-- - - [ ] Thursday
-- - - [ ] Friday
-- - - [ ] Saturday
-- - - [ ] Sunday
+- - - [x] Monday
+- - - [x] Tuesday
+- - - [x] Wednesday
+- - - [x] Thursday
+- - - [x] Friday
+- - - [x] Saturday
+- - - [x] Sunday
+- - [ ] Tutorial
+- - [ ] Debt Collector Day 3.
 - - [ ] Ending
 - - - [ ] Ending 1
 - - - [ ] Ending 2
