@@ -75,8 +75,18 @@
 - - [x] Shop system
 - - [x] Inventory
 - - [x] Fishing rod upgrades
-- - [ ] Event player.
 - - [ ] Daily Events
+- - - [ ] Monday
+- - - [ ] Tuesday
+- - - [ ] Wednesday
+- - - [ ] Thursday
+- - - [ ] Friday
+- - - [ ] Saturday
+- - - [ ] Sunday
+- - [ ] Ending
+- - - [ ] Ending 1
+- - - [ ] Ending 2
+- - - [ ] Ending 3
 
 ---
 - Rendering part 2:
