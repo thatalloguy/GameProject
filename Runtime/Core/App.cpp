@@ -26,6 +26,25 @@ namespace Level {
     Player* player;
     Quack::Entity* car_trigger;
     Quack::Entity* house_trigger;
+
+    Quack::Entity* Clock;
+    Quack::Entity* EvilMoon;
+    Quack::Entity* Hand;
+    Quack::Entity* Stone;
+    Quack::Entity* Shovel;
+    Quack::Entity* Moon;
+    Quack::Entity* Sun;
+    Quack::Entity* Candel;
+    Quack::Entity* Reaper;
+
+
+    tweeny::tween<float> ReaperWalkingAnimation = tweeny::from(-41.0f).to(36.0f).during(700).onStep([](float  pos){
+        Level::Reaper->position = Quack::Math::Vector3{pos, 11.7f, -54.0f};
+
+        return false;
+    });
+
+
     Characters::FisherMan fisherMan;
 
 
@@ -89,7 +108,6 @@ namespace Game {
 
     float deltaTime = 0.0f;
 
-
     void loadAssets() {
         // Temp model
         //std::string structurePath = {"../../Assets/basicmesh.glb"};
@@ -109,8 +127,37 @@ namespace Game {
         Game::mapLoader->loadMap([&](int entityID, Quack::Entity* entity) {
 
             //FisherMan
-            if (entityID == 7) {
-                Level::fisherMan.initialize(*entity);
+            switch (entityID) {
+                case 7:
+                    Level::fisherMan.initialize(*entity);
+                    break;
+                case 8:
+                    Level::Reaper = entity;
+                    break;
+                case 10:
+                    Level::Clock = entity;
+                    break;
+                case 11:
+                    Level::EvilMoon = entity;
+                    break;
+                case 12:
+                    Level::Hand = entity;
+                    break;
+                case 13:
+                    Level::Stone = entity;
+                    break;
+                case 14:
+                    Level::Shovel = entity;
+                    break;
+                case 15:
+                    Level::Moon = entity;
+                    break;
+                case 16:
+                    Level::Sun = entity;
+                    break;
+                case 17:
+                    Level::Candel = entity;
+                    break;
             }
 
         });
@@ -434,9 +481,89 @@ void App::run() {
         Level::player->update(Game::deltaTime);
         Level::fisherMan.update(*Level::player);
 
+        //Event Entities
+        switch (Game::timeManager.getCurrentDay()) {
+            case Day::Mon:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                    Level::EvilMoon->position.y = 128;
+                }
+                break;
+            case Day::Tue:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 12) {
+                    // day
+                    Level::EvilMoon->position.y = -40;
 
+                    Level::ReaperWalkingAnimation.step(1);
 
-        //Car Logic;
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                    Level::EvilMoon->position.y = 128;
+                } else {
+                    //current night
+                    Level::Reaper->position = Quack::Math::Vector3{-13.4f, 9.5f, -47.2f};
+                    Level::Reaper->rotation.y = -147.9f;
+                }
+                break;
+            case Day::Wen:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+            case Day::Thu:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+            case Day::Fri:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+            case Day::Sat:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+            case Day::Sun:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+            case Day::End:
+                if (Game::timeManager.getHour() <= 20 && Game::timeManager.getHour() >= 4) {
+                    // day
+                } else if (Game::timeManager.getHour() <= 4) {
+                    // prev night
+                } else {
+                    //current night
+                }
+                break;
+        }
 
 
         //via f3 you can toggle debug menu
