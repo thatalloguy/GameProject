@@ -7,6 +7,7 @@
 
 #include "App.h"
 #include "../Character/FisherMan.h"
+#include "../Character/DebtCollector.h"
 #include "../Character/DialogSystem.h"
 #include "Input/InputManager.h"
 #include "spdlog/spdlog.h"
@@ -38,6 +39,7 @@ namespace Level {
     Quack::Entity* Reaper;
 
     Characters::FisherMan fisherMan;
+    Characters::DebtCollector debtCollector;
 
 
 
@@ -196,6 +198,8 @@ namespace Game {
                 case 17:
                     Level::Candel = entity;
                     break;
+                case 18:
+                    Level::debtCollector.initialize(*entity, Game::timeManager);
             }
 
         });
@@ -289,6 +293,9 @@ void App::init() {
     Game::mapLoader = new Loader::MapLoader(Game::renderer, *Game::physicsEngine);
 
 
+    Game::timeManager.start();
+
+
     Game::loadAssets();
 
     //
@@ -361,7 +368,6 @@ void App::init() {
     Game::pianoId = Game::audioEngine->registerSound({"../../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
 
 
-    Game::timeManager.start();
 
     //DialogRenderer::setCurrentConversation(&Level::test);
 

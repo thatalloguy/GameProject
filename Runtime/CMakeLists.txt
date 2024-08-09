@@ -27,6 +27,8 @@ file(GLOB_RECURSE GAME_SRC
         Character/DialogSystem.cpp
         Character/FisherMan.h
         Character/FisherMan.cpp
+        Character/DebtCollector.h
+        Character/DebtCollector.cpp
 
 )
 
