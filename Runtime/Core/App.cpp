@@ -19,7 +19,7 @@
 #include "Audio/AudioEngine.h"
 #include "MapLoader.h"
 #include "TimeManager.h"
-
+#include "QuestManager.h"
 
 
 namespace Level {
@@ -487,6 +487,7 @@ void App::run() {
 
 
         DialogRenderer::render(size);
+        QuestManager::renderUI(size);
 
 
         // The cinematic bars
@@ -512,6 +513,19 @@ void App::run() {
 
 
     Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
+
+
+    Quest testQ{
+        .desc = "Test Quest",
+        .condition = [=]() {
+            return (Level::player->position.z >= 100);
+        },
+        .onComplete = [](){
+            spdlog::info("TEST HELLO WORLD");
+        }
+    };
+
+    QuestManager::setCurrentQuest(&testQ);
 
     while (!window->shouldShutdown()) {
         Game::renderer.updateScene();
@@ -638,6 +652,7 @@ void App::run() {
         window->update();
 
         UI::update(window->getSize());
+        QuestManager::update();
 
         if (Level::isTraveling) {
             Level::barTween.step(1);

@@ -10,8 +10,8 @@
 
 struct Quest {
     const char* desc;
-    std::function<bool()>& condition;
-    std::function<void()>& onComplete;
+    std::function<bool()> condition;
+    std::function<void()> onComplete;
     Quest* next = nullptr;
 };
 
