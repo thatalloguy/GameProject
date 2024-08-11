@@ -14,6 +14,8 @@ file(GLOB_RECURSE GAME_SRC
 
         Core/TimeManager.h
         Core/TimeManager.cpp
+        Core/QuestManager.h
+        Core/QuestManager.cpp
 
         Inventory/Inventory.h
         Inventory/Items/FishingRod.h

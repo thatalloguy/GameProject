@@ -11,8 +11,6 @@ Characters::DebtCollector::~DebtCollector() {
 void Characters::DebtCollector::initialize(Quack::Entity &baseEntity, TimeManager &timeManager) {
     _entity = &baseEntity;
     _timeManager = &timeManager;
-
-    DialogRenderer::setCurrentConversation(&opening);
 }
 
 void Characters::DebtCollector::update(Player &player) {
