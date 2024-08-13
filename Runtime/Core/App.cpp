@@ -213,6 +213,38 @@ namespace Game {
     }
 }
 
+namespace Tutorial {
+
+
+    enum class TutorialProgress : unsigned int {
+        Fishing = 1,
+        Traveling = 2,
+        Selling = 3,
+        Upgrading = 4,
+        Sleeping = 5
+    };
+
+    Quest _fishingQ {
+        .desc = "Go to the dock and Fish",
+        .condition = [](){ return Level::player->state == PlayerState::Fishing; },
+        .onComplete = []() { Game::fishingManager->startTutorial(); }
+    };
+
+
+    TutorialProgress _currentProgress = TutorialProgress::Fishing;
+
+    void start() {
+        QuestManager::setCurrentQuest(&_fishingQ);
+    };
+
+    void update() {
+        //
+    };
+
+
+
+
+}
 
 
 namespace UI {
@@ -254,9 +286,22 @@ namespace UI {
 
         auto drawList = ImGui::GetForegroundDrawList();
 
+        auto& fish = Game::fishingManager->dummy;
+
+        float staminaLength = fish.stamina / fish.maxStamina;
+        float durabilityLength = Game::fishingManager->fishlineDurability / Game::fishingManager->maxDurability;
+        staminaLength = staminaLength * 0.8f;
+        durabilityLength = durabilityLength * 0.8f;
+
+        if (Level::player->state == PlayerState::Fishing) {
+            drawList->AddRectFilled({windowSize.x * 0.95f, windowSize.y * 0.1f}, {windowSize.x * 0.97f, windowSize.y * staminaLength}, ImColor(50, 250, 200));
+            drawList->AddRectFilled({windowSize.x * 0.98f, windowSize.y * 0.1f}, {windowSize.x * 0.99f, windowSize.y * durabilityLength}, ImColor(50, 250, 100));
+        }
+
+
+
         std::string date = toCstr(Game::timeManager.getCurrentDay()); date += " | ";
         date += std::to_string(Game::timeManager.getHour()); date += ":00";
-
 
 
         drawList->AddRectFilled(ImVec2(0, 0), sideBar, ImColor(1, 1, 1));
@@ -418,10 +463,11 @@ void App::run() {
         std::string date = toCstr(Game::timeManager.getCurrentDay()); date += " | ";
         date += std::to_string(Game::timeManager.getHour()); date += ":00";
 
-        ImGui::SetWindowFontScale(4.0f);
-        drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255), date.c_str());
-        ImGui::SetWindowFontScale(1.0f);
-
+        if (Level::player->state == PlayerState::Moving) {
+            ImGui::SetWindowFontScale(4.0f);
+            drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255), date.c_str());
+            ImGui::SetWindowFontScale(1.0f);
+        }
 
         // car logic
         if (Level::car_trigger->hasHit(Level::player->position)) {
@@ -515,17 +561,7 @@ void App::run() {
     Quack::Input::setMouseMode(Quack::MouseMode::Disabled);
 
 
-    Quest testQ{
-        .desc = "Test Quest",
-        .condition = [=]() {
-            return (Level::player->position.z >= 100);
-        },
-        .onComplete = [](){
-            spdlog::info("TEST HELLO WORLD");
-        }
-    };
-
-    QuestManager::setCurrentQuest(&testQ);
+    Tutorial::start();
 
     while (!window->shouldShutdown()) {
         Game::renderer.updateScene();

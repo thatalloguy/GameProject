@@ -29,6 +29,8 @@ void QuestManager::renderUI(ImVec2 &windowSize) {
 
 
     if (_currentQuest) {
+        ImGui::SetWindowFontScale(3.0f);
         drawList->AddText({0, windowSize.y - 100}, ImColor(255, 255, 255), _currentQuest->desc);
+        ImGui::SetWindowFontScale(1.0f);
     }
 }

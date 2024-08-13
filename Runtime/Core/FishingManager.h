@@ -396,7 +396,6 @@ struct Fish {
         moveLeft = false;
     }
 
-private:
     void calculateRects(Quack::Math::Vector2 rectMin, Quack::Math::Vector2 rectMax) {
         // calc the halfs of the rects.
         float halfWidth  = rectMin.x + ((rectMax.x - rectMin.x)  / 2); // for example : -2 - -18 = 16. 16 / 2 = 8. -18 + 8 = -10. so halfway = 10
@@ -537,6 +536,13 @@ public:
 
     void Update(float dt);
 
+    void startTutorial() {};
+
+    Fish dummy;
+
+    float fishlineDurability = 10.0f;
+    float maxDurability = 10.0f;
+
 private:
     friend class Player;
 
@@ -555,8 +561,8 @@ private:
     tweeny::tween<float, float, float, float, float> vec3Tween;
     bool pause = false;
     bool updateFishing = false;
+    bool isInTutorial = false;
 
-    Fish dummy;
 
     Quack::Math::Vector2 cursor{0, 0};
 
@@ -570,7 +576,6 @@ private:
 
     //bobber movement
     bool bobberMovedLastFrame = false;
-    float fishlineDurability = 10.0f;
 };
 
 

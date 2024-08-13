@@ -63,7 +63,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     // UI UI UI UI UI AHGHHHHDAHIKWDHwaiudyAWDIAWUDAYUIduaiwdyawuid. i hate UI programming >:(
-    renderer.uiRenderFuncs.pushFunction([&](){
+    renderer.debugRenderFuncs.pushFunction([&](){
 
         ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
         ImGui::Begin("Fish Manager");
@@ -176,7 +176,7 @@ void FishingManager::cleanUpFishing() {
     cursor.y = lake->position.z;
     dummy.reset();
 
-    fishlineDurability = 10.0f;
+    fishlineDurability = maxDurability;
 }
 
 void FishingManager::checkUserCanFish(float deltaTime) {
