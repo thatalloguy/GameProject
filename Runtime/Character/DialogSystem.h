@@ -27,4 +27,6 @@ namespace DialogRenderer {
     //void setCurrentDialog(DialogBox* dialogBox);
     void setCurrentConversation(DialogBox* dialogBox);
 
+    bool isCurrentConvEmpty();
+
 };

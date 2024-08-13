@@ -223,11 +223,36 @@ namespace Tutorial {
         Upgrading = 4,
         Sleeping = 5
     };
+    DialogBox fishingTutorial {
+        .author = "Fishing Gods",
+        .dialogs = {
+                "First wait for the fish to bite",
+                "After it has bitten the bait",
+                "then you must move together with the fish",
+                "Do this with either A/D or the left joystick",
+                "The blue bar is the fish stamina",
+                "The green bar is the line durability"
+        }
+    };
+
+    Quest _main {
+        .desc = "Pay the debt",
+        .condition = []() { return false; /* >:) */ },
+        .onComplete = []() { spdlog::info("HOW???"); }
+    };
+
+    Quest _fishing2 {
+            .desc = "read the tutorial",
+            .condition = []() {return Level::player->state == PlayerState::Fishing && DialogRenderer::isCurrentConvEmpty(); },
+            .onComplete = []() { Game::fishingManager->completeTutorial(); },
+            .next = &_main
+    };
 
     Quest _fishingQ {
         .desc = "Go to the dock and Fish",
         .condition = [](){ return Level::player->state == PlayerState::Fishing; },
-        .onComplete = []() { Game::fishingManager->startTutorial(); }
+        .onComplete = []() { Game::fishingManager->startTutorial(); DialogRenderer::setCurrentConversation(&fishingTutorial); },
+        .next = &_fishing2
     };
 
 
@@ -296,6 +321,9 @@ namespace UI {
         if (Level::player->state == PlayerState::Fishing) {
             drawList->AddRectFilled({windowSize.x * 0.95f, windowSize.y * 0.1f}, {windowSize.x * 0.97f, windowSize.y * staminaLength}, ImColor(50, 250, 200));
             drawList->AddRectFilled({windowSize.x * 0.98f, windowSize.y * 0.1f}, {windowSize.x * 0.99f, windowSize.y * durabilityLength}, ImColor(50, 250, 100));
+
+
+
         }
 
 
@@ -342,8 +370,6 @@ void App::init() {
 
 
     Game::loadAssets();
-
-    //
 
     std::chrono::seconds(1);
 

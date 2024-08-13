@@ -536,8 +536,8 @@ public:
 
     void Update(float dt);
 
-    void startTutorial() {};
-
+    void startTutorial() { isInTutorial = true; };
+    void completeTutorial() { isInTutorial = false; };
     Fish dummy;
 
     float fishlineDurability = 10.0f;

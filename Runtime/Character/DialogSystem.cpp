@@ -89,3 +89,7 @@ void DialogRenderer::skip(bool bypassToggleLock) {
 void DialogRenderer::setCurrentConversation(DialogBox *dialogBox) {
     _currentDialog = dialogBox;
 }
+
+bool DialogRenderer::isCurrentConvEmpty() {
+    return _currentDialog == nullptr;
+}

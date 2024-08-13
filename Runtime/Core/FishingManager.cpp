@@ -228,7 +228,7 @@ void FishingManager::checkUserCanFish(float deltaTime) {
 void FishingManager::updateBobberMovement(float deltaTime) {
 
 
-    if (updateFishing) {
+    if (updateFishing && !isInTutorial) {
         dummy.update(deltaTime, bobber->position, _player);
         debugPoint->position = dummy.position;
         bobber->position.x = cursor.x;
