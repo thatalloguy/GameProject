@@ -83,8 +83,8 @@
 - - - [x] Friday
 - - - [x] Saturday
 - - - [x] Sunday
-- - [ ] Tutorial
-- - [ ] Debt Collector Day 3.
+- - [x] Tutorial
+- - [ ] Debt Collector.
 - - [ ] Ending
 - - - [ ] Ending 1
 - - - [ ] Ending 2
