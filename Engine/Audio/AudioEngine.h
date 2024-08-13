@@ -36,17 +36,20 @@ namespace Quack {
         IPLHRTF HRTF;
         IPLBinauralEffect binauralEffect;
         IPLDirectEffect  directEffect;
+        float spatialBlend = 1.0f;
         Quack::Math::Vector3 direction{1, 1, 1};
         Quack::Math::Vector3 soundPosition{1, 0, 0};
         Quack::Math::Vector3 playerPosition{1, 0, 0};
         float* inBuffer[2];
         float* outBuffer[2];
         void* _heap;
+
     };
 
     struct SoundCreationInfo {
         const char* filePath = nullptr;
         bool shouldLoop = false;
+        float spatialBlend = 1.0f;
         //todo add  steamaudio options here?
     };
 

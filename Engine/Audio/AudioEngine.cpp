@@ -18,7 +18,7 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
     binauralEffectParams.direction.y = soundEffect->direction.y;
     binauralEffectParams.direction.z = soundEffect->direction.z;
     binauralEffectParams.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
-    binauralEffectParams.spatialBlend = 1.0f;
+    binauralEffectParams.spatialBlend = soundEffect->spatialBlend;
     binauralEffectParams.hrtf = soundEffect->HRTF;
     binauralEffectParams.peakDelays = nullptr;
 
@@ -292,7 +292,7 @@ Quack::SoundID Quack::AudioEngine::registerSound(SoundCreationInfo info) {
     ma_sound_set_looping(&newSoundObject->g_sound, info.shouldLoop);
 
 
-
+    newSoundObject->soundEffect.spatialBlend = info.spatialBlend;
 
     // add binauralEffect
     SoundEffectConfig binauralEffectConfig;
