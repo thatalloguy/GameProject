@@ -20,6 +20,7 @@
 #include "MapLoader.h"
 #include "TimeManager.h"
 #include "QuestManager.h"
+#include "SoundPlayer.h"
 
 
 namespace Level {
@@ -145,6 +146,8 @@ namespace Game {
 
     FishingManager* fishingManager;
     BookUI* bookUI;
+
+    SoundPlayer* soundPlayer;
 
     float deltaTime = 0.0f;
 
@@ -438,7 +441,7 @@ void App::init() {
 
     Game::pianoId = Game::audioEngine->registerSound({"../../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
 
-
+    Game::soundPlayer = new SoundPlayer(*Game::audioEngine, *Level::player);
 
     //DialogRenderer::setCurrentConversation(&Level::test);
 
@@ -463,6 +466,10 @@ void App::run() {
        ImGui::Separator();
        if (ImGui::Button("Skip an hour")) {
            Game::timeManager.setHour(Game::timeManager.getHour() + 1);
+       }
+
+       if (ImGui::Button("Play sound")) {
+           Game::soundPlayer->playRandomSound();
        }
 
        ImGui::End();
@@ -709,6 +716,8 @@ void App::run() {
         soundDir.z = dir.z;
         Game::audioEngine->updateSound(Game::pianoId, Level::player->position, soundDir);
 
+        Game::soundPlayer->update();
+
         Game::timeManager.tick();
 
         window->update();
@@ -773,6 +782,7 @@ void App::cleanup() {
     delete Game::engineCreationInfo;
     delete Game::bookUI;
     delete Game::audioEngine;
+    delete Game::soundPlayer;
 
     Game::renderer.CleanUp();
 

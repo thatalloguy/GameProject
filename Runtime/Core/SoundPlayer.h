@@ -6,8 +6,8 @@
 #define DUCKWATCHERS_SOUNDPLAYER_H
 
 
-#include "Audio/AudioEngine.h"
 #include "FishingManager.h"
+#include "Audio/AudioEngine.h"
 #include "Utils/Array.h"
 
 class SoundPlayer {
@@ -19,16 +19,20 @@ public:
 
     void loadSounds();
 
+    void playRandomSound();
+
     void update();
 
 private:
 
+
+    Quack::Math::Vector3 getDirection(Quack::Math::Vector3 soundPos);
+
     Player& _player;
     Quack::AudioEngine& _engine;
 
-
-    STL::Array<Quack::SoundID, 4> _queue;
-
+    std::vector<std::pair<Quack::SoundID, Quack::Math::Vector3>> _sounds;
+    std::vector<std::pair<Quack::SoundID, Quack::Math::Vector3>> _queue;
 };
 
 

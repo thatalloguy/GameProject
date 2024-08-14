@@ -115,7 +115,7 @@ namespace Quack {
 
 
         std::unordered_map<SoundID, SoundObject*> registry;
-        unsigned int idCounter = 0;
+        unsigned int idCounter = 1;
 
     };
 

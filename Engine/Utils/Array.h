@@ -11,7 +11,7 @@ namespace STL {
     template<class T, auto S>
     struct Array {
 
-        T _data[S];
+        T _data[S]{};
 
         int getSize() {
             return S;
