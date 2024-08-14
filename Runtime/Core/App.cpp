@@ -142,8 +142,6 @@ namespace Game {
     Loader::MapLoader* mapLoader;
     TimeManager timeManager{};
 
-    Quack::SoundID pianoId;
-
     FishingManager* fishingManager;
     BookUI* bookUI;
 
@@ -438,9 +436,6 @@ void App::init() {
     Game::audioEngine = new Quack::AudioEngine();
 
     Game::audioEngine->Init();
-
-    Game::pianoId = Game::audioEngine->registerSound({"../../Assets/Audio/bluebonnet_in_b_major_looped.wav", true});
-
     Game::soundPlayer = new SoundPlayer(*Game::audioEngine, *Level::player);
 
     //DialogRenderer::setCurrentConversation(&Level::test);
@@ -582,9 +577,6 @@ void App::run() {
     bool toggle = false;
     bool booktoggle = false;
 
-    Game::audioEngine->playSound(1);
-    Game::audioEngine->setSoundPosition(Game::pianoId, Level::car_trigger->position);
-
     auto& sky = Game::renderer.backgroundEffects[0].data;
 
 
@@ -709,12 +701,6 @@ void App::run() {
 
         Game::renderer.Run();
 
-        auto dir = glm::normalize(glm::vec3(Game::camera->getRotationMatrix() * glm::vec4(Level::car_trigger->position.x - Level::player->position.x  , Level::player->position.y - Level::car_trigger->position.y, Level::player->position.z - Level::car_trigger->position.z, 0)));
-        Quack::Math::Vector3 soundDir{0, 0, 0};
-        soundDir.x = dir.x;
-        soundDir.y = dir.y;
-        soundDir.z = dir.z;
-        Game::audioEngine->updateSound(Game::pianoId, Level::player->position, soundDir);
 
         Game::soundPlayer->update();
 
@@ -768,8 +754,6 @@ void App::run() {
 }
 
 void App::cleanup() {
-    Game::audioEngine->CleanUp();
-
     delete Level::player;
     delete Level::floor;
     delete Level::car_trigger;
@@ -781,7 +765,10 @@ void App::cleanup() {
     delete Game::physicsEngine;
     delete Game::engineCreationInfo;
     delete Game::bookUI;
+
+    Game::audioEngine->CleanUp();
     delete Game::audioEngine;
+
     delete Game::soundPlayer;
 
     Game::renderer.CleanUp();

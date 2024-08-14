@@ -10,6 +10,11 @@
 #include "Audio/AudioEngine.h"
 #include "Utils/Array.h"
 
+struct SoundEffect {
+    Quack::SoundID id;
+    Quack::Math::Vector3 position;
+};
+
 class SoundPlayer {
 
 public:
@@ -31,8 +36,8 @@ private:
     Player& _player;
     Quack::AudioEngine& _engine;
 
-    std::vector<std::pair<Quack::SoundID, Quack::Math::Vector3>> _sounds;
-    std::vector<std::pair<Quack::SoundID, Quack::Math::Vector3>> _queue;
+    std::vector<Quack::SoundID> _sounds;
+    std::vector<SoundEffect> _queue;
 };
 
 

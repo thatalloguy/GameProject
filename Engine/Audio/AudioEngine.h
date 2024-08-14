@@ -73,7 +73,7 @@ namespace Quack {
 
         void updateSound(SoundID id, Quack::Math::Vector3& playerPos, Quack::Math::Vector3& soundDirection);
         void setSoundPosition(SoundID id, Quack::Math::Vector3 newPos);
-
+        bool isSoundPlaying(SoundID id);
     private:
 
         // lifetime functions

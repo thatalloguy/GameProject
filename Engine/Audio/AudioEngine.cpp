@@ -18,7 +18,7 @@ void Quack::AudioEngine::soundEffectProccessPCMFrames(ma_node *pNode, const floa
     binauralEffectParams.direction.y = soundEffect->direction.y;
     binauralEffectParams.direction.z = soundEffect->direction.z;
     binauralEffectParams.interpolation = IPL_HRTFINTERPOLATION_NEAREST;
-    binauralEffectParams.spatialBlend = soundEffect->spatialBlend;
+    binauralEffectParams.spatialBlend = 1.0f;
     binauralEffectParams.hrtf = soundEffect->HRTF;
     binauralEffectParams.peakDelays = nullptr;
 
@@ -330,6 +330,10 @@ void Quack::AudioEngine::setSoundPosition(Quack::SoundID id, Quack::Math::Vector
     auto sound = registry[id];
 
     sound->soundEffect.soundPosition = newPos;
+}
+
+bool Quack::AudioEngine::isSoundPlaying(Quack::SoundID id) {
+    return (bool) ma_sound_is_playing(&registry[id]->g_sound);
 }
 /*
 

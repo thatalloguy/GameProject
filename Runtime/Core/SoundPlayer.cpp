@@ -10,26 +10,31 @@ SoundPlayer::SoundPlayer(Quack::AudioEngine &audioEngine, Player &player) : _eng
 
 void SoundPlayer::loadSounds() {
     Quack::SoundCreationInfo _owl {
-            .filePath = "../../Assets/Audio/effects/owl_1.mp3",
+            .filePath = "../../Assets/Audio/effects/Ambient_1.mp3",
             .shouldLoop = false,
             .spatialBlend = 1.0f
     };
 
-    _sounds.emplace_back(_engine.registerSound(_owl), Quack::Math::Vector3{-3, 0, 0});
+    _sounds.push_back(_engine.registerSound(_owl));
 }
 
 void SoundPlayer::update() {
     int i = 0;
-            Quack::Math::Vector3 dir = getDirection(_queue[i].second);
-            _engine.updateSound(_queue[i].first, _player.position, dir);
-            _engine.setSoundPosition(_queue[i].first, _queue[i].second);
-
+    for (auto sound : _queue) {
+        if (!_engine.isSoundPlaying(sound.id)) {
+            _queue.erase(_queue.begin() + i);
+            spdlog::info("removed");
+        }
+        _engine.setSoundPosition(sound.id, sound.position);
+        auto dir = getDirection(sound.position);
+        _engine.updateSound(sound.id, _player.position, dir);
+        i++;
+    }
 }
 
 void SoundPlayer::playRandomSound() {
-
-    _queue.emplace_back(_sounds[0]);
-    _engine.playSound(_sounds[0].first);
+    _queue.push_back({_sounds.back(), {-4, 0, 33}});
+    _engine.playSound(_sounds.back());
 }
 
 Quack::Math::Vector3 SoundPlayer::getDirection(Quack::Math::Vector3 soundPos) {
