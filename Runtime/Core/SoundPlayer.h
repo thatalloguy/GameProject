@@ -5,6 +5,9 @@
 #ifndef DUCKWATCHERS_SOUNDPLAYER_H
 #define DUCKWATCHERS_SOUNDPLAYER_H
 
+#ifndef PLAY_LOCATION_AMOUNT
+#define PLAY_LOCATION_AMOUNT 4
+#endif
 
 #include "FishingManager.h"
 #include "Audio/AudioEngine.h"
@@ -38,6 +41,8 @@ private:
 
     std::vector<Quack::SoundID> _sounds;
     std::vector<SoundEffect> _queue;
+
+    Quack::Math::Vector3 playPositions[PLAY_LOCATION_AMOUNT] = {{-27, 2, -9}, {27, 2, -11}, {-15, 2, -19}, {0, 2, 84}};
 };
 
 
