@@ -91,8 +91,11 @@
 - - - [ ] Ending 3
 ---
 - Sound
-- - [ ] todo
+- - [x] Play sounds
+- - [ ] random Ambient sound effects.
 ---
 - Polish phase
 - - [ ] Fix bugs
+- - [ ] Saving and loading
+- - [ ] Settings.
 - - [ ] Water?
