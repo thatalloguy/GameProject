@@ -19,6 +19,7 @@ file(GLOB_RECURSE QUACK_ENGINE_SRC
 
         Math/Vecs.h
         Utils/Defines.h
+        Utils/Array.h
 
         Input/InputManager.h
         Input/InputManager.cpp

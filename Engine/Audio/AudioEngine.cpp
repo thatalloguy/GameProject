@@ -322,6 +322,7 @@ void Quack::AudioEngine::updateSound(Quack::SoundID id, Quack::Math::Vector3 &pl
 }
 
 void Quack::AudioEngine::playSound(Quack::SoundID id) {
+
     ma_sound_start(&registry[id]->g_sound);
 }
 
