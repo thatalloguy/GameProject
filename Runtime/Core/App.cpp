@@ -318,8 +318,8 @@ namespace UI {
 
         float staminaLength = fish.stamina / fish.maxStamina;
         float durabilityLength = Game::fishingManager->fishlineDurability / Game::fishingManager->maxDurability;
-        staminaLength = staminaLength * 0.8f;
-        durabilityLength = durabilityLength * 0.8f;
+        staminaLength = 0.1f + staminaLength * 0.8f;
+        durabilityLength = 0.1f + durabilityLength * 0.8f;
 
         if (Level::player->state == PlayerState::Fishing) {
             drawList->AddRectFilled({windowSize.x * 0.95f, windowSize.y * 0.1f}, {windowSize.x * 0.97f, windowSize.y * staminaLength}, ImColor(50, 250, 200));

@@ -280,9 +280,9 @@ void FishingManager::updateBobberMovement(float deltaTime) {
 
 
                 // We movin correctly
-                if (Quack::Input::isKeyPressed(Quack::Key::D) && !dummy.moveLeft) {
+                if (Quack::Input::isKeyPressed(Quack::Key::D) && !dummy.moveLeft && !Quack::Input::isKeyPressed(Quack::Key::A)) {
                     dummy.stamina -= 1.0f * deltaTime * 1.45f;
-                } else if (Quack::Input::isKeyPressed(Quack::Key::A) && dummy.moveLeft) {
+                } else if (Quack::Input::isKeyPressed(Quack::Key::A) && dummy.moveLeft && !Quack::Input::isKeyPressed(Quack::Key::D)) {
                     dummy.stamina -= 1.0f * deltaTime * 1.45f;
                 } else {// We arent movin correctly
                     fishlineDurability -= deltaTime * 1.05f;
@@ -310,8 +310,13 @@ void FishingManager::updateBobberMovement(float deltaTime) {
 
 
 
-        if (fishlineDurability <= 0.1f || dummy.stamina <= 0.1f) {
+        if (fishlineDurability <= 0.1f) {
             cleanUpFishing();
+        }
+
+        if (dummy.stamina <= 0.1f) {
+            cleanUpFishing();
+            _player.inventory.fish++;
         }
     }
 
