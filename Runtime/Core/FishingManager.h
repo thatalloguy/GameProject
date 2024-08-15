@@ -347,7 +347,7 @@ struct Fish {
 
                 travelPath.step(deltaTime * moveSpeed);
                 if (travelPath.progress() == 1.0f && std::rand() % 5) {
-                    genNextPos();
+                    genNextPos(player);
                 }
                 break;
 

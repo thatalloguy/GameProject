@@ -75,7 +75,7 @@
 - - [x] Shop system
 - - [x] Inventory
 - - [x] Fishing rod upgrades
-- - [ ] Daily Events
+- - [x] Daily Events
 - - - [x] Monday
 - - - [x] Tuesday
 - - - [x] Wednesday
