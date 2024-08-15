@@ -601,6 +601,7 @@ void App::run() {
         Level::floor->updatePhysics(*Game::physicsEngine);
         Level::player->update(Game::deltaTime);
         Level::fisherMan.update(*Level::player);
+        Level::debtCollector.update(*Level::player);
 
         //Event Entities
         switch (Game::timeManager.getCurrentDay()) {

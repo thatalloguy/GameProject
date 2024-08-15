@@ -98,7 +98,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
         ImGui::SeparatorText("Fish AI");
         if (ImGui::Button("Pick new")) {
-            dummy.genNextPos();
+            dummy.genNextPos(player);
         }
         ImGui::Text("Current Corner: %i", dummy.corners[dummy.currentCorner].ID);
         ImGui::Text("CORNER 1: %f", dummy.corners[0].weight);
@@ -161,7 +161,7 @@ void FishingManager::setUpFishing() {
     cursor.y = lake->position.z;
 
     dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
-    dummy.genNextPos();
+    dummy.genNextPos(_player);
 
 
     updateFishing = true;

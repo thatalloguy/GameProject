@@ -14,6 +14,13 @@
 namespace Characters {
 
 
+    enum class CharacterState : unsigned int {
+        Opening = 0,
+        Wensday = 1,
+        Disabled = 2,
+        Talking = 3
+    };
+
     class DebtCollector {
     public:
 
@@ -32,7 +39,8 @@ namespace Characters {
 
         Quack::Entity* _entity;
         TimeManager* _timeManager;
-
+        CharacterState _currentState{CharacterState::Opening};
+        bool hasYapped = false;
 
         //dialog;
         DialogBox opening {
@@ -41,7 +49,7 @@ namespace Characters {
                     "Rise and Shine..",
                     "You inherited quite the place.",
                     "Same goes for your father's debt.",
-                    "Now... He owed me 1000 bucks.",
+                    "Now... He owed me 500 bucks.",
                     "Officially you have to pay right now.",
                     "But I see you don't have the money.",
                     "That's why I give you a week.",
