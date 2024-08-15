@@ -94,8 +94,14 @@
 - - [x] Play sounds
 - - [ ] random Ambient sound effects.
 ---
+- Fix Bugs
+- - [x] Fish not counting after getting caught.
+- - [x] Selling not working.
+- - [x] Stamina bars not shrinking properly.
+- - [x] DebtCollector not showing up
+
+---
 - Polish phase
-- - [ ] Fix bugs
 - - [ ] Saving and loading
 - - [ ] Settings.
 - - [ ] Water?
