@@ -84,7 +84,7 @@
 - - - [x] Saturday
 - - - [x] Sunday
 - - [x] Tutorial
-- - [ ] Debt Collector.
+- - [x] Debt Collector.
 - - [ ] Ending
 - - - [ ] Ending 1
 - - - [ ] Ending 2
