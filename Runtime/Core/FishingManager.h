@@ -282,7 +282,8 @@ enum class FishState : unsigned  int {
  * - How Curiosity works:
  *  -- Curiosity increase over time generally.
  *  -- Curiosity increases when the bobber makes small movements
- *  -- Curiosity increases automatically based on the bait used. -- NOT IMPL YET.
+ *  -- Curiosity increases automatically based on the bait used.
+ *
  */
 struct Fish {
     friend class FishingManager;
@@ -299,9 +300,9 @@ struct Fish {
         this->position = newPos;
     }
 
-    void genNextPos() {
+    void genNextPos(Player& player) {
 
-        curiosity += (std::rand() % 3 + 1.0f) / 10.0f;
+        curiosity += (player.inventory.fishingRodLevel / 10.0f) + (std::rand() % 3 + 1.0f) / 10.0f;
 
         //then pick a corner
         pickCorner();

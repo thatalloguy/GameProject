@@ -97,6 +97,8 @@ void Characters::FisherMan::drawSellingTab(ImVec2 windowSize, Player &player) {
     if (ImGui::Button("Sell")) {
         _currentTab = ShopTab::Selection;
         // do selling stuff :)
+        player.inventory.money += (int) player.inventory.fish * 10;
+        player.inventory.fish = 0;
     }
 }
 
@@ -116,13 +118,17 @@ void Characters::FisherMan::drawUpgradingTab(ImVec2 windowSize, Player &player) 
     if (ImGui::Button("Upgrade")) {
         _currentTab = ShopTab::Selection;
         // do upgrade stuff :)
+        if (player.inventory.money >= 50) {
+            player.inventory.fishingRodLevel += 1;
+            player.inventory.money -= 50;
+        }
     }
 }
 
 void Characters::FisherMan::drawSelectionTab(ImVec2 windowSize, Player &player) {
+    ImGui::Text("|| Current FishingRod Level: %i ||", player.inventory.fishingRodLevel);
     ImGui::Text("What would ya like?");
 
-    ImGui::Text(" ");
     ImGui::Text(" ");
     ImGui::Text(" ");
     ImGui::Text(" ");
