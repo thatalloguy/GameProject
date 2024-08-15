@@ -21,7 +21,8 @@
     {"id": 16, "path": "../../Assets/Models/Moon_N.glb"},
     {"id": 17, "path": "../../Assets/Models/Sun.glb"},
     {"id": 18, "path": "../../Assets/Models/Candel.glb"},
-    {"id": 19, "path": "../../Assets/Models/DebtCol.glb"}
+    {"id": 19, "path": "../../Assets/Models/DebtCol.glb"},
+    {"id": 43, "path": "../../Assets/Models/Mountain.glb"}
   ],
 
   "blueprints": [
@@ -336,6 +337,23 @@
       "name": "Debt",
       "model": 19,
       "isPhysical": true,
+      "Body": {
+        "shapeType": 0,
+        "shapeVolume": {
+          "x": 1,
+          "y": 5,
+          "z": 1
+        },
+        "physicsType": 0,
+        "shouldActivate": false,
+        "objectLayer": 0
+      }
+    },
+    {
+      "ID": 19,
+      "name": "Mountain",
+      "model": 43,
+      "isPhysical": false,
       "Body": {
         "shapeType": 0,
         "shapeVolume": {
