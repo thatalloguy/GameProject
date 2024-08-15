@@ -69,7 +69,7 @@ namespace Quack {
 
         SoundID registerSound(SoundCreationInfo info);
 
-        void playSound(SoundID id);
+        void playSound(SoundID id, float volume=1.0f);
 
         void updateSound(SoundID id, Quack::Math::Vector3& playerPos, Quack::Math::Vector3& soundDirection);
         void setSoundPosition(SoundID id, Quack::Math::Vector3 newPos);

@@ -14,6 +14,21 @@ void SoundPlayer::loadSounds() {
                                                     .filePath = "../../Assets/Audio/effects/Ambient_1.mp3",
                                                     .shouldLoop = false
                                             }));
+
+    _sounds.push_back(_engine.registerSound({
+                                                    .filePath = "../../Assets/Audio/effects/bird_1.mp3",
+                                                    .shouldLoop = false
+                                            }));
+
+    _sounds.push_back(_engine.registerSound({
+                                                    .filePath = "../../Assets/Audio/effects/bird_2.mp3",
+                                                    .shouldLoop = false
+                                            }));
+
+    _sounds.push_back(_engine.registerSound({
+                                                    .filePath = "../../Assets/Audio/effects/owl_1.mp3",
+                                                    .shouldLoop = false
+                                            }));
 }
 
 void SoundPlayer::update() {
@@ -41,7 +56,7 @@ void SoundPlayer::playRandomSound() {
     spdlog::info("Playing {} at {} {} {} || {} {}", sound, position.x, position.y, position.z, randomSound, randomLoc);
 
     _queue.push_back({sound, position});
-    _engine.playSound(sound);
+    _engine.playSound(sound, 25.0f);
 }
 
 Quack::Math::Vector3 SoundPlayer::getDirection(Quack::Math::Vector3 soundPos) {

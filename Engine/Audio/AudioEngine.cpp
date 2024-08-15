@@ -321,9 +321,12 @@ void Quack::AudioEngine::updateSound(Quack::SoundID id, Quack::Math::Vector3 &pl
 
 }
 
-void Quack::AudioEngine::playSound(Quack::SoundID id) {
+void Quack::AudioEngine::playSound(Quack::SoundID id, float volume) {
 
-    ma_sound_start(&registry[id]->g_sound);
+    auto sound = &registry[id]->g_sound;
+
+    ma_sound_set_volume(sound, volume);
+    ma_sound_start(sound);
 }
 
 void Quack::AudioEngine::setSoundPosition(Quack::SoundID id, Quack::Math::Vector3 newPos) {
