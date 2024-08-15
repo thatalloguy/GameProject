@@ -305,6 +305,8 @@ namespace UI {
                 Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
                 Game::timeManager.forcedUpdate();
 
+                Level::player->sleepingCounter++;
+
             } else if (bedBarTween.direction() <= -1 && bedBarTween.progress() <= 0.0f) {
                 isToBed = false;
             }

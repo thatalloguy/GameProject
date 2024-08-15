@@ -112,6 +112,8 @@ public:
     Ref<Character> _character;
     BackPack inventory;
     Camera& _camera;
+
+    int sleepingCounter = 0;
 private:
     void updateCamera(float deltaTime) {
 

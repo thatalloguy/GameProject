@@ -15,6 +15,10 @@ void Characters::DebtCollector::initialize(Quack::Entity &baseEntity, TimeManage
 
 void Characters::DebtCollector::update(Player &player) {
 
+    if (_timeManager->getCurrentDay() == Day::Mon) {
+
+    }
+
 }
 
 void Characters::DebtCollector::drawUI(ImVec2 windowSize, Player &player) {
