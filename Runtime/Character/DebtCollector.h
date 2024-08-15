@@ -39,7 +39,7 @@ namespace Characters {
 
         Quack::Entity* _entity;
         TimeManager* _timeManager;
-        CharacterState _currentState{CharacterState::Opening};
+        CharacterState _currentState{CharacterState::Disabled}; // MUST BE OPENING!!
         bool hasYapped = false;
 
         //dialog;
