@@ -5,6 +5,9 @@
 #include "FishingManager.h"
 #include "imgui.h"
 
+
+const float lakeSize = 10.0f;
+
 FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::PhysicsEngine& physicsEngine) : _renderer(renderer), _player(player), _physicsEngine(physicsEngine) {
 
 
@@ -17,8 +20,8 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
     };
 
     Quack::EntityCreationInfo lake_info {
-            .position = {5, -2.5f, -18},
-            .size = {10, 1.0f, 10},
+            .position = {5, -5.0f, -18},
+            .size = {30, 0.4f, 30},
             .model = 20,
             .isPhysical = true,
             .bodyCreationInfo = {
@@ -35,7 +38,7 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
     Quack::EntityCreationInfo debugPoint_info {
             .position = {0, 4, 15},
-            .size = {0.2f, 0.2f, 0.2f},
+            .size = {1, 1, 1},
             .model = 30,
             .isPhysical = false,
     };
@@ -149,9 +152,10 @@ void FishingManager::Update(float dt) {
 
 void FishingManager::setUpFishing() {
 
+
     //center debug point
-    debugPoint->position.x = lake->position.x + (lake->size.x * 0.8f);
-    debugPoint->position.z = lake->position.z + (lake->size.z * 0.8f);
+    debugPoint->position.x = lake->position.x + (lakeSize * 0.8f);
+    debugPoint->position.z = lake->position.z + (lakeSize * 0.8f);
 
     debugPoint->position.y  = lake->position.y + lake->size.y + 1;
 
@@ -160,7 +164,7 @@ void FishingManager::setUpFishing() {
     cursor.x = lake->position.x;
     cursor.y = lake->position.z;
 
-    dummy.initFish({lake->position.x - lake->size.x * 0.8f, lake->position.z - lake->size.z * 0.8f}, {lake->position.x + (lake->size.x * 0.8f), lake->position.z + lake->size.z * 0.7f}, debugPoint->position);
+    dummy.initFish({lake->position.x - lakeSize * 0.8f, lake->position.z - lakeSize * 0.8f}, {lake->position.x + (lakeSize * 0.8f), lake->position.z + lakeSize * 0.7f}, debugPoint->position);
     dummy.genNextPos(_player);
 
 
@@ -197,7 +201,7 @@ void FishingManager::checkUserCanFish(float deltaTime) {
             });
             pause = true;
         }
-        if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isButtonPressed(0, 3)) {
+        if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isButtonPressed(0, 3) && !isInTutorial) {
             cleanUpFishing();
         }
 
@@ -218,7 +222,7 @@ void FishingManager::checkUserCanFish(float deltaTime) {
         });
         pause = true;
     }
-    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isKeyPressed(Quack::Key::Q)) {
+    if (fishCollider->hasHit(_player.position) && _player.state == PlayerState::Fishing && Quack::Input::isKeyPressed(Quack::Key::Q) && !isInTutorial) {
         cleanUpFishing();
     }
 
@@ -258,7 +262,7 @@ void FishingManager::updateBobberMovement(float deltaTime) {
 
             if (Quack::Input::isButtonPressed(0, 0)) {
                 cursor.y += 2 * (deltaTime * 2.5f);
-                if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
+                if (bobber->position.z < lake->position.z - (lakeSize * 0.75f)) {
                     cleanUpFishing();
                 }
 
@@ -294,7 +298,7 @@ void FishingManager::updateBobberMovement(float deltaTime) {
 
             if (Quack::Input::isKeyPressed(Quack::Key::E)) {
                 cursor.y += 2 * (deltaTime * 2.5f);
-                if (bobber->position.z < lake->position.z - (lake->size.z * 0.75f)) {
+                if (bobber->position.z < lake->position.z - (lakeSize * 0.75f)) {
                     cleanUpFishing();
                 }
 

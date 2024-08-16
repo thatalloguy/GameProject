@@ -153,7 +153,7 @@ namespace Game {
         //std::string structurePath = {"../../Assets/basicmesh.glb"};
         //auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
         auto testFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/cube.glb");
-        auto sphereFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/sphere.glb");
+        auto sphereFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/Models/Fish.glb");
         auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
         // just a check, not necessary
         //assert(structureFile.has_value());
