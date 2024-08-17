@@ -244,7 +244,7 @@ namespace Tutorial {
     Quest _fishingQ {
         .desc = "Go to the dock and Fish",
         .condition = [](){ return Level::player->state == PlayerState::Fishing; },
-        .onComplete = []() { Game::fishingManager->startTutorial(); DialogRenderer::setCurrentConversation(&fishingTutorial); },
+        .onComplete = []() { /*Game::fishingManager->startTutorial(); DialogRenderer::setCurrentConversation(&fishingTutorial); */ },
         .next = &_fishing2
     };
 

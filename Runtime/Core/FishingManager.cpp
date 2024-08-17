@@ -4,7 +4,7 @@
 
 #include "FishingManager.h"
 #include "imgui.h"
-
+#include <glm/gtx/matrix_decompose.hpp>
 
 const float lakeSize = 10.0f;
 
@@ -157,7 +157,7 @@ void FishingManager::setUpFishing() {
     debugPoint->position.x = lake->position.x + (lakeSize * 0.8f);
     debugPoint->position.z = lake->position.z + (lakeSize * 0.8f);
 
-    debugPoint->position.y  = lake->position.y + lake->size.y + 1;
+    debugPoint->position.y  = lake->position.y ;
 
     bobber->position.y = lake->position.y + lake->size.y + 0.2f;
 

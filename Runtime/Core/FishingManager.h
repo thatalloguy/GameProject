@@ -72,6 +72,12 @@ public:
                 updateCamera(deltaTime);
                 auto vec = getMovement();
 
+                if (Quack::Input::isKeyPressed(Quack::Key::SPACE)) {
+                    vec.y += 1.0f;
+                } else if (Quack::Input::isKeyPressed(Quack::Key::Q)) {
+                    vec.y -= 0.1f;
+                }
+
                 // gross.
                 position.x += vec.x * 0.1f;
                 position.y += vec.y * 0.1f;

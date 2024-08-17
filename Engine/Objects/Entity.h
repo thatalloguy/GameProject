@@ -86,6 +86,7 @@ namespace Quack {
         Quack::Math::Vector3 position{0, 0, 0};
         Quack::Math::Vector3 size{1, 1, 1};
         Quack::Math::Vector3 rotation{0, 0, 0}; // in degrees
+
         BodyID physicsID{};
         unsigned int modelID = 0;
     private:
