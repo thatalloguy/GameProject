@@ -132,6 +132,9 @@ namespace Level {
 
 // Core Game Systems
 namespace Game {
+
+    bool renderAllUI = true;
+
     VulkanEngine renderer;
     Camera* camera;
     Quack::PhysicsEngine* physicsEngine;
@@ -292,10 +295,18 @@ namespace UI {
             bedBarTween.step(1);
 
             if (bedBarTween.direction() != -1 && bedBarTween.progress() >= 1.0f) {
-                bedBarTween = bedBarTween.backward().via(tweeny::easing::exponentialOut).during(200);
-                Game::timeManager.setHour(6);
-                Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
-                Game::timeManager.forcedUpdate();
+
+                if (Game::timeManager.getCurrentDay() == Day::Sun) {
+                    // do ending.
+                    spdlog::info("Ending Tick");
+                    Game::renderAllUI = false;
+                } else {
+                    bedBarTween = bedBarTween.backward().via(tweeny::easing::exponentialOut).during(200);
+
+                    Game::timeManager.setHour(6);
+                    Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
+                    Game::timeManager.forcedUpdate();
+                }
 
                 Level::player->sleepingCounter++;
 
@@ -453,9 +464,14 @@ void App::run() {
 
 
        ImGui::Separator();
-       if (ImGui::Button("Skip an hour")) {
+       if (ImGui::Button("Skip a hour")) {
            Game::timeManager.setHour(Game::timeManager.getHour() + 1);
        }
+
+        if (ImGui::Button("Skip a Day")) {
+            Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
+            Game::timeManager.forcedUpdate();
+        }
 
        if (ImGui::Button("Play sound")) {
            Game::soundPlayer->playRandomSound();
@@ -481,89 +497,104 @@ void App::run() {
 
 
         auto drawList = ImGui::GetForegroundDrawList();
+        if (Game::renderAllUI) {
 
-        std::string date = toCstr(Game::timeManager.getCurrentDay()); date += " | ";
-        date += std::to_string(Game::timeManager.getHour()); date += ":00";
+            std::string date = toCstr(Game::timeManager.getCurrentDay());
+            date += " | ";
+            date += std::to_string(Game::timeManager.getHour());
+            date += ":00";
 
-        if (Level::player->state == PlayerState::Moving) {
-            ImGui::SetWindowFontScale(4.0f);
-            drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255), date.c_str());
-            ImGui::SetWindowFontScale(1.0f);
-        }
-
-        // car logic
-        if (Level::car_trigger->hasHit(Level::player->position)) {
-            if (Quack::Input::isControllerPresent(0)) {
+            if (Level::player->state == PlayerState::Moving) {
                 ImGui::SetWindowFontScale(4.0f);
-                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press DOWN to travel");
+                drawList->AddText(ImVec2{windowSize.x * 0.05f, windowSize.y * 0.05f}, ImColor(255, 255, 255),
+                                  date.c_str());
                 ImGui::SetWindowFontScale(1.0f);
+            }
 
-                if (Quack::Input::isButtonPressed(0, 0)) {
-                    // check if we are in the forest and we are allowed to travel to the beach
-                    if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
-                        Level::goToBeach();
-                        Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f, windowSize.y / 2.0f).during(100).onStep([=, this](float x, float b) {
-                            Level::upBarPos.y = x;
-                            Level::downBarPos.y = b;
-                            return false;
-                        });
-                    } else {
-                        Level::goToForest();
+            // car logic
+            if (Level::car_trigger->hasHit(Level::player->position)) {
+                if (Quack::Input::isControllerPresent(0)) {
+                    ImGui::SetWindowFontScale(4.0f);
+                    drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255),
+                                      "Press DOWN to travel");
+                    ImGui::SetWindowFontScale(1.0f);
+
+                    if (Quack::Input::isButtonPressed(0, 0)) {
+                        // check if we are in the forest and we are allowed to travel to the beach
+                        if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
+                            Level::goToBeach();
+                            Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f,
+                                                                                       windowSize.y / 2.0f).during(
+                                    100).onStep([=, this](float x, float b) {
+                                Level::upBarPos.y = x;
+                                Level::downBarPos.y = b;
+                                return false;
+                            });
+                        } else {
+                            Level::goToForest();
+                        }
                     }
-                }
-            } else {
-                ImGui::SetWindowFontScale(4.0f);
-                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press E to travel");
-                ImGui::SetWindowFontScale(1.0f);
+                } else {
+                    ImGui::SetWindowFontScale(4.0f);
+                    drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255),
+                                      "Press E to travel");
+                    ImGui::SetWindowFontScale(1.0f);
 
-                if (Quack::Input::isKeyPressed(Quack::Key::E)) {
-                    // check if we are in the forest and we are allowed to travel to the beach
-                    if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
-                        Level::goToBeach();
-                        Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f, windowSize.y / 2.0f).during(100).onStep([=, this](float x, float b) {
-                            Level::upBarPos.y = x;
-                            Level::downBarPos.y = b;
-                            return false;
-                        });
-                    } else {
-                        Level::goToForest();
+                    if (Quack::Input::isKeyPressed(Quack::Key::E)) {
+                        // check if we are in the forest and we are allowed to travel to the beach
+                        if (Level::player->position.z <= 60 && Game::timeManager.getHour() <= 19) {
+                            Level::goToBeach();
+                            Level::barTween = tweeny::from(0.0f, windowSize.y - 50).to(windowSize.y / 2.0f,
+                                                                                       windowSize.y / 2.0f).during(
+                                    100).onStep([=, this](float x, float b) {
+                                Level::upBarPos.y = x;
+                                Level::downBarPos.y = b;
+                                return false;
+                            });
+                        } else {
+                            Level::goToForest();
+                        }
                     }
                 }
             }
-        }
 
-        // house logic
-        if (Level::house_trigger->hasHit(Level::player->position) && Game::timeManager.getHour() >= 19) {
-            if (Quack::Input::isControllerPresent(0)) {
-                ImGui::SetWindowFontScale(4.0f);
-                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press DOWN to sleep");
-                ImGui::SetWindowFontScale(1.0f);
+            // house logic
+            if (Level::house_trigger->hasHit(Level::player->position) && Game::timeManager.getHour() >= 19) {
+                if (Quack::Input::isControllerPresent(0)) {
+                    ImGui::SetWindowFontScale(4.0f);
+                    drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255),
+                                      "Press DOWN to sleep");
+                    ImGui::SetWindowFontScale(1.0f);
 
-                if (Quack::Input::isButtonPressed(0, 0)) {
-                    UI::startSleepAnimation(windowSize.x, windowSize.y);
-                }
-            } else {
-                ImGui::SetWindowFontScale(4.0f);
-                drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255), "Press E to Sleep");
-                ImGui::SetWindowFontScale(1.0f);
+                    if (Quack::Input::isButtonPressed(0, 0)) {
+                        UI::startSleepAnimation(windowSize.x, windowSize.y);
+                    }
+                } else {
+                    ImGui::SetWindowFontScale(4.0f);
+                    drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255),
+                                      "Press E to Sleep");
+                    ImGui::SetWindowFontScale(1.0f);
 
-                if (Quack::Input::isKeyPressed(Quack::Key::E)) {
-                    UI::startSleepAnimation(windowSize.x, windowSize.y);
+                    if (Quack::Input::isKeyPressed(Quack::Key::E)) {
+                        UI::startSleepAnimation(windowSize.x, windowSize.y);
+                    }
                 }
             }
+
+
+            QuestManager::renderUI(size);
         }
+            DialogRenderer::render(size);
 
+            UI::render(windowSize);
 
-        DialogRenderer::render(size);
-        QuestManager::renderUI(size);
+        if (Game::renderAllUI) {
+            // The cinematic bars
+            drawList->AddRectFilled(ImVec2{0, 0}, ImVec2{windowSize.x, Level::upBarPos.y + 50}, ImColor(1, 1, 1));
+            drawList->AddRectFilled(ImVec2{0, windowSize.y}, ImVec2{windowSize.x, Level::downBarPos.y - 50},
+                                    ImColor(1, 1, 1));
 
-
-        // The cinematic bars
-        drawList->AddRectFilled(ImVec2{0, 0}, ImVec2{windowSize.x, Level::upBarPos.y + 50}, ImColor(1, 1, 1));
-        drawList->AddRectFilled(ImVec2{0, windowSize.y}, ImVec2{windowSize.x, Level::downBarPos.y - 50}, ImColor(1, 1, 1));
-
-        UI::render(windowSize);
-
+        }
 
         ImGui::End();
     });
