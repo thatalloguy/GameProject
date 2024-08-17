@@ -176,6 +176,7 @@ void FishingManager::cleanUpFishing() {
     _player._camera.pitch = 0.f;
     // cancel the rest
     updateFishing = false;
+    pause = false;
     cursor.x = lake->position.x;
     cursor.y = lake->position.z;
     dummy.reset();
