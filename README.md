@@ -99,6 +99,7 @@
 - - [x] Selling not working.
 - - [x] Stamina bars not shrinking properly.
 - - [x] DebtCollector not showing up
+- - [x] Resizing.
 
 ---
 - Polish phase
