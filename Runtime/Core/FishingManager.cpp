@@ -37,21 +37,21 @@ FishingManager::FishingManager(VulkanEngine &renderer, Player &player, Quack::Ph
 
 
     Quack::EntityCreationInfo debugPoint_info {
-            .position = {0, 4, 15},
+            .position = {0, -40, 15},
             .size = {1, 1, 1},
             .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo debugE_info {
-            .position = {0, 4, 15},
+            .position = {0, -40, 15},
             .size = {0.3f, 0.1f, 0.3f},
             .model = 30,
             .isPhysical = false,
     };
 
     Quack::EntityCreationInfo bobber_info {
-            .position = {0, 4, 15},
+            .position = {0, -40, 15},
             .size = {0.3f, 0.3f, 0.3f},
             .model = 40,
             .isPhysical = false,
