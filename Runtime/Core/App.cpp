@@ -149,19 +149,12 @@ namespace Game {
     float deltaTime = 0.0f;
 
     void loadAssets() {
-        // Temp model
-        //std::string structurePath = {"../../Assets/basicmesh.glb"};
-        //auto structureFile = VkLoader::loadGltf(&Game::renderer, structurePath);
         auto testFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/cube.glb");
         auto sphereFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/Models/Fish.glb");
         auto bobberFile = VkLoader::loadGltf(&Game::renderer, "../../Assets/bobber.glb");
-        // just a check, not necessary
-        //assert(structureFile.has_value());
-        //Game::renderer.loadedScenes[55] = *structureFile;
         Game::renderer.loadedScenes[20] = *testFile;
         Game::renderer.loadedScenes[30] = *sphereFile;
         Game::renderer.loadedScenes[40] = *bobberFile;
-        //Game::renderer.loadedScenes[50] = *VkLoader::loadGltf(&Game::renderer, "../../Assets/Chest.glb");;
 
 
         Game::mapLoader->loadMap([&](int entityID, Quack::Entity* entity) {

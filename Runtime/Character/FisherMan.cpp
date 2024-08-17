@@ -78,6 +78,23 @@ void Characters::FisherMan::drawUI(ImVec2 windowSize, Player& player) {
         ImGui::SetWindowFontScale(1.0f);
 
         ImGui::End();
+    } else if (_trigger->hasHit(player.position)) {
+        ImGui::SetNextWindowPos(ImVec2(-700, -700));
+        ImGui::SetNextWindowSize(ImVec2(0, 0));
+        ImGui::Begin(" ", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+        ImGui::SetWindowFontScale(sqrt((windowSize.x * windowSize.x) + (windowSize.y * windowSize.y)) / 600);
+
+        auto drawList = ImGui::GetForegroundDrawList();
+
+        if (Quack::Input::isControllerPresent(0)) {
+            drawList->AddText(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.8f), ImColor(255, 255, 255), "Press Down to interact");
+        } else {
+            drawList->AddText(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.8f), ImColor(255, 255, 255), "Press E to interact");
+        }
+
+        ImGui::SetWindowFontScale(1.0f);
+        ImGui::End();
     }
 }
 
