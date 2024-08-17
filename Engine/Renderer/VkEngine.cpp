@@ -314,6 +314,11 @@ void VulkanEngine::Run()
 
             if (resizeRequested) {
                 resizeSwapchain();
+/*
+                _drawImage.imageExtent.width = _drawExtent.width;
+                _drawImage.imageExtent.height = _drawExtent.height;
+                _depthImage.imageExtent.width = _drawExtent.width;
+                _depthImage.imageExtent.height = _drawExtent.height;*/
             }
 
             // no need for this since the game handles the camera now.
@@ -1298,6 +1303,8 @@ void VulkanEngine::resizeSwapchain() {
     _windowExtent.height = h;
 
     createSwapchain(_windowExtent.width, _windowExtent.height);
+
+    spdlog::info("Resized {} {} ", w, h);
 
     resizeRequested = false;
 }

@@ -443,7 +443,6 @@ void App::init() {
     Game::audioEngine->Init();
     Game::soundPlayer = new SoundPlayer(*Game::audioEngine, *Level::player);
 
-    //DialogRenderer::setCurrentConversation(&Level::test);
 
 }
 
