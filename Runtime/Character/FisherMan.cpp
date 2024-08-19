@@ -88,7 +88,7 @@ void Characters::FisherMan::drawUI(ImVec2 windowSize, Player& player) {
         auto drawList = ImGui::GetForegroundDrawList();
 
         if (Quack::Input::isControllerPresent(0)) {
-            drawList->AddText(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.8f), ImColor(255, 255, 255), "Press Down to interact");
+            drawList->AddText(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.8f), ImColor(255, 255, 255), "Press Left to interact");
         } else {
             drawList->AddText(ImVec2(windowSize.x * 0.4f, windowSize.y * 0.8f), ImColor(255, 255, 255), "Press E to interact");
         }

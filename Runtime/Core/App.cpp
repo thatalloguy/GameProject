@@ -247,7 +247,7 @@ namespace Tutorial {
     Quest _fishingQ {
         .desc = "Go to the dock and Fish",
         .condition = [](){ return Level::player->state == PlayerState::Fishing; },
-        .onComplete = []() { /*Game::fishingManager->startTutorial(); DialogRenderer::setCurrentConversation(&fishingTutorial); */ },
+        .onComplete = []() { Game::fishingManager->startTutorial(); DialogRenderer::setCurrentConversation(&fishingTutorial); },
         .next = &_fishing2
     };
 
@@ -271,6 +271,7 @@ namespace Tutorial {
 namespace UI {
 
     bool isToBed = false;
+    bool playingEnding = false;
 
 
     ImVec2 sideBar{0, 720};
@@ -298,6 +299,17 @@ namespace UI {
 
                 if (Game::timeManager.getCurrentDay() == Day::Sun) {
                     // do ending.
+                    if (Level::player->sleepingCounter <= 4) {
+
+                        // secret ending
+
+                    } else {
+                        if (Level::player->inventory.money >= 500) {
+                            // Good ending
+                        } else {
+                            // Bad ending
+                        }
+                    }
                     spdlog::info("Ending Tick");
                     Game::renderAllUI = false;
                 } else {
@@ -515,7 +527,7 @@ void App::run() {
                 if (Quack::Input::isControllerPresent(0)) {
                     ImGui::SetWindowFontScale(4.0f);
                     drawList->AddText(ImVec2{windowSize.x * 0.4f, windowSize.y * 0.7f}, ImColor(255, 255, 255),
-                                      "Press DOWN to travel");
+                                      "Press Left to travel");
                     ImGui::SetWindowFontScale(1.0f);
 
                     if (Quack::Input::isButtonPressed(0, 0)) {
