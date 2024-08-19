@@ -46,7 +46,7 @@ void Characters::DebtCollector::update(Player &player) {
 
             _currentState = CharacterState::Talking;
             player.state = PlayerState::Cutscene;
-            player._character->SetPosition({3, -0.2f, 33});
+            player.position = Quack::Math::Vector3{3, -0.2f, 35};
             player._camera.pitch = 0.0f;
             player._camera.yaw = 0.0f;
     }

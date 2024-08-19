@@ -28,7 +28,6 @@ namespace Characters {
         ~DebtCollector();
 
         void initialize(Quack::Entity& baseEntity, TimeManager& timeManager);
-
         void update(Player& player);
 
         void drawUI(ImVec2 windowSize, Player& player);
@@ -39,7 +38,7 @@ namespace Characters {
 
         Quack::Entity* _entity;
         TimeManager* _timeManager;
-        CharacterState _currentState{CharacterState::Disabled}; // MUST BE OPENING!!
+        CharacterState _currentState{CharacterState::Opening}; // MUST BE OPENING!!
         bool hasYapped = false;
 
         //dialog;

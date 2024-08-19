@@ -231,6 +231,40 @@ namespace Tutorial {
         }
     };
 
+    DialogBox badEnding {
+        .author = "_ _ _ _ _ ",
+        .dialogs = {
+                "Being unable to pay of their fathers debt",
+                "They were murdered in their sleep",
+                "Because if they could not pay it with money",
+                "They would have to pay it with their soul",
+                "They were unable to escape their fate",
+                "... ",
+                "You were unable to escape your fate"
+        }
+    };
+
+    DialogBox insaneEnding {
+            .author = "_ _ _ _ _ ",
+            .dialogs = {
+                    "A lack of sleep does unspeakable things.",
+                    "Combine that with the loss of a father",
+                    "They died in their sleep, their heart stopping",
+                    "Their body was never discovered",
+                    "Nor was the debt ever paid."
+            }
+    };
+
+    DialogBox goodEnding {
+            .author = "_ _ _ _ _ ",
+            .dialogs = {
+                    "The next day the debt collector came.",
+                    "You were successful in paying the debt",
+                    "You escaped your fate, unlike your father"
+            }
+    };
+
+
     Quest _main {
         .desc = "Pay the debt",
         .condition = []() { return false; /* >:) */ },
@@ -298,27 +332,69 @@ namespace UI {
             if (bedBarTween.direction() != -1 && bedBarTween.progress() >= 1.0f) {
 
                 if (Game::timeManager.getCurrentDay() == Day::Sun) {
+                    QuestManager::setCurrentQuest(nullptr);
                     // do ending.
                     if (Level::player->sleepingCounter <= 4) {
 
-                        // secret ending
+
+                        if (!playingEnding) {
+                            spdlog::info("Ending Tick");
+                            playingEnding = true;
+
+                            // secret ending
+                            Level::player->state = PlayerState::Cutscene;
+
+                            Level::player->state = PlayerState::Cutscene;
+                            Level::player->_character->SetPosition({3, -0.2f, 33});
+                            Level::player->_camera.pitch = 0.0f;
+                            Level::player->_camera.yaw = 0.0f;
+                            Level::player->_camera.fov = 0.0f;
+                            DialogRenderer::setCurrentConversation(&Tutorial::insaneEnding);
+                        }
 
                     } else {
                         if (Level::player->inventory.money >= 500) {
                             // Good ending
+                            if (!playingEnding) {
+                                spdlog::info("Ending Tick");
+                                playingEnding = true;
+
+                                // secret ending
+                                Level::player->state = PlayerState::Cutscene;
+
+                                Level::player->state = PlayerState::Cutscene;
+                                Level::player->_character->SetPosition({3, -0.2f, 33});
+                                Level::player->_camera.pitch = 0.0f;
+                                Level::player->_camera.yaw = 0.0f;
+                                Level::player->_camera.fov = 0.0f;
+                                DialogRenderer::setCurrentConversation(&Tutorial::goodEnding);
+                            }
                         } else {
                             // Bad ending
+                            if (!playingEnding) {
+                                spdlog::info("Ending Tick");
+                                playingEnding = true;
+
+                                Level::player->state = PlayerState::Cutscene;
+
+                                Level::player->state = PlayerState::Cutscene;
+                                Level::player->_character->SetPosition({3, -0.2f, 33});
+                                Level::player->_camera.pitch = 0.0f;
+                                Level::player->_camera.yaw = 0.0f;
+                                Level::player->_camera.fov = 0.0f;
+
+                                DialogRenderer::setCurrentConversation(&Tutorial::badEnding);
+                            }
                         }
                     }
-                    spdlog::info("Ending Tick");
-                    Game::renderAllUI = false;
-                } else {
+                    //Game::renderAllUI = false;
+                }
                     bedBarTween = bedBarTween.backward().via(tweeny::easing::exponentialOut).during(200);
 
                     Game::timeManager.setHour(6);
                     Game::timeManager.setDay(static_cast<Day>(static_cast<unsigned int>(Game::timeManager.getCurrentDay()) + 1));
                     Game::timeManager.forcedUpdate();
-                }
+
 
                 Level::player->sleepingCounter++;
 
@@ -488,6 +564,11 @@ void App::run() {
            Game::soundPlayer->playRandomSound();
        }
 
+
+        if (ImGui::Button("Give 10 bucks")) {
+            Level::player->inventory.money += 10;
+        }
+
        ImGui::End();
 
 
@@ -595,9 +676,8 @@ void App::run() {
 
             QuestManager::renderUI(size);
         }
-            DialogRenderer::render(size);
-
-            UI::render(windowSize);
+        UI::render(windowSize);
+        DialogRenderer::render(size);
 
         if (Game::renderAllUI) {
             // The cinematic bars

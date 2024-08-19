@@ -85,14 +85,19 @@
 - - - [x] Sunday
 - - [x] Tutorial
 - - [x] Debt Collector.
-- - [ ] Ending
-- - - [ ] Ending 1
-- - - [ ] Ending 2
-- - - [ ] Ending 3
+- - [x] Ending
+- - - [x] Ending 1
+- - - [x] Ending 2
+- - - [x] Ending 3
 ---
 - Sound
 - - [x] Play sounds
 - - [ ] random Ambient sound effects.
+
+---
+- Misc.
+- - [ ] Saving and loading
+- - [ ] Settings.
 ---
 - Fix Bugs
 - - [x] Fish not counting after getting caught.
@@ -100,9 +105,3 @@
 - - [x] Stamina bars not shrinking properly.
 - - [x] DebtCollector not showing up
 - - [x] Resizing.
-
----
-- Polish phase
-- - [ ] Saving and loading
-- - [ ] Settings.
-- - [ ] Water?
